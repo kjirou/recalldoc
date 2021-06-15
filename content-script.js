@@ -81,8 +81,9 @@ if (pageKind === 'note') {
     url: document.URL,
   }
   if (footprints.every(e => e.url !== footprint.url)) {
-    footprints.push(footprint)
+    saveFootprints([
+      ...footprints,
+      footprint,
+    ])
   }
-  saveFootprints(footprints)
-  console.log(footprints)
 }
