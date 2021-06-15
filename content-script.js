@@ -60,6 +60,15 @@ const initializeSearcher = (footprints) => {
 }
 
 const pageKind = getPageKind(document.URL)
+// TODO: 全画面でデータを読み込んでいる。
+const footprints = loadFootprints()
+
+window.addEventListener('keydown', (event) => {
+  // TODO: 表示中なら無視する。
+  if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
+    initializeSearcher(footprints)
+  }
+})
 
 // TODO: ディレクトリのページも検索対象に含める。
 if (pageKind === 'note') {
@@ -71,17 +80,9 @@ if (pageKind === 'note') {
     // TODO: Query Stringなどを落として正規化する。
     url: document.URL,
   }
-  const footprints = loadFootprints()
   if (footprints.every(e => e.url !== footprint.url)) {
     footprints.push(footprint)
   }
   saveFootprints(footprints)
   console.log(footprints)
-  const originalSearchBox = document.querySelector('#header .searchBox input[type="search"]')
-  originalSearchBox.addEventListener('keydown', (event) => {
-    // TODO: 表示中なら無視する。
-    if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
-      initializeSearcher(footprints)
-    }
-  })
 }
