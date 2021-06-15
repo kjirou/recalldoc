@@ -27,11 +27,10 @@ if (pageKind === 'note') {
     // TODO: Query Stringなどを落として正規化する。
     url: document.URL,
   }
-  // TODO: 同じ URL を追加しない。
-  const footprints = [
-    ...loadFootprints(),
-    footprint,
-  ]
+  const footprints = loadFootprints()
+  if (footprints.every(e => e.url !== footprint.url)) {
+    footprints.push(footprint)
+  }
   saveFootprints(footprints)
   console.log(footprints)
 }
