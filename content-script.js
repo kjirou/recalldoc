@@ -13,6 +13,7 @@ const loadFootprints = () => {
 }
 const saveFootprints = (footprints) => {
   const serializedFootprints = JSON.stringify(footprints)
+  // TODO: 開発者モードだからか、普通に kibe.la の localStorage として保存されている。
   window.localStorage.setItem('footprints', serializedFootprints)
 }
 
