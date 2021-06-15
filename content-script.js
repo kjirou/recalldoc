@@ -16,17 +16,22 @@ const saveFootprints = (footprints) => {
   // TODO: 開発者モードだからか、普通に kibe.la の localStorage として保存されている。
   window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
 }
-const renderSearcher = (footprints, inputValue, itemList) => {
-  const filteredFootprints = footprints.filter(footprint => {
+const renderSearcher = (state, itemList) => {
+  const filteredFootprints = state.footprints.filter(footprint => {
     // TODO: スペース区切りによる複数キーワード指定。
-    return footprint.title.toUpperCase().includes(inputValue.toUpperCase())
+    return footprint.title.toUpperCase().includes(state.inputValue.toUpperCase())
   })
+  // TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
+  const actualCursoredIndex = (filteredFootprints.length * 1000 + state.cursoredIndex) % filteredFootprints.length
   itemList.innerHTML = ''
   // TODO: カーソルとEnterで指定したい。
   // TODO: マッチしている箇所をハイライトする。
-  for (const footprint of filteredFootprints) {
+  for (const [index, footprint] of filteredFootprints.entries()) {
     const itemLi = document.createElement('li')
     itemLi.style.lineHeight = '1'
+    if (index === actualCursoredIndex) {
+      itemLi.style.backgroundColor = '#ffff00'
+    }
     const itemAnchor = document.createElement('a')
     itemAnchor.textContent = footprint.title
     itemAnchor.href = footprint.url
@@ -51,8 +56,35 @@ const initializeSearcher = (footprints) => {
   searchField.style.display = 'block'
   searchField.style.width = '100%'
   searchField.style.textAlign = 'right'
+  let state = {
+    cursoredIndex: 0,
+    inputValue: '',
+    footprints,
+  }
   searchField.addEventListener('input', (event) => {
-    renderSearcher(footprints, event.target.value, itemList)
+    state = {
+      ...state,
+      inputValue: event.target.value,
+      cursoredIndex: 0,
+    }
+    renderSearcher(state, itemList)
+  })
+  searchField.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      state = {
+        ...state,
+        cursoredIndex: state.cursoredIndex - 1,
+      }
+      renderSearcher(state, itemList)
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      state = {
+        ...state,
+        cursoredIndex: state.cursoredIndex + 1,
+      }
+      renderSearcher(state, itemList)
+    }
   })
   container.appendChild(searchField)
   container.appendChild(itemList)
