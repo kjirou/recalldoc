@@ -23,10 +23,13 @@ const searchFootprints = (footprints, inputValue) => {
     return footprint.title.toUpperCase().includes(inputValue.toUpperCase())
   })
 }
+// TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
+const rotateIndex = (length, index) => {
+  return (length * 1000 + index) % length
+}
 const renderSearcher = (state, itemList) => {
   const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
-  // TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
-  const actualCursoredIndex = (searchedFootprints.length * 1000 + state.cursoredIndex) % searchedFootprints.length
+  const actualCursoredIndex = rotateIndex(searchedFootprints.length, state.cursoredIndex)
   itemList.innerHTML = ''
   // TODO: マッチしている箇所をハイライトする。
   // TODO: 全件出力してしまう。
@@ -91,7 +94,7 @@ const initializeSearcher = (footprints) => {
     } else if (event.key === 'Enter') {
       event.preventDefault()
       const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
-      const cursoredFootprint = searchedFootprints[state.cursoredIndex]
+      const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, state.cursoredIndex)]
       if (cursoredFootprint) {
         window.location.href = cursoredFootprint.url
       }
