@@ -11,22 +11,26 @@ const loadFootprints = () => {
   }
   return JSON.parse(rawFootprints)
 }
+// TODO: 保存する件数に上限を設ける。
 const saveFootprints = (footprints) => {
   const serializedFootprints = JSON.stringify(footprints)
   // TODO: 開発者モードだからか、普通に kibe.la の localStorage として保存されている。
   window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
 }
-const renderSearcher = (state, itemList) => {
-  const filteredFootprints = state.footprints.filter(footprint => {
+const searchFootprints = (footprints, inputValue) => {
+  return footprints.filter(footprint => {
     // TODO: スペース区切りによる複数キーワード指定。
-    return footprint.title.toUpperCase().includes(state.inputValue.toUpperCase())
+    return footprint.title.toUpperCase().includes(inputValue.toUpperCase())
   })
+}
+const renderSearcher = (state, itemList) => {
+  const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
   // TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
-  const actualCursoredIndex = (filteredFootprints.length * 1000 + state.cursoredIndex) % filteredFootprints.length
+  const actualCursoredIndex = (searchedFootprints.length * 1000 + state.cursoredIndex) % searchedFootprints.length
   itemList.innerHTML = ''
-  // TODO: カーソルとEnterで指定したい。
   // TODO: マッチしている箇所をハイライトする。
-  for (const [index, footprint] of filteredFootprints.entries()) {
+  // TODO: 全件出力してしまう。
+  for (const [index, footprint] of searchedFootprints.entries()) {
     const itemLi = document.createElement('li')
     itemLi.style.lineHeight = '1'
     if (index === actualCursoredIndex) {
@@ -84,6 +88,13 @@ const initializeSearcher = (footprints) => {
         cursoredIndex: state.cursoredIndex + 1,
       }
       renderSearcher(state, itemList)
+    } else if (event.key === 'Enter') {
+      event.preventDefault()
+      const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
+      const cursoredFootprint = searchedFootprints[state.cursoredIndex]
+      if (cursoredFootprint) {
+        window.location.href = cursoredFootprint.url
+      }
     }
   })
   container.appendChild(searchField)
