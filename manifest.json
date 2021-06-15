@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Recalldoc",
+  "version": "0.0.0",
+  "content_scripts": [
+    {
+      "matches": ["https://*.kibe.la/*"],
+      "js": ["content-script.js"]
+    }
+  ]
+}
