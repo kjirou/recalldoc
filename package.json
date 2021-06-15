@@ -1,6 +1,6 @@
 {
   "name": "recalldoc",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,9 +11,10 @@
     "url": "git+https://github.com/kjirou/recalldoc.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "SEE LICENSE IN https://github.com/kjirou/recalldoc/blob/main/LICENSE",
   "bugs": {
     "url": "https://github.com/kjirou/recalldoc/issues"
   },
-  "homepage": "https://github.com/kjirou/recalldoc#readme"
+  "homepage": "https://github.com/kjirou/recalldoc#readme",
+  "private": true
 }
