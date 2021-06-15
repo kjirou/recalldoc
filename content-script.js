@@ -23,6 +23,7 @@ const renderSearcher = (footprints, inputValue, itemList) => {
   })
   itemList.innerHTML = ''
   // TODO: カーソルとEnterで指定したい。
+  // TODO: マッチしている箇所をハイライトする。
   for (const footprint of filteredFootprints) {
     const itemLi = document.createElement('li')
     itemLi.style.lineHeight = '1'
