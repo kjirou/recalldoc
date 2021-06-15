@@ -65,8 +65,10 @@ const pageKind = getPageKind(document.URL)
 const footprints = loadFootprints()
 
 window.addEventListener('keydown', (event) => {
-  // TODO: 表示中なら無視する。
-  if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
+  if (
+      (event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l' &&
+      !document.querySelector('.recalldoc-searcher')
+  ) {
     initializeSearcher(footprints)
   }
 })
