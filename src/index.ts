@@ -1,3 +1,7 @@
+import { createElement } from 'react'
+import { render } from 'react-dom'
+import { Searcher } from './components/Searcher'
+
 type Footprint = {
   title: string;
   url: string;
@@ -65,6 +69,10 @@ const renderSearcher = (state: State, itemList: HTMLUListElement): void => {
 }
 
 const initializeSearcher = (footprints: Footprint[]): void => {
+  render(
+    createElement(Searcher, {}),
+    document.body,
+  )
   const container = document.createElement('div')
   container.classList.add('recalldoc-searcher')
   container.style.position = 'fixed'
