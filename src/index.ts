@@ -1,3 +1,11 @@
+import { createElement } from 'react'
+import { createPortal, render } from 'react-dom'
+import {
+  FootprintProps as SearcherFootprintProps,
+  Props as SearcherProps,
+  Searcher,
+} from './components/Searcher'
+
 type Footprint = {
   title: string;
   url: string;
@@ -43,99 +51,76 @@ const rotateIndex = (length: number, index: number): number => {
   return (length * 1000 + index) % length
 }
 
-const renderSearcher = (state: State, itemList: HTMLUListElement): void => {
-  const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
-  const actualCursoredIndex = rotateIndex(searchedFootprints.length, state.cursoredIndex)
-  itemList.innerHTML = ''
-  // TODO: マッチしている箇所をハイライトする。
-  // TODO: 全件出力してしまう。
-  for (const [index, footprint] of searchedFootprints.entries()) {
-    const itemLi = document.createElement('li')
-    itemLi.style.lineHeight = '1'
-    if (index === actualCursoredIndex) {
-      itemLi.style.backgroundColor = '#ffff00'
-    }
-    const itemAnchor = document.createElement('a')
-    itemAnchor.textContent = footprint.title
-    itemAnchor.href = footprint.url
-    itemAnchor.style.fontSize = '12px'
-    itemLi.appendChild(itemAnchor)
-    itemList.appendChild(itemLi)
-  }
-}
-
-const initializeSearcher = (footprints: Footprint[]): void => {
-  const container = document.createElement('div')
-  container.classList.add('recalldoc-searcher')
-  container.style.position = 'fixed'
-  container.style.width = '600px'
-  container.style.top = '20px'
-  container.style.left = 'calc(50% - 600px/2)'
-  container.style.zIndex = '1'
-  const itemList = document.createElement('ul')
-  itemList.style.padding = '5px'
-  itemList.style.border = '1px solid #cccccc'
-  itemList.style.backgroundColor = '#ffffff'
-  const searchField: HTMLInputElement = document.createElement('input')
-  searchField.style.display = 'block'
-  searchField.style.width = '100%'
-  searchField.style.textAlign = 'right'
-  let state: State = {
-    cursoredIndex: 0,
-    inputValue: '',
-    footprints,
-  }
-  searchField.addEventListener('input', (event) => {
-    state = {
-      ...state,
-      // TODO: 型が雑だけど、Reactにするときにどうせ変わるはず。
-      // TODO: event.currentTarget でも searchField: HTMLInputElement の型を引き継げないのはなぜ？
-      inputValue: (event.currentTarget as HTMLInputElement).value,
-      cursoredIndex: 0,
-    }
-    renderSearcher(state, itemList)
-  })
-  searchField.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      state = {
-        ...state,
-        cursoredIndex: state.cursoredIndex - 1,
-      }
-      renderSearcher(state, itemList)
-    } else if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      state = {
-        ...state,
-        cursoredIndex: state.cursoredIndex + 1,
-      }
-      renderSearcher(state, itemList)
-    // TODO: IMEの変換決定でここが動いてしまう。
-    } else if (event.key === 'Enter') {
-      event.preventDefault()
-      const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
-      const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, state.cursoredIndex)]
-      if (cursoredFootprint) {
-        window.location.href = cursoredFootprint.url
-      }
-    }
-  })
-  container.appendChild(searchField)
-  container.appendChild(itemList)
-  document.body.appendChild(container)
-  searchField.focus()
-}
-
 const pageKind = getPageKind(document.URL)
 // TODO: 全画面でデータを読み込んでいる。
 const footprints = loadFootprints()
+let state: State = {
+  cursoredIndex: 0,
+  inputValue: '',
+  footprints,
+}
+const searcherRootElement = document.createElement('div')
+searcherRootElement.style.display = 'none'
+document.body.appendChild(searcherRootElement)
+
+const renderSearcher = (props: SearcherProps): void => {
+  render(
+    createPortal(
+      createElement(Searcher, props),
+      document.body,
+    ),
+    searcherRootElement,
+  )
+}
+
+const generateSearcherProps = (state: State): SearcherProps => {
+  const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
+  const actualCursoredIndex = rotateIndex(searchedFootprints.length, state.cursoredIndex)
+  return {
+    footprints: searchedFootprints.map((footprint, index) => ({
+      ...footprint,
+      highlighted: index === actualCursoredIndex,
+    })),
+    onInput: ((inputValue: string) => {
+      state = {
+        ...state,
+        inputValue,
+        cursoredIndex: 0,
+      }
+      renderSearcher(generateSearcherProps(state))
+    }),
+    // TODO: ESCキーで Searcher を閉じる。
+    onKeyDown: ((event) => {
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        state = {
+          ...state,
+          cursoredIndex: state.cursoredIndex - 1,
+        }
+        renderSearcher(generateSearcherProps(state))
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        state = {
+          ...state,
+          cursoredIndex: state.cursoredIndex + 1,
+        }
+        renderSearcher(generateSearcherProps(state))
+      // TODO: IMEの変換決定でここが動いてしまう。
+      } else if (event.key === 'Enter') {
+        event.preventDefault()
+        const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
+        const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, state.cursoredIndex)]
+        if (cursoredFootprint) {
+          window.location.href = cursoredFootprint.url
+        }
+      }
+    })
+  }
+}
 
 window.addEventListener('keydown', (event) => {
-  if (
-      (event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l' &&
-      !document.querySelector('.recalldoc-searcher')
-  ) {
-    initializeSearcher(footprints)
+  if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
+    renderSearcher(generateSearcherProps(state))
   }
 })
 
