@@ -1,4 +1,9 @@
-import { KeyboardEvent, VFC } from 'react'
+import {
+  KeyboardEvent,
+  VFC,
+  useEffect,
+  useRef,
+} from 'react'
 
 export type FootprintProps = {
   highlighted: boolean;
@@ -12,10 +17,15 @@ export type Props = {
   onKeyDown: (event: KeyboardEvent) => void,
 }
 
-// TODO: mount 時に focus する。
 // TODO: 最大表示件数を設定する。
 // TODO: 検索キーワードがマッチしている箇所をハイライトする。
 export const Searcher: VFC<Props> = (props) => {
+  const searchFieldRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    searchFieldRef.current?.focus()
+  }, [])
+
   return <div
     style={{
       width: '600px',
@@ -26,6 +36,7 @@ export const Searcher: VFC<Props> = (props) => {
     }}
   >
     <input
+      ref={searchFieldRef}
       onInput={event => {
         props.onInput(event.currentTarget.value)
       }}
