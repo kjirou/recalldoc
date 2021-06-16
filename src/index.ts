@@ -1,33 +1,49 @@
-const getPageKind = (url) => {
+type Footprint = {
+  title: string;
+  url: string;
+}
+
+type State = {
+  cursoredIndex: number;
+  footprints: Footprint[];
+  inputValue: string;
+}
+
+const getPageKind = (url: string): 'note' | 'unknown' => {
   if (/\/notes\/\d+(\?|$)/.test(url)) {
     return 'note'
   }
   return 'unknown'
 }
-const loadFootprints = () => {
+
+const loadFootprints = (): Footprint[] => {
   const rawFootprints = window.localStorage.getItem('recalldoc_footprints')
   if (!rawFootprints) {
     return []
   }
   return JSON.parse(rawFootprints)
 }
+
 // TODO: 保存する件数に上限を設ける。
-const saveFootprints = (footprints) => {
+const saveFootprints = (footprints: Footprint[]): void => {
   const serializedFootprints = JSON.stringify(footprints)
   // TODO: 開発者モードだからか、普通に kibe.la の localStorage として保存されている。
   window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
 }
-const searchFootprints = (footprints, inputValue) => {
+
+const searchFootprints = (footprints: Footprint[], inputValue: string): Footprint[] => {
   return footprints.filter(footprint => {
     // TODO: スペース区切りによる複数キーワード指定。
     return footprint.title.toUpperCase().includes(inputValue.toUpperCase())
   })
 }
+
 // TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
-const rotateIndex = (length, index) => {
+const rotateIndex = (length: number, index: number): number => {
   return (length * 1000 + index) % length
 }
-const renderSearcher = (state, itemList) => {
+
+const renderSearcher = (state: State, itemList: HTMLUListElement): void => {
   const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
   const actualCursoredIndex = rotateIndex(searchedFootprints.length, state.cursoredIndex)
   itemList.innerHTML = ''
@@ -47,7 +63,8 @@ const renderSearcher = (state, itemList) => {
     itemList.appendChild(itemLi)
   }
 }
-const initializeSearcher = (footprints) => {
+
+const initializeSearcher = (footprints: Footprint[]): void => {
   const container = document.createElement('div')
   container.classList.add('recalldoc-searcher')
   container.style.position = 'fixed'
@@ -59,11 +76,11 @@ const initializeSearcher = (footprints) => {
   itemList.style.padding = '5px'
   itemList.style.border = '1px solid #cccccc'
   itemList.style.backgroundColor = '#ffffff'
-  const searchField = document.createElement('input')
+  const searchField: HTMLInputElement = document.createElement('input')
   searchField.style.display = 'block'
   searchField.style.width = '100%'
   searchField.style.textAlign = 'right'
-  let state = {
+  let state: State = {
     cursoredIndex: 0,
     inputValue: '',
     footprints,
@@ -71,7 +88,9 @@ const initializeSearcher = (footprints) => {
   searchField.addEventListener('input', (event) => {
     state = {
       ...state,
-      inputValue: event.target.value,
+      // TODO: 型が雑だけど、Reactにするときにどうせ変わるはず。
+      // TODO: event.currentTarget でも searchField: HTMLInputElement の型を引き継げないのはなぜ？
+      inputValue: (event.currentTarget as HTMLInputElement).value,
       cursoredIndex: 0,
     }
     renderSearcher(state, itemList)
@@ -91,6 +110,7 @@ const initializeSearcher = (footprints) => {
         cursoredIndex: state.cursoredIndex + 1,
       }
       renderSearcher(state, itemList)
+    // TODO: IMEの変換決定でここが動いてしまう。
     } else if (event.key === 'Enter') {
       event.preventDefault()
       const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
@@ -121,9 +141,11 @@ window.addEventListener('keydown', (event) => {
 
 // TODO: ディレクトリのページも検索対象に含める。
 if (pageKind === 'note') {
-  const pageTitle = document.querySelector('#title span').textContent
+  // TODO: HTML 要素がなかったときの対応をする。
+  const pageTitle = document.querySelector('#title span')!.textContent
   // TODO: .folderIndicator の中には複数要素が含まれているので、それを現在は textContent で強引に結合している。
-  const folderIndicatorLabel = document.querySelector('.folderIndicator').textContent
+  // TODO: HTML 要素がなかったときの対応をする。
+  const folderIndicatorLabel = document.querySelector('.folderIndicator')!.textContent
   const footprint = {
     title: `${folderIndicatorLabel}/${pageTitle}`,
     // TODO: Query Stringなどを落として正規化する。

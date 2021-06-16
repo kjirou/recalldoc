@@ -5,7 +5,7 @@
   "content_scripts": [
     {
       "matches": ["https://*.kibe.la/*"],
-      "js": ["content-script.js"]
+      "js": ["dist/webpacked.js"]
     }
   ]
 }
