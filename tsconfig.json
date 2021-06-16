@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es2020"
+    ],
+    "outDir": "./dist",
+    "strict": true,
+    "target": "esnext"
+  },
+  "include": [
+    "./src"
+  ]
+}
