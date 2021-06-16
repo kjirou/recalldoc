@@ -110,6 +110,7 @@ const initializeSearcher = (footprints: Footprint[]): void => {
         cursoredIndex: state.cursoredIndex + 1,
       }
       renderSearcher(state, itemList)
+    // TODO: IMEの変換決定でここが動いてしまう。
     } else if (event.key === 'Enter') {
       event.preventDefault()
       const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
