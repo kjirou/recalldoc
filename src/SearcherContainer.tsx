@@ -81,7 +81,6 @@ const useVariables = (initialFootprints: Footprint[]): {
   }
 }
 
-// TODO: unmount に対応する。
 const useShadowRoot = (): ShadowRoot | undefined => {
   const [shadowRoot, setShadowRoot] = useState<ShadowRoot | undefined>(undefined)
   useEffect(() => {
@@ -89,6 +88,9 @@ const useShadowRoot = (): ShadowRoot | undefined => {
     document.body.appendChild(shadowContainer)
     const sr = shadowContainer.attachShadow({mode: 'open'})
     setShadowRoot(sr)
+    return () => {
+      document.body.removeChild(shadowContainer)
+    }
   }, [])
   return shadowRoot
 }
