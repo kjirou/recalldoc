@@ -6,6 +6,7 @@ import {
   SearcherContainer,
 } from './SearcherContainer'
 
+// TODO: esa対応。
 const getPageKind = (url: string): 'note' | 'unknown' => {
   if (/\/notes\/\d+(\?|$)/.test(url)) {
     return 'note'
