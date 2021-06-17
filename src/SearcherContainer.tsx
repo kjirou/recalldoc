@@ -51,13 +51,14 @@ const useVariables = (initialFootprints: Footprint[]): {
     setCursoredIndex(0)
   }, [])
   const onKeyDown = useCallback((event) => {
-    if (event.key === 'ArrowUp') {
+    const isComposing: boolean = !event.nativeEvent.isComposing
+    if (event.key === 'ArrowUp' && !isComposing) {
       event.preventDefault()
       setCursoredIndex(s => s - 1)
-    } else if (event.key === 'ArrowDown') {
+    } else if (event.key === 'ArrowDown' && !isComposing) {
       event.preventDefault()
       setCursoredIndex(s => s + 1)
-    } else if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+    } else if (event.key === 'Enter' && !isComposing) {
       event.preventDefault()
       // TODO: 画面遷移処理は useEffect へ移動する。
       if (cursoredFootprint) {
