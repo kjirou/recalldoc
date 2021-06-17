@@ -81,8 +81,24 @@ const useVariables = (initialFootprints: Footprint[]): {
   }
 }
 
+const useShadowRoot = (): ShadowRoot | undefined => {
+  const [shadowRoot, setShadowRoot] = useState<ShadowRoot | undefined>(undefined)
+  useEffect(() => {
+    const shadowContainer = document.createElement('div')
+    document.body.appendChild(shadowContainer)
+    const sr = shadowContainer.attachShadow({mode: 'open'})
+    setShadowRoot(sr)
+    return () => {
+      document.body.removeChild(shadowContainer)
+    }
+  }, [])
+  return shadowRoot
+}
+
 export const SearcherContainer: VFC<Props> = (props) => {
   const {searcherProps} = useVariables(props.footprints)
-  // TODO: document.body への参照が雑。
-  return createPortal(<Searcher {...searcherProps}/>, document.body)
+  const shadowRoot = useShadowRoot()
+  // TODO: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
+  //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html
+  return shadowRoot ? createPortal(<Searcher {...searcherProps}/>, shadowRoot as any) : null
 }
