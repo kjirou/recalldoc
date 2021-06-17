@@ -5,7 +5,7 @@ import {
   useRef,
 } from 'react'
 
-export type FootprintProps = {
+type FootprintProps = {
   highlighted: boolean;
   title: string;
   url: string;
