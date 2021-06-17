@@ -57,8 +57,7 @@ const useVariables = (initialFootprints: Footprint[]): {
     } else if (event.key === 'ArrowDown') {
       event.preventDefault()
       setCursoredIndex(s => s + 1)
-    // TODO: IMEの変換決定でここが動いてしまう。
-    } else if (event.key === 'Enter') {
+    } else if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
       event.preventDefault()
       // TODO: 画面遷移処理は useEffect へ移動する。
       if (cursoredFootprint) {
