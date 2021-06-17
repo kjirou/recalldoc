@@ -1,21 +1,10 @@
 import { createElement } from 'react'
-import { createPortal, render } from 'react-dom'
+import { render } from 'react-dom'
 import {
-  FootprintProps as SearcherFootprintProps,
-  Props as SearcherProps,
-  Searcher,
-} from './components/Searcher'
-
-type Footprint = {
-  title: string;
-  url: string;
-}
-
-type State = {
-  cursoredIndex: number;
-  footprints: Footprint[];
-  inputValue: string;
-}
+  Footprint,
+  Props as SearcherContainerProps,
+  SearcherContainer,
+} from './SearcherContainer'
 
 const getPageKind = (url: string): 'note' | 'unknown' => {
   if (/\/notes\/\d+(\?|$)/.test(url)) {
@@ -39,88 +28,24 @@ const saveFootprints = (footprints: Footprint[]): void => {
   window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
 }
 
-const searchFootprints = (footprints: Footprint[], inputValue: string): Footprint[] => {
-  return footprints.filter(footprint => {
-    // TODO: スペース区切りによる複数キーワード指定。
-    return footprint.title.toUpperCase().includes(inputValue.toUpperCase())
-  })
-}
-
-// TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
-const rotateIndex = (length: number, index: number): number => {
-  return (length * 1000 + index) % length
-}
-
 const pageKind = getPageKind(document.URL)
-// TODO: 全画面でデータを読み込んでいる。
-const footprints = loadFootprints()
-let state: State = {
-  cursoredIndex: 0,
-  inputValue: '',
-  footprints,
-}
+
 const searcherRootElement = document.createElement('div')
 searcherRootElement.style.display = 'none'
 document.body.appendChild(searcherRootElement)
 
-const renderSearcher = (props: SearcherProps): void => {
+const renderSearcher = (props: SearcherContainerProps): void => {
   render(
-    createPortal(
-      createElement(Searcher, props),
-      document.body,
-    ),
+    createElement(SearcherContainer, props),
     searcherRootElement,
   )
 }
 
-const generateSearcherProps = (state: State): SearcherProps => {
-  const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
-  const actualCursoredIndex = rotateIndex(searchedFootprints.length, state.cursoredIndex)
-  return {
-    footprints: searchedFootprints.map((footprint, index) => ({
-      ...footprint,
-      highlighted: index === actualCursoredIndex,
-    })),
-    onInput: ((inputValue: string) => {
-      state = {
-        ...state,
-        inputValue,
-        cursoredIndex: 0,
-      }
-      renderSearcher(generateSearcherProps(state))
-    }),
-    // TODO: ESCキーで Searcher を閉じる。
-    onKeyDown: ((event) => {
-      if (event.key === 'ArrowUp') {
-        event.preventDefault()
-        state = {
-          ...state,
-          cursoredIndex: state.cursoredIndex - 1,
-        }
-        renderSearcher(generateSearcherProps(state))
-      } else if (event.key === 'ArrowDown') {
-        event.preventDefault()
-        state = {
-          ...state,
-          cursoredIndex: state.cursoredIndex + 1,
-        }
-        renderSearcher(generateSearcherProps(state))
-      // TODO: IMEの変換決定でここが動いてしまう。
-      } else if (event.key === 'Enter') {
-        event.preventDefault()
-        const searchedFootprints = searchFootprints(state.footprints, state.inputValue)
-        const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, state.cursoredIndex)]
-        if (cursoredFootprint) {
-          window.location.href = cursoredFootprint.url
-        }
-      }
-    })
-  }
-}
-
 window.addEventListener('keydown', (event) => {
   if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
-    renderSearcher(generateSearcherProps(state))
+    // TODO: 重さで一瞬固まるかもしれない。
+    const footprints = loadFootprints()
+    renderSearcher({footprints})
   }
 })
 
@@ -136,6 +61,8 @@ if (pageKind === 'note') {
     // TODO: Query Stringなどを落として正規化する。
     url: document.URL,
   }
+  // TODO: 非同期でやっても良さそう。
+  const footprints = loadFootprints()
   if (footprints.every(e => e.url !== footprint.url)) {
     saveFootprints([
       ...footprints,
