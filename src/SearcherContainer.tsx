@@ -22,6 +22,7 @@ export type Footprint = {
 
 export type Props = {
   footprints: Footprint[],
+  onClose: () => void,
 }
 
 const searchFootprints = (footprints: Footprint[], inputValue: string): Footprint[] => {
@@ -36,7 +37,7 @@ const rotateIndex = (length: number, index: number): number => {
   return (length * 1000 + index) % length
 }
 
-const useVariables = (initialFootprints: Footprint[]): {
+const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
   searcherProps: SearcherProps;
 } => {
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
@@ -67,8 +68,11 @@ const useVariables = (initialFootprints: Footprint[]): {
       if (cursoredFootprint) {
         window.location.href = cursoredFootprint.url
       }
+    } else if (key === 'Escape' && !isComposing) {
+      preventDefault()
+      onClose()
     }
-  }, [cursoredFootprint])
+  }, [onClose, cursoredFootprint])
 
   const searcherProps: SearcherProps = {
     footprints: searchedFootprints.map((footprint) => ({
@@ -100,7 +104,7 @@ const useShadowRoot = (): ShadowRoot | undefined => {
 }
 
 export const SearcherContainer: VFC<Props> = (props) => {
-  const {searcherProps} = useVariables(props.footprints)
+  const {searcherProps} = useVariables(props.footprints, props.onClose)
   const shadowRoot = useShadowRoot()
   // TODO: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html
