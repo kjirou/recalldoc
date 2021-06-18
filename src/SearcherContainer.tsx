@@ -22,6 +22,7 @@ export type Footprint = {
 
 export type Props = {
   footprints: Footprint[],
+  onClose: () => void,
 }
 
 const searchFootprints = (footprints: Footprint[], inputValue: string): Footprint[] => {
@@ -36,7 +37,7 @@ const rotateIndex = (length: number, index: number): number => {
   return (length * 1000 + index) % length
 }
 
-const useVariables = (initialFootprints: Footprint[]): {
+const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
   searcherProps: SearcherProps;
 } => {
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
@@ -51,20 +52,27 @@ const useVariables = (initialFootprints: Footprint[]): {
     setCursoredIndex(0)
   }, [])
   const onKeyDown = useCallback((event) => {
-    if (event.key === 'ArrowUp') {
-      event.preventDefault()
+    // TODO: キーリストの型付け方法があった気がする。
+    const key: string = event.key
+    const isComposing: boolean = event.nativeEvent.isComposing
+    const preventDefault: () => void = () => event.preventDefault()
+    if (key === 'ArrowUp' && !isComposing) {
+      preventDefault()
       setCursoredIndex(s => s - 1)
-    } else if (event.key === 'ArrowDown') {
-      event.preventDefault()
+    } else if (key === 'ArrowDown' && !isComposing) {
+      preventDefault()
       setCursoredIndex(s => s + 1)
-    } else if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
-      event.preventDefault()
+    } else if (key === 'Enter' && !isComposing) {
+      preventDefault()
       // TODO: 画面遷移処理は useEffect へ移動する。
       if (cursoredFootprint) {
         window.location.href = cursoredFootprint.url
       }
+    } else if (key === 'Escape' && !isComposing) {
+      preventDefault()
+      onClose()
     }
-  }, [cursoredFootprint])
+  }, [onClose, cursoredFootprint])
 
   const searcherProps: SearcherProps = {
     footprints: searchedFootprints.map((footprint) => ({
@@ -72,7 +80,6 @@ const useVariables = (initialFootprints: Footprint[]): {
       highlighted: footprint === cursoredFootprint,
     })),
     onInput,
-    // TODO: ESCキーで Searcher を閉じる。
     onKeyDown,
   }
 
@@ -96,7 +103,7 @@ const useShadowRoot = (): ShadowRoot | undefined => {
 }
 
 export const SearcherContainer: VFC<Props> = (props) => {
-  const {searcherProps} = useVariables(props.footprints)
+  const {searcherProps} = useVariables(props.footprints, props.onClose)
   const shadowRoot = useShadowRoot()
   // TODO: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html

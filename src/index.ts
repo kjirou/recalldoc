@@ -1,5 +1,8 @@
 import { createElement } from 'react'
-import { render } from 'react-dom'
+import {
+  unmountComponentAtNode,
+  render,
+} from 'react-dom'
 import {
   Footprint,
   Props as SearcherContainerProps,
@@ -46,7 +49,12 @@ window.addEventListener('keydown', (event) => {
   if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
     // TODO: 重さで一瞬固まるかもしれない。
     const footprints = loadFootprints()
-    renderSearcher({footprints})
+    renderSearcher({
+      footprints,
+      onClose: () => {
+        unmountComponentAtNode(searcherRootElement)
+      },
+    })
   }
 })
 
