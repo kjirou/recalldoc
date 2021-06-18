@@ -55,7 +55,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     // TODO: キーリストの型付け方法があった気がする。
     const key: string = event.key
     const isComposing: boolean = event.nativeEvent.isComposing
-    const preventDefault: () => void = event.preventDefault
+    const preventDefault: () => void = () => event.preventDefault()
     if (key === 'ArrowUp' && !isComposing) {
       preventDefault()
       setCursoredIndex(s => s - 1)
