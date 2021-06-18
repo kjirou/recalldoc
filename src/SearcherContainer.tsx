@@ -80,7 +80,6 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       highlighted: footprint === cursoredFootprint,
     })),
     onInput,
-    // TODO: ESCキーで Searcher を閉じる。
     onKeyDown,
   }
 
