@@ -54,7 +54,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const onKeyDown = useCallback((event) => {
     // TODO: キーリストの型付け方法があった気がする。
     const key: string = event.key
-    const isComposing: boolean = !event.nativeEvent.isComposing
+    const isComposing: boolean = event.nativeEvent.isComposing
     const preventDefault: () => void = event.preventDefault
     if (key === 'ArrowUp' && !isComposing) {
       preventDefault()
