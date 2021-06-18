@@ -51,15 +51,18 @@ const useVariables = (initialFootprints: Footprint[]): {
     setCursoredIndex(0)
   }, [])
   const onKeyDown = useCallback((event) => {
+    // TODO: キーリストの型付け方法があった気がする。
+    const key: string = event.key
     const isComposing: boolean = !event.nativeEvent.isComposing
-    if (event.key === 'ArrowUp' && !isComposing) {
-      event.preventDefault()
+    const preventDefault: () => void = event.preventDefault
+    if (key === 'ArrowUp' && !isComposing) {
+      preventDefault()
       setCursoredIndex(s => s - 1)
-    } else if (event.key === 'ArrowDown' && !isComposing) {
-      event.preventDefault()
+    } else if (key === 'ArrowDown' && !isComposing) {
+      preventDefault()
       setCursoredIndex(s => s + 1)
-    } else if (event.key === 'Enter' && !isComposing) {
-      event.preventDefault()
+    } else if (key === 'Enter' && !isComposing) {
+      preventDefault()
       // TODO: 画面遷移処理は useEffect へ移動する。
       if (cursoredFootprint) {
         window.location.href = cursoredFootprint.url
