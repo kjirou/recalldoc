@@ -72,6 +72,7 @@ if (pageKind === 'note') {
   }
   // TODO: 非同期でやっても良さそう。
   const footprints = loadFootprints()
+  // TODO: url が存在しても保存する。title を最新にし、検索時の優先順位を最大にする。
   if (footprints.every(e => e.url !== footprint.url)) {
     saveFootprints([
       ...footprints,
