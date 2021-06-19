@@ -4,10 +4,12 @@ import {
   render,
 } from 'react-dom'
 import {
-  Footprint,
   Props as SearcherContainerProps,
   SearcherContainer,
 } from './SearcherContainer'
+import {
+  Footprint,
+} from './utils'
 
 // TODO: esa対応。
 const getPageKind = (url: string): 'note' | 'folder' | 'unknown' => {
@@ -80,4 +82,9 @@ if (pageKind === 'note') {
     ])
   }
 } else if (pageKind === 'folder') {
+  const folder = decodeURIComponent(location.pathname.replace(/^\/notes\/folder\//, ''))
+  const newFootprint: Footprint = {
+    title: folder,
+    url: location.origin + location.pathname,
+  }
 }
