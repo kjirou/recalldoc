@@ -8,13 +8,11 @@ export const updateFootprints = (footprints: Footprint[], newFootprint: Footprin
   if (sameFootprintIndex === -1) {
     return [newFootprint, ...footprints]
   } else {
-    const sameFootprint = footprints[sameFootprintIndex]
+    let copiedFootprints = footprints.slice()
+    copiedFootprints.splice(sameFootprintIndex, 1)
     return [
-      {
-        ...newFootprint,
-        title: sameFootprint.title,
-      },
-      ...footprints.slice().splice(sameFootprintIndex, 1),
+      newFootprint,
+      ...copiedFootprints,
     ]
   }
 }
