@@ -16,3 +16,15 @@ export const updateFootprints = (footprints: Footprint[], newFootprint: Footprin
     ]
   }
 }
+
+export const splitSearchQueryIntoMultipulKeywords = (query: string): string[] => {
+  return query.split(/[ \u3000]+/).filter(e => e !== '')
+}
+
+export const searchFootprints = (footprints: Footprint[], searchQuery: string): Footprint[] => {
+  const keywords = splitSearchQueryIntoMultipulKeywords(searchQuery)
+  return footprints.filter(footprint => {
+    const upperCasedTitle = footprint.title.toUpperCase()
+    return keywords.length === 0 || keywords.some(keyword => upperCasedTitle.includes(keyword.toUpperCase()))
+  })
+}

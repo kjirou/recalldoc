@@ -16,18 +16,12 @@ import {
 } from './components/Searcher'
 import {
   Footprint,
+  searchFootprints,
 } from './utils'
 
 export type Props = {
   footprints: Footprint[],
   onClose: () => void,
-}
-
-const searchFootprints = (footprints: Footprint[], inputValue: string): Footprint[] => {
-  return footprints.filter(footprint => {
-    // TODO: スペース区切りによる複数キーワード指定。
-    return footprint.title.toUpperCase().includes(inputValue.toUpperCase())
-  })
 }
 
 // TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
