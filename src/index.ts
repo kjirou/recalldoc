@@ -4,15 +4,20 @@ import {
   render,
 } from 'react-dom'
 import {
-  Footprint,
   Props as SearcherContainerProps,
   SearcherContainer,
 } from './SearcherContainer'
+import {
+  Footprint,
+  updateFootprints,
+} from './utils'
 
 // TODO: esa対応。
-const getPageKind = (url: string): 'note' | 'unknown' => {
+const getPageKind = (url: string): 'note' | 'folder' | 'unknown' => {
   if (/\/notes\/\d+(\?|$)/.test(url)) {
     return 'note'
+  } else if (/\/notes\/folder\//.test(url)) {
+    return 'folder'
   }
   return 'unknown'
 }
@@ -31,8 +36,6 @@ const saveFootprints = (footprints: Footprint[]): void => {
   // TODO: 開発者モードだからか、普通に kibe.la の localStorage として保存されている。
   window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
 }
-
-const pageKind = getPageKind(document.URL)
 
 const searcherRootElement = document.createElement('div')
 searcherRootElement.style.display = 'none'
@@ -58,25 +61,27 @@ window.addEventListener('keydown', (event) => {
   }
 })
 
-// TODO: ディレクトリのページも検索対象に含める。
+const pageKind = getPageKind(document.URL)
 if (pageKind === 'note') {
   // TODO: HTML 要素がなかったときの対応をする。
   const pageTitle = document.querySelector('#title span')!.textContent
   // TODO: .folderIndicator の中には複数要素が含まれているので、それを現在は textContent で強引に結合している。
   // TODO: HTML 要素がなかったときの対応をする。
   const folderIndicatorLabel = document.querySelector('.folderIndicator')!.textContent
-  const footprint = {
+  const newFootprint = {
     title: `${folderIndicatorLabel}/${pageTitle}`,
-    // TODO: Query Stringなどを落として正規化する。
-    url: document.URL,
+    url: location.origin + location.pathname,
   }
   // TODO: 非同期でやっても良さそう。
   const footprints = loadFootprints()
-  // TODO: url が存在しても保存する。title を最新にし、検索時の優先順位を最大にする。
-  if (footprints.every(e => e.url !== footprint.url)) {
-    saveFootprints([
-      ...footprints,
-      footprint,
-    ])
+  saveFootprints(updateFootprints(footprints, newFootprint))
+// TODO: folder の画面から他のフォルダーに遷移する上部のリンクが Ajax になっているので、その画面遷移経路だと保存できない。
+} else if (pageKind === 'folder') {
+  const folder = decodeURIComponent(location.pathname.replace(/^\/notes\/folder\//, ''))
+  const newFootprint: Footprint = {
+    title: folder,
+    url: location.origin + location.pathname,
   }
+  const footprints = loadFootprints()
+  saveFootprints(updateFootprints(footprints, newFootprint))
 }

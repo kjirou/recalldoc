@@ -14,11 +14,9 @@ import {
   Props as SearcherProps,
   Searcher,
 } from './components/Searcher'
-
-export type Footprint = {
-  title: string;
-  url: string;
-}
+import {
+  Footprint,
+} from './utils'
 
 export type Props = {
   footprints: Footprint[],
