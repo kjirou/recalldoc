@@ -9,6 +9,7 @@ import {
 } from './SearcherContainer'
 import {
   Footprint,
+  updateFootprints,
 } from './utils'
 
 // TODO: esa対応。
@@ -81,10 +82,13 @@ if (pageKind === 'note') {
       footprint,
     ])
   }
+// TODO: folder の画面から他のフォルダーに遷移する上部のリンクが Ajax になっているので、その画面遷移経路だと保存できない。
 } else if (pageKind === 'folder') {
   const folder = decodeURIComponent(location.pathname.replace(/^\/notes\/folder\//, ''))
   const newFootprint: Footprint = {
     title: folder,
     url: location.origin + location.pathname,
   }
+  const footprints = loadFootprints()
+  saveFootprints(updateFootprints(footprints, newFootprint))
 }
