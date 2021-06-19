@@ -10,9 +10,11 @@ import {
 } from './SearcherContainer'
 
 // TODO: esa対応。
-const getPageKind = (url: string): 'note' | 'unknown' => {
+const getPageKind = (url: string): 'note' | 'folder' | 'unknown' => {
   if (/\/notes\/\d+(\?|$)/.test(url)) {
     return 'note'
+  } else if (/\/notes\/folder\//.test(url)) {
+    return 'folder'
   }
   return 'unknown'
 }
@@ -31,8 +33,6 @@ const saveFootprints = (footprints: Footprint[]): void => {
   // TODO: 開発者モードだからか、普通に kibe.la の localStorage として保存されている。
   window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
 }
-
-const pageKind = getPageKind(document.URL)
 
 const searcherRootElement = document.createElement('div')
 searcherRootElement.style.display = 'none'
@@ -58,7 +58,7 @@ window.addEventListener('keydown', (event) => {
   }
 })
 
-// TODO: ディレクトリのページも検索対象に含める。
+const pageKind = getPageKind(document.URL)
 if (pageKind === 'note') {
   // TODO: HTML 要素がなかったときの対応をする。
   const pageTitle = document.querySelector('#title span')!.textContent
@@ -79,4 +79,5 @@ if (pageKind === 'note') {
       footprint,
     ])
   }
+} else if (pageKind === 'folder') {
 }
