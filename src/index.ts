@@ -68,20 +68,13 @@ if (pageKind === 'note') {
   // TODO: .folderIndicator の中には複数要素が含まれているので、それを現在は textContent で強引に結合している。
   // TODO: HTML 要素がなかったときの対応をする。
   const folderIndicatorLabel = document.querySelector('.folderIndicator')!.textContent
-  const footprint = {
+  const newFootprint = {
     title: `${folderIndicatorLabel}/${pageTitle}`,
-    // TODO: Query Stringなどを落として正規化する。
-    url: document.URL,
+    url: location.origin + location.pathname,
   }
   // TODO: 非同期でやっても良さそう。
   const footprints = loadFootprints()
-  // TODO: url が存在しても保存する。title を最新にし、検索時の優先順位を最大にする。
-  if (footprints.every(e => e.url !== footprint.url)) {
-    saveFootprints([
-      ...footprints,
-      footprint,
-    ])
-  }
+  saveFootprints(updateFootprints(footprints, newFootprint))
 // TODO: folder の画面から他のフォルダーに遷移する上部のリンクが Ajax になっているので、その画面遷移経路だと保存できない。
 } else if (pageKind === 'folder') {
   const folder = decodeURIComponent(location.pathname.replace(/^\/notes\/folder\//, ''))
