@@ -13,8 +13,8 @@ type FootprintProps = {
 
 export type Props = {
   footprints: FootprintProps[];
-  onInput: (inputValue: string) => void,
-  onKeyDown: (event: KeyboardEvent) => void,
+  onInput: (inputValue: string) => void;
+  onKeyDown: (event: KeyboardEvent) => void;
 }
 
 // TODO: 最大表示件数を設定する。
