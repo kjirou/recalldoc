@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "content_scripts": [
     {
-      "matches": ["https://*.kibe.la/*"],
+      "matches": ["https://*.esa.io/*", "https://*.kibe.la/*"],
       "js": ["dist/webpacked.js"]
     }
   ]
