@@ -65,6 +65,9 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       onClose()
     }
   }, [onClose, cursoredFootprint])
+  const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
+    searchFieldElement.focus()
+  }, [])
 
   const searcherProps: SearcherProps = {
     footprints: searchedFootprints.map((footprint) => ({
@@ -73,6 +76,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     })),
     onInput,
     onKeyDown,
+    onMount,
   }
 
   return {
