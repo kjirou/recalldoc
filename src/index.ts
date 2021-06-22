@@ -71,10 +71,10 @@ switch (pageMataData.siteId) {
       }
     } else if (pageMataData.contentKind === 'category') {
       const categoryPath = decodeURIComponent(location.hash.replace(/^#path=/, '')).replace(/^\//, '')
-      if (!categoryPath) {
+      if (categoryPath) {
         const newFootprint: Footprint = {
           title: categoryPath,
-          url: location.origin + location.pathname,
+          url: location.origin + location.pathname + location.hash,
         }
         const footprints = loadFootprints()
         saveFootprints(updateFootprints(footprints, newFootprint))
