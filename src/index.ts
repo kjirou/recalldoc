@@ -9,18 +9,9 @@ import {
 } from './SearcherContainer'
 import {
   Footprint,
+  classifyPage,
   updateFootprints,
 } from './utils'
-
-// TODO: esa対応。
-const getPageKind = (url: string): 'note' | 'folder' | 'unknown' => {
-  if (/\/notes\/\d+(\?|$)/.test(url)) {
-    return 'note'
-  } else if (/\/notes\/folder\//.test(url)) {
-    return 'folder'
-  }
-  return 'unknown'
-}
 
 const loadFootprints = (): Footprint[] => {
   const rawFootprints = window.localStorage.getItem('recalldoc_footprints')
@@ -61,27 +52,33 @@ window.addEventListener('keydown', (event) => {
   }
 })
 
-const pageKind = getPageKind(document.URL)
-if (pageKind === 'note') {
-  // TODO: HTML 要素がなかったときの対応をする。
-  const pageTitle = document.querySelector('#title span')!.textContent
-  // TODO: .folderIndicator の中には複数要素が含まれているので、それを現在は textContent で強引に結合している。
-  // TODO: HTML 要素がなかったときの対応をする。
-  const folderIndicatorLabel = document.querySelector('.folderIndicator')!.textContent
-  const newFootprint = {
-    title: `${folderIndicatorLabel}/${pageTitle}`,
-    url: location.origin + location.pathname,
+const pageMataData = classifyPage(document.URL)
+switch (pageMataData.siteId) {
+case 'esa':
+  break
+case 'kibela':
+  if (pageMataData.contentKind === 'note') {
+    // TODO: HTML 要素がなかったときの対応をする。
+    const pageTitle = document.querySelector('#title span')!.textContent
+    // TODO: .folderIndicator の中には複数要素が含まれているので、それを現在は textContent で強引に結合している。
+    // TODO: HTML 要素がなかったときの対応をする。
+    const folderIndicatorLabel = document.querySelector('.folderIndicator')!.textContent
+    const newFootprint = {
+      title: `${folderIndicatorLabel}/${pageTitle}`,
+      url: location.origin + location.pathname,
+    }
+    // TODO: 非同期でやっても良さそう。
+    const footprints = loadFootprints()
+    saveFootprints(updateFootprints(footprints, newFootprint))
+  // TODO: folder の画面から他のフォルダーに遷移する上部のリンクが Ajax になっているので、その画面遷移経路だと保存できない。
+  } else if (pageMataData.contentKind === 'folder') {
+    const folder = decodeURIComponent(location.pathname.replace(/^\/notes\/folder\//, ''))
+    const newFootprint: Footprint = {
+      title: folder,
+      url: location.origin + location.pathname,
+    }
+    const footprints = loadFootprints()
+    saveFootprints(updateFootprints(footprints, newFootprint))
   }
-  // TODO: 非同期でやっても良さそう。
-  const footprints = loadFootprints()
-  saveFootprints(updateFootprints(footprints, newFootprint))
-// TODO: folder の画面から他のフォルダーに遷移する上部のリンクが Ajax になっているので、その画面遷移経路だと保存できない。
-} else if (pageKind === 'folder') {
-  const folder = decodeURIComponent(location.pathname.replace(/^\/notes\/folder\//, ''))
-  const newFootprint: Footprint = {
-    title: folder,
-    url: location.origin + location.pathname,
-  }
-  const footprints = loadFootprints()
-  saveFootprints(updateFootprints(footprints, newFootprint))
+  break
 }
