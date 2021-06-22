@@ -32,7 +32,8 @@ export const Searcher: VFC<Props> = (props) => {
       position: 'fixed',
       top: '20px',
       left: 'calc(50% - 600px/2)',
-      zIndex: 1,
+      // NOTE: esa の上部バー(nav.navbar-sub)の z-index が 3 。
+      zIndex: 4,
     }}
   >
     <input
