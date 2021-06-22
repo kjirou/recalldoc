@@ -19,7 +19,6 @@ export type Props = {
 
 // TODO: 最大表示件数を設定する。
 // TODO: 検索キーワードがマッチしている箇所をハイライトする。
-// TODO: 既存サイトのスタイルの影響を受けないようにする。
 export const Searcher: VFC<Props> = (props) => {
   const searchFieldRef = useRef<HTMLInputElement>(null)
 
@@ -33,7 +32,8 @@ export const Searcher: VFC<Props> = (props) => {
       position: 'fixed',
       top: '20px',
       left: 'calc(50% - 600px/2)',
-      zIndex: 1,
+      // NOTE: esa の上部バー(nav.navbar-sub)の z-index が 3 。
+      zIndex: 4,
     }}
   >
     <input
