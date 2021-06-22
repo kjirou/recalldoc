@@ -13,8 +13,9 @@ type FootprintProps = {
 
 export type Props = {
   footprints: FootprintProps[];
-  onInput: (inputValue: string) => void,
-  onKeyDown: (event: KeyboardEvent) => void,
+  onInput: (inputValue: string) => void;
+  onKeyDown: (event: KeyboardEvent) => void;
+  onMount: (searchFieldElement: HTMLInputElement) => void;
 }
 
 // TODO: 最大表示件数を設定する。
@@ -23,8 +24,10 @@ export const Searcher: VFC<Props> = (props) => {
   const searchFieldRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    searchFieldRef.current?.focus()
-  }, [])
+    if (searchFieldRef.current) {
+      props.onMount(searchFieldRef.current)
+    }
+  }, [props, props.onMount])
 
   return <div
     style={{
