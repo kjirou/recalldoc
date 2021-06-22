@@ -19,7 +19,6 @@ export type Props = {
 
 // TODO: 最大表示件数を設定する。
 // TODO: 検索キーワードがマッチしている箇所をハイライトする。
-// TODO: 既存サイトのスタイルの影響を受けないようにする。
 export const Searcher: VFC<Props> = (props) => {
   const searchFieldRef = useRef<HTMLInputElement>(null)
 
