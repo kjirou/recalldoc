@@ -1,11 +1,55 @@
 import {
   Footprint,
+  PageMetaData,
+  classifyPage,
   updateFootprints,
   searchFootprints,
   splitSearchQueryIntoMultipulKeywords,
 } from './utils'
 
 describe('utils', () => {
+  describe('classifyPage', () => {
+    const table: {
+      expected: PageMetaData,
+      url: string,
+    }[] = [
+      {
+        url: 'https://foo.esa.io/posts/123',
+        expected: {siteId: 'esa', contentKind: 'post', teamId: 'foo'},
+      },
+      {
+        url: 'https://foo.esa.io/#path=%2FUsers',
+        expected: {siteId: 'esa', contentKind: 'category', teamId: 'foo'},
+      },
+      {
+        url: 'https://foo.esa.io/posts/123/edit',
+        expected: {siteId: 'esa', contentKind: 'unknown', teamId: 'foo'},
+      },
+      {
+        url: 'https://foo.kibe.la/notes/123',
+        expected: {siteId: 'kibela', contentKind: 'note', teamId: 'foo'},
+      },
+      {
+        url: 'https://foo.kibe.la/notes/folder/Bar?group_id=1&order_by=title',
+        expected: {siteId: 'kibela', contentKind: 'folder', teamId: 'foo'},
+      },
+      {
+        url: 'https://foo.kibe.la/notes/123/edit',
+        expected: {siteId: 'kibela', contentKind: 'unknown', teamId: 'foo'},
+      },
+      {
+        url: 'https://esa.io',
+        expected: {siteId: 'unknown'},
+      },
+      {
+        url: 'https://kibe.la',
+        expected: {siteId: 'unknown'},
+      },
+    ]
+    test.each(table)(`$url -> $expected`, ({url, expected}) => {
+      expect(classifyPage(url)).toStrictEqual(expected)
+    })
+  })
   describe('updateFootprints', () => {
     const table: {
       name: string,
