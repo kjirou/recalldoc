@@ -28,34 +28,31 @@ const saveFootprints = (footprints: Footprint[]): void => {
   window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
 }
 
-const searcherRootElement = document.createElement('div')
-searcherRootElement.style.display = 'none'
-document.body.appendChild(searcherRootElement)
-
-const renderSearcher = (props: SearcherContainerProps): void => {
-  render(
-    createElement(SearcherContainer, props),
-    searcherRootElement,
-  )
+const prepareUi = (): void => {
+  const searcherRootElement = document.createElement('div')
+  searcherRootElement.style.display = 'none'
+  document.body.appendChild(searcherRootElement)
+  window.addEventListener('keydown', (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
+      // TODO: 重さで一瞬固まるかもしれない。
+      const footprints = loadFootprints()
+      render(
+        createElement(SearcherContainer, {
+          footprints,
+          onClose: () => {
+            unmountComponentAtNode(searcherRootElement)
+          },
+        }),
+        searcherRootElement,
+      )
+    }
+  })
 }
-
-// TODO: これも siteId がないと動かさない。
-window.addEventListener('keydown', (event) => {
-  if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
-    // TODO: 重さで一瞬固まるかもしれない。
-    const footprints = loadFootprints()
-    renderSearcher({
-      footprints,
-      onClose: () => {
-        unmountComponentAtNode(searcherRootElement)
-      },
-    })
-  }
-})
 
 const pageMataData = classifyPage(document.URL)
 switch (pageMataData.siteId) {
   case 'esa': {
+    prepareUi()
     if (pageMataData.contentKind === 'post') {
       // NOTE: カテゴリは無いこともある。
       const categoryPathItems = Array.from(document.querySelectorAll('.post-header .category-path__item'))
@@ -83,6 +80,7 @@ switch (pageMataData.siteId) {
     break
   }
   case 'kibela': {
+    prepareUi()
     if (pageMataData.contentKind === 'note') {
       // TODO: HTML 要素がなかったときの対応をする。
       const pageTitle = document.querySelector('#title span')!.textContent
