@@ -22,6 +22,10 @@ export type Props = {
  * NOTE: .searcher の z-index は、esa の上部バー(nav.navbar-sub)の z-index: 3; より高くする必要がある。
  */
 const styleLiteral = `
+  * {
+    margin: 0;
+    padding: 0;
+  }
   .searcher {
     --width: 600px;
     width: var(--width);
@@ -32,16 +36,22 @@ const styleLiteral = `
   }
   input.searcher__searchQuery {
     display: block;
-    width: 100%;
-    text-align: right;
+    padding: 0 4px;
+    width: 40%;
+    height: 24px;
+    font-size: 14px;
   }
   ul.searcher__itemList {
-    padding: 5px;
+    padding: 4px;
     border: 1px solid #ccc;
+    list-style-type: none;
     background-color: #fff;
   }
   ul.searcher__itemList > li {
     line-height: 1;
+  }
+  ul.searcher__itemList > li:nth-child(n+2) {
+    margin-top: 4px;
   }
   ul.searcher__itemList > li.highlighted {
     background-color: #ff0;
@@ -68,6 +78,7 @@ export const Searcher: VFC<Props> = (props) => {
       <input
         className="searcher__searchQuery"
         ref={searchFieldRef}
+        placeholder="キーワード検索"
         onInput={event => {
           props.onInput(event.currentTarget.value)
         }}
