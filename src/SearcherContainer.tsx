@@ -4,6 +4,7 @@ import {
   VFC,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -11,6 +12,7 @@ import {
   createPortal,
 } from 'react-dom'
 import {
+  FootprintProps as SearcherFootprintProps,
   Props as SearcherProps,
   Searcher,
 } from './components/Searcher'
@@ -36,7 +38,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const [cursoredIndex, setCursoredIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
 
-  const searchedFootprints = searchFootprints(footprints, inputValue)
+  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
   const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, cursoredIndex)]
 
   const onInput = useCallback((newInputValue: string) => {
@@ -65,6 +67,14 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       onClose()
     }
   }, [onClose, cursoredFootprint])
+  const onClickDeleteButton = useCallback((url: SearcherFootprintProps['url']) => {
+    const deleted = searchedFootprints.find(e => e.url === url)
+    if (deleted) {
+      setFootprints(footprints => footprints.filter(e => e !== deleted))
+    } else {
+      throw new Error('The deleted footprint must exist in searched footprints.')
+    }
+  }, [searchedFootprints])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
@@ -76,6 +86,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     })),
     onInput,
     onKeyDown,
+    onClickDeleteButton,
     onMount,
   }
 

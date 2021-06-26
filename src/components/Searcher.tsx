@@ -6,7 +6,7 @@ import {
   useRef,
 } from 'react'
 
-type FootprintProps = {
+export type FootprintProps = {
   highlighted: boolean;
   title: string;
   url: string;
@@ -14,6 +14,7 @@ type FootprintProps = {
 
 export type Props = {
   footprints: FootprintProps[];
+  onClickDeleteButton: (url: FootprintProps['url']) => void;
   onInput: (inputValue: string) => void;
   onKeyDown: (event: KeyboardEvent) => void;
   onMount: (searchFieldElement: HTMLInputElement) => void;
@@ -114,7 +115,9 @@ export const Searcher: VFC<Props> = (props) => {
                   >{ footprint.title }</a>
                 </div>
                 <div>
-                  <button>削除</button>
+                  <button onClick={() => {
+                    props.onClickDeleteButton(footprint.url)
+                  }}>削除</button>
                 </div>
               </li>
             })
