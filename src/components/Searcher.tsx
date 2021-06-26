@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import {
   KeyboardEvent,
   VFC,
@@ -105,10 +106,7 @@ export const Searcher: VFC<Props> = (props) => {
             props.footprints.map(footprint => {
               return <li
                 key={ footprint.url }
-                className={[
-                  'searcher__itemListItem',
-                  ...(footprint.highlighted ? ['searcher__itemListItem--highlighted'] : []),
-                ].join(' ')}
+                className={classNames('searcher__itemListItem', {'searcher__itemListItem--highlighted': footprint.highlighted})}
               >
                 <div>
                   <a
