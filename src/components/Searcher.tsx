@@ -5,11 +5,14 @@ import {
   useEffect,
   useRef,
 } from 'react'
+import {
+  Footprint
+} from '../utils'
 
 export type FootprintProps = {
   highlighted: boolean;
-  title: string;
-  url: string;
+  title: Footprint['title'];
+  url: Footprint['url'];
 }
 
 export type Props = {
