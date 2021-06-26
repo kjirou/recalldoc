@@ -96,6 +96,17 @@ describe('utils', () => {
     test.each(table)('$name', ({footprints, newFootprint, expected}) => {
       expect(updateFootprints(footprints, newFootprint)).toStrictEqual(expected)
     })
+    test('It returns up to 1000', () => {
+      const footprints1000: Footprint[] = []
+      for (let i = 0; i < 1000; i++) {
+        footprints1000.push({
+          title: '',
+          url: `https://example.com/${i}`,
+        })
+      }
+      expect(footprints1000).toHaveLength(1000)
+      expect(updateFootprints(footprints1000, {title: '', url: 'https://not-example.com'})).toHaveLength(1000)
+    })
   })
   describe('splitSearchQueryIntoMultipulKeywords', () => {
     const table: {

@@ -15,6 +15,8 @@ export type Footprint = {
   url: string;
 }
 
+const maxFootprints = 1000 as const
+
 export const classifyPage = (url: string): PageMetaData => {
   const {host, pathname, hash} = new URL(url)
   if (host.endsWith('.esa.io')) {
@@ -46,16 +48,18 @@ export const classifyPage = (url: string): PageMetaData => {
 
 export const updateFootprints = (footprints: Footprint[], newFootprint: Footprint): Footprint[] => {
   const sameFootprintIndex = footprints.findIndex(e => e.url === newFootprint.url)
+  let newFootprints: Footprint[]
   if (sameFootprintIndex === -1) {
-    return [newFootprint, ...footprints]
+    newFootprints = [newFootprint, ...footprints]
   } else {
     let copiedFootprints = footprints.slice()
     copiedFootprints.splice(sameFootprintIndex, 1)
-    return [
+    newFootprints = [
       newFootprint,
       ...copiedFootprints,
     ]
   }
+  return newFootprints.length <= maxFootprints ? newFootprints : newFootprints.slice(0, maxFootprints)
 }
 
 export const splitSearchQueryIntoMultipulKeywords = (query: string): string[] => {
