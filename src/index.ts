@@ -28,6 +28,7 @@ const prepareUi = (): void => {
       const footprints = await storage.loadFootprints()
       render(
         createElement(SearcherContainer, {
+          storage,
           footprints,
           onClose: () => {
             unmountComponentAtNode(searcherRootElement)

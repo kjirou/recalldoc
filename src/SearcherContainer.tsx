@@ -20,10 +20,14 @@ import {
   Footprint,
   searchFootprints,
 } from './utils'
+import {
+  Storage,
+} from './storage'
 
 export type Props = {
-  footprints: Footprint[],
-  onClose: () => void,
+  footprints: Footprint[];
+  onClose: () => void;
+  storage: Storage;
 }
 
 // TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。

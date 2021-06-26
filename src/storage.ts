@@ -3,7 +3,7 @@ import {
   updateFootprints,
 } from './utils'
 
-type Storage = {
+export type Storage = {
   loadFootprints: () => Promise<Footprint[]>;
   // TODO: 保存する件数に上限を設ける。
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
