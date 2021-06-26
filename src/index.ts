@@ -24,7 +24,6 @@ const prepareUi = (): void => {
   window.addEventListener('keydown', async (event) => {
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
       // TODO: 二重実行の回避。
-      // TODO: 重さで一瞬固まるかもしれない。
       const footprints = await storage.loadFootprints()
       render(
         createElement(SearcherContainer, {
