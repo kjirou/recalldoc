@@ -4,40 +4,29 @@ import {
   render,
 } from 'react-dom'
 import {
-  Props as SearcherContainerProps,
   SearcherContainer,
 } from './SearcherContainer'
 import {
   Footprint,
   classifyPage,
-  updateFootprints,
 } from './utils'
+import {
+  getStorage,
+} from './storage'
 
-const loadFootprints = (): Footprint[] => {
-  const rawFootprints = window.localStorage.getItem('recalldoc_footprints')
-  if (!rawFootprints) {
-    return []
-  }
-  return JSON.parse(rawFootprints)
-}
-
-// TODO: 保存する件数に上限を設ける。
-const saveFootprints = (footprints: Footprint[]): void => {
-  const serializedFootprints = JSON.stringify(footprints)
-  // TODO: 開発者モードだからか、普通に kibe.la の localStorage として保存されている。
-  window.localStorage.setItem('recalldoc_footprints', serializedFootprints)
-}
+const storage = getStorage()
 
 const prepareUi = (): void => {
   const searcherRootElement = document.createElement('div')
   searcherRootElement.style.display = 'none'
   document.body.appendChild(searcherRootElement)
-  window.addEventListener('keydown', (event) => {
+  window.addEventListener('keydown', async (event) => {
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
-      // TODO: 重さで一瞬固まるかもしれない。
-      const footprints = loadFootprints()
+      // TODO: 二重実行の回避。
+      const footprints = await storage.loadFootprints()
       render(
         createElement(SearcherContainer, {
+          storage,
           footprints,
           onClose: () => {
             unmountComponentAtNode(searcherRootElement)
@@ -63,8 +52,7 @@ switch (pageMataData.siteId) {
           title: [...categoryPathItems, titleNameElement.textContent].join('/'),
           url: location.origin + location.pathname,
         }
-        const footprints = loadFootprints()
-        saveFootprints(updateFootprints(footprints, newFootprint))
+        storage.updateFootprints(newFootprint)
       }
     // TODO: 左ナビからのカテゴリ画面への遷移は Ajax なので、その画面遷移経路だとここの分岐を通らず保存されない。
     } else if (pageMataData.contentKind === 'category') {
@@ -74,8 +62,7 @@ switch (pageMataData.siteId) {
           title: categoryPath,
           url: location.origin + location.pathname + location.hash,
         }
-        const footprints = loadFootprints()
-        saveFootprints(updateFootprints(footprints, newFootprint))
+        storage.updateFootprints(newFootprint)
       }
     }
     break
@@ -91,9 +78,7 @@ switch (pageMataData.siteId) {
           title: `${folderIndicatorElement.textContent}/${titleElement.textContent}`,
           url: location.origin + location.pathname,
         }
-        // TODO: 非同期でやっても良さそう。
-        const footprints = loadFootprints()
-        saveFootprints(updateFootprints(footprints, newFootprint))
+        storage.updateFootprints(newFootprint)
       }
     // TODO: folder の画面から他のフォルダーに遷移する上部のリンクが Ajax になっているので、その画面遷移経路だとここの分岐を通らず保存されない。
     } else if (pageMataData.contentKind === 'folder') {
@@ -102,8 +87,7 @@ switch (pageMataData.siteId) {
         title: folder,
         url: location.origin + location.pathname,
       }
-      const footprints = loadFootprints()
-      saveFootprints(updateFootprints(footprints, newFootprint))
+      storage.updateFootprints(newFootprint)
     }
     break
   }

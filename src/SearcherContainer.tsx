@@ -1,16 +1,15 @@
 import {
-  Dispatch,
-  KeyboardEvent,
   VFC,
   useCallback,
   useEffect,
-  useRef,
+  useMemo,
   useState,
 } from 'react'
 import {
   createPortal,
 } from 'react-dom'
 import {
+  FootprintProps as SearcherFootprintProps,
   Props as SearcherProps,
   Searcher,
 } from './components/Searcher'
@@ -18,10 +17,14 @@ import {
   Footprint,
   searchFootprints,
 } from './utils'
+import {
+  Storage,
+} from './storage'
 
 export type Props = {
-  footprints: Footprint[],
-  onClose: () => void,
+  footprints: Footprint[];
+  onClose: () => void;
+  storage: Storage;
 }
 
 // TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
@@ -30,13 +33,14 @@ const rotateIndex = (length: number, index: number): number => {
 }
 
 const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
+  footprints: Footprint[];
   searcherProps: SearcherProps;
 } => {
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
   const [cursoredIndex, setCursoredIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
 
-  const searchedFootprints = searchFootprints(footprints, inputValue)
+  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
   const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, cursoredIndex)]
 
   const onInput = useCallback((newInputValue: string) => {
@@ -65,6 +69,14 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       onClose()
     }
   }, [onClose, cursoredFootprint])
+  const onClickDeleteButton = useCallback((url: SearcherFootprintProps['url']) => {
+    const deleted = searchedFootprints.find(e => e.url === url)
+    if (deleted) {
+      setFootprints(footprints => footprints.filter(e => e !== deleted))
+    } else {
+      throw new Error('The deleted footprint must exist in searched footprints.')
+    }
+  }, [searchedFootprints])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
@@ -76,12 +88,22 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     })),
     onInput,
     onKeyDown,
+    onClickDeleteButton,
     onMount,
   }
 
   return {
+    footprints,
     searcherProps,
   }
+}
+
+const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
+  useEffect(() => {
+    // TODO: 処理順序保証、二重実行回避。
+    // TODO: ummount時のキャンセル。
+    storage.saveFootprints(footprints)
+  }, [storage, footprints])
 }
 
 const useShadowRoot = (): ShadowRoot | undefined => {
@@ -98,11 +120,11 @@ const useShadowRoot = (): ShadowRoot | undefined => {
   return shadowRoot
 }
 
-// TODO: 任意のfootprintを削除できるようにする。
 export const SearcherContainer: VFC<Props> = (props) => {
-  const {searcherProps} = useVariables(props.footprints, props.onClose)
+  const {footprints, searcherProps} = useVariables(props.footprints, props.onClose)
+  useStorageSynchronization(props.storage, footprints)
   const shadowRoot = useShadowRoot()
-  // TODO: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
+  // NOTE: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html
   return shadowRoot ? createPortal(<Searcher {...searcherProps}/>, shadowRoot as any) : null
 }
