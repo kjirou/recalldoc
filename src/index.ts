@@ -4,7 +4,6 @@ import {
   render,
 } from 'react-dom'
 import {
-  Props as SearcherContainerProps,
   SearcherContainer,
 } from './SearcherContainer'
 import {
