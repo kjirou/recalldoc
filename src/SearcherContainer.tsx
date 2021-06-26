@@ -36,6 +36,7 @@ const rotateIndex = (length: number, index: number): number => {
 }
 
 const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
+  footprints: Footprint[];
   searcherProps: SearcherProps;
 } => {
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
@@ -95,8 +96,17 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   }
 
   return {
+    footprints,
     searcherProps,
   }
+}
+
+const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
+  useEffect(() => {
+    // TODO: 処理順序保証、二重実行回避。
+    // TODO: ummount時のキャンセル。
+    storage.saveFootprints(footprints)
+  }, [storage, footprints])
 }
 
 const useShadowRoot = (): ShadowRoot | undefined => {
@@ -114,7 +124,8 @@ const useShadowRoot = (): ShadowRoot | undefined => {
 }
 
 export const SearcherContainer: VFC<Props> = (props) => {
-  const {searcherProps} = useVariables(props.footprints, props.onClose)
+  const {footprints, searcherProps} = useVariables(props.footprints, props.onClose)
+  useStorageSynchronization(props.storage, footprints)
   const shadowRoot = useShadowRoot()
   // TODO: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html
