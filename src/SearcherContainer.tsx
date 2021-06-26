@@ -127,7 +127,7 @@ export const SearcherContainer: VFC<Props> = (props) => {
   const {footprints, searcherProps} = useVariables(props.footprints, props.onClose)
   useStorageSynchronization(props.storage, footprints)
   const shadowRoot = useShadowRoot()
-  // TODO: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
+  // NOTE: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html
   return shadowRoot ? createPortal(<Searcher {...searcherProps}/>, shadowRoot as any) : null
 }
