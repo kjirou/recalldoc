@@ -1,6 +1,8 @@
 import {
-  Footprint,
   updateFootprints,
+} from './reducers'
+import {
+  Footprint,
 } from './utils'
 
 export type Storage = {
@@ -25,7 +27,7 @@ const localStorage: Storage = {
   updateFootprints: async (footprint: Footprint) => {
     // TODO: トランザクションになっていない。
     const footprints = await localStorage.loadFootprints()
-    return localStorage.saveFootprints(updateFootprints(footprints, footprint))
+    return localStorage.saveFootprints(updateFootprints(footprint)(footprints))
   },
 }
 
