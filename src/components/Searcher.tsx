@@ -19,12 +19,17 @@ export type Props = {
 }
 
 /**
- * NOTE: .searcher の z-index は、esa の上部バー(nav.navbar-sub)の z-index: 3; より高くする必要がある。
+ * NOTE: .searcher の z-index は、既存サイトの以下の要素を考慮する必要がある。
+ *       - esa の上部ナビゲーションバー(nav.navbar-sub)の z-index: 3;
+ *       - kibela の上部ナビゲーションバー(div.sticky-inner-wrapper)の z-index: 6;
+ *         - このスタイル定義は、DOM の style 属性へ記載されている。 
+ *       - kibela の記事上部のユーザーアイコン画像の枠(div.profilePopup-container)の z-index: 5;
  */
 const styleLiteral = `
   * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
   }
   .searcher {
     --width: 600px;
@@ -32,31 +37,41 @@ const styleLiteral = `
     position: fixed;
     top: 20px;
     left: calc(50% - var(--width)/2);
-    z-index: 4;
+    z-index: 7;
   }
-  input.searcher__searchQuery {
+  .searcher__searchQuery {
     display: block;
     padding: 0 4px;
     width: 40%;
     height: 24px;
     font-size: 14px;
   }
-  ul.searcher__itemList {
-    padding: 4px;
+  .searcher__itemList {
     border: 1px solid #ccc;
     list-style-type: none;
     background-color: #fff;
   }
-  ul.searcher__itemList > li {
+  .searcher__itemListItem {
+    min-height: 28px;
+    display: flex;
+    align-items: center;
     line-height: 1;
   }
-  ul.searcher__itemList > li:nth-child(n+2) {
-    margin-top: 4px;
+  .searcher__itemListItem > :first-child {
+    flex: 1;
+    padding: 4px;
   }
-  ul.searcher__itemList > li.highlighted {
+  .searcher__itemListItem.searcher__itemListItem--highlighted {
     background-color: #ff0;
   }
-  ul.searcher__itemList > li > a {
+  .searcher__itemListItem > :first-child > a {
+    font-size: 12px;
+  }
+  .searcher__itemListItem > :last-child {
+    width: 40px;
+    text-align: center;
+  }
+  .searcher__itemListItem > :last-child > button {
     font-size: 12px;
   }
 `
@@ -90,11 +105,19 @@ export const Searcher: VFC<Props> = (props) => {
             props.footprints.map(footprint => {
               return <li
                 key={ footprint.url }
-                className={footprint.highlighted ? 'highlighted' : undefined}
+                className={[
+                  'searcher__itemListItem',
+                  ...(footprint.highlighted ? ['searcher__itemListItem--highlighted'] : []),
+                ].join(' ')}
               >
-                <a
-                  href={ footprint.url }
-                >{ footprint.title }</a>
+                <div>
+                  <a
+                    href={ footprint.url }
+                  >{ footprint.title }</a>
+                </div>
+                <div>
+                  <button>削除</button>
+                </div>
               </li>
             })
           }

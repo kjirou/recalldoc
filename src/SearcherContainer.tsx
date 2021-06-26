@@ -98,7 +98,6 @@ const useShadowRoot = (): ShadowRoot | undefined => {
   return shadowRoot
 }
 
-// TODO: 任意のfootprintを削除できるようにする。
 export const SearcherContainer: VFC<Props> = (props) => {
   const {searcherProps} = useVariables(props.footprints, props.onClose)
   const shadowRoot = useShadowRoot()
