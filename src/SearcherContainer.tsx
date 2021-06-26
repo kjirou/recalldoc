@@ -14,12 +14,15 @@ import {
   Searcher,
 } from './components/Searcher'
 import {
-  Footprint,
-  searchFootprints,
-} from './utils'
+  deleteFootprint,
+} from './reducers'
 import {
   Storage,
 } from './storage'
+import {
+  Footprint,
+  searchFootprints,
+} from './utils'
 
 export type Props = {
   footprints: Footprint[];
@@ -72,7 +75,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const onClickDeleteButton = useCallback((url: SearcherFootprintProps['url']) => {
     const deleted = searchedFootprints.find(e => e.url === url)
     if (deleted) {
-      setFootprints(footprints => footprints.filter(e => e !== deleted))
+      setFootprints(deleteFootprint(deleted))
     } else {
       throw new Error('The deleted footprint must exist in searched footprints.')
     }

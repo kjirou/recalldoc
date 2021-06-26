@@ -44,20 +44,6 @@ export const classifyPage = (url: string): PageMetaData => {
   }
 }
 
-export const updateFootprints = (footprints: Footprint[], newFootprint: Footprint): Footprint[] => {
-  const sameFootprintIndex = footprints.findIndex(e => e.url === newFootprint.url)
-  if (sameFootprintIndex === -1) {
-    return [newFootprint, ...footprints]
-  } else {
-    let copiedFootprints = footprints.slice()
-    copiedFootprints.splice(sameFootprintIndex, 1)
-    return [
-      newFootprint,
-      ...copiedFootprints,
-    ]
-  }
-}
-
 export const splitSearchQueryIntoMultipulKeywords = (query: string): string[] => {
   return query.split(/[ \u3000]+/).filter(e => e !== '')
 }
