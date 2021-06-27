@@ -39,8 +39,10 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   footprints: Footprint[];
   searcherProps: SearcherProps;
 } => {
+  const defaultCursoredIndex = 0
+
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
-  const [cursoredIndex, setCursoredIndex] = useState(0)
+  const [cursoredIndex, setCursoredIndex] = useState(defaultCursoredIndex)
   const [inputValue, setInputValue] = useState('')
 
   const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
@@ -49,7 +51,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
 
   const onInput = useCallback((newInputValue: string) => {
     setInputValue(newInputValue)
-    setCursoredIndex(0)
+    setCursoredIndex(defaultCursoredIndex)
   }, [])
   const onKeyDown = useCallback((event) => {
     // TODO: キーリストの型付け方法があった気がする。
@@ -76,8 +78,8 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const onClickDeleteButton = useCallback((url: SearcherFootprintProps['url']) => {
     const deleted = displayableFootprints.find(e => e.url === url)
     if (deleted) {
-      // TODO: cursoredIndex を 0 へ戻す。
       setFootprints(deleteFootprint(deleted))
+      setCursoredIndex(defaultCursoredIndex)
     } else {
       throw new Error('The deleted footprint must exist in searched footprints.')
     }
