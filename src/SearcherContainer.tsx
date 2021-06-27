@@ -39,16 +39,20 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   footprints: Footprint[];
   searcherProps: SearcherProps;
 } => {
+  const defaultCursoredIndex = 0
+
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
-  const [cursoredIndex, setCursoredIndex] = useState(0)
+  const [cursoredIndex, setCursoredIndex] = useState(defaultCursoredIndex)
   const [inputValue, setInputValue] = useState('')
 
   const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
-  const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, cursoredIndex)]
+  const displayableFootprints = searchedFootprints.slice(0, 10)
+  const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
+  // TODO: kibera は検索フィールドに focus して "/" を入力したときも、既存の「検索」へ focus を移動してしまう。
   const onInput = useCallback((newInputValue: string) => {
     setInputValue(newInputValue)
-    setCursoredIndex(0)
+    setCursoredIndex(defaultCursoredIndex)
   }, [])
   const onKeyDown = useCallback((event) => {
     // TODO: キーリストの型付け方法があった気がする。
@@ -73,19 +77,20 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     }
   }, [onClose, cursoredFootprint])
   const onClickDeleteButton = useCallback((url: SearcherFootprintProps['url']) => {
-    const deleted = searchedFootprints.find(e => e.url === url)
+    const deleted = displayableFootprints.find(e => e.url === url)
     if (deleted) {
       setFootprints(deleteFootprint(deleted))
+      setCursoredIndex(defaultCursoredIndex)
     } else {
       throw new Error('The deleted footprint must exist in searched footprints.')
     }
-  }, [searchedFootprints])
+  }, [displayableFootprints])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
 
   const searcherProps: SearcherProps = {
-    footprints: searchedFootprints.map((footprint) => ({
+    footprints: displayableFootprints.map((footprint) => ({
       ...footprint,
       highlighted: footprint === cursoredFootprint,
     })),
@@ -93,6 +98,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     onKeyDown,
     onClickDeleteButton,
     onMount,
+    totalCount: searchedFootprints.length,
   }
 
   return {
