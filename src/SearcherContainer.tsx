@@ -49,6 +49,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const displayableFootprints = searchedFootprints.slice(0, 10)
   const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
+  // TODO: kibera は検索フィールドに focus して "/" を入力したときも、既存の「検索」へ focus を移動してしまう。
   const onInput = useCallback((newInputValue: string) => {
     setInputValue(newInputValue)
     setCursoredIndex(defaultCursoredIndex)
