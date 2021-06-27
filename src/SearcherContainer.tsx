@@ -98,6 +98,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     onKeyDown,
     onClickDeleteButton,
     onMount,
+    totalCount: searchedFootprints.length,
   }
 
   return {

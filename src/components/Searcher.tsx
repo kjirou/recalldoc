@@ -21,6 +21,7 @@ export type Props = {
   onInput: (inputValue: string) => void;
   onKeyDown: (event: KeyboardEvent) => void;
   onMount: (searchFieldElement: HTMLInputElement) => void;
+  totalCount: number,
 }
 
 /**
@@ -43,6 +44,11 @@ const styleLiteral = `
     top: 20px;
     left: calc(50% - var(--width)/2);
     z-index: 7;
+    border: 1px solid #ccc;
+  }
+  .searcher__upper {
+    display: flex;
+    background-color: #fff;
   }
   .searcher__searchQuery {
     display: block;
@@ -51,8 +57,14 @@ const styleLiteral = `
     height: 24px;
     font-size: 14px;
   }
+  .searcher__totalCount {
+    flex: 1;
+    margin-left: 4px;
+    line-height: 24px;
+    font-size: 14px;
+    color: #666;
+  }
   .searcher__itemList {
-    border: 1px solid #ccc;
     list-style-type: none;
     background-color: #fff;
   }
@@ -94,15 +106,18 @@ export const Searcher: VFC<Props> = (props) => {
   return <>
     <style>{styleLiteral}</style>
     <div className="searcher">
-      <input
-        className="searcher__searchQuery"
-        ref={searchFieldRef}
-        placeholder="キーワード検索"
-        onInput={event => {
-          props.onInput(event.currentTarget.value)
-        }}
-        onKeyDown={props.onKeyDown}
-      />
+      <div className="searcher__upper">
+        <input
+          className="searcher__searchQuery"
+          ref={searchFieldRef}
+          placeholder="キーワード検索"
+          onInput={event => {
+            props.onInput(event.currentTarget.value)
+          }}
+          onKeyDown={props.onKeyDown}
+        />
+        <div className="searcher__totalCount">全 {props.totalCount} 件</div>
+      </div>
       {
         props.footprints.length > 0 && <ul className="searcher__itemList">
           {
