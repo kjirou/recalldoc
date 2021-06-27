@@ -81,7 +81,6 @@ const styleLiteral = `
   }
 `
 
-// TODO: 最大表示件数を設定する。
 // TODO: 検索キーワードがマッチしている箇所をハイライトする。
 export const Searcher: VFC<Props> = (props) => {
   const searchFieldRef = useRef<HTMLInputElement>(null)

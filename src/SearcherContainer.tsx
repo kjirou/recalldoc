@@ -44,7 +44,8 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const [inputValue, setInputValue] = useState('')
 
   const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
-  const cursoredFootprint = searchedFootprints[rotateIndex(searchedFootprints.length, cursoredIndex)]
+  const displayableFootprints = searchedFootprints.slice(0, 10)
+  const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
   const onInput = useCallback((newInputValue: string) => {
     setInputValue(newInputValue)
@@ -73,19 +74,20 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     }
   }, [onClose, cursoredFootprint])
   const onClickDeleteButton = useCallback((url: SearcherFootprintProps['url']) => {
-    const deleted = searchedFootprints.find(e => e.url === url)
+    const deleted = displayableFootprints.find(e => e.url === url)
     if (deleted) {
+      // TODO: cursoredIndex を 0 へ戻す。
       setFootprints(deleteFootprint(deleted))
     } else {
       throw new Error('The deleted footprint must exist in searched footprints.')
     }
-  }, [searchedFootprints])
+  }, [displayableFootprints])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
 
   const searcherProps: SearcherProps = {
-    footprints: searchedFootprints.map((footprint) => ({
+    footprints: displayableFootprints.map((footprint) => ({
       ...footprint,
       highlighted: footprint === cursoredFootprint,
     })),
