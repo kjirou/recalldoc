@@ -89,7 +89,7 @@ export const Searcher: VFC<Props> = (props) => {
     if (searchFieldRef.current) {
       props.onMount(searchFieldRef.current)
     }
-  }, [props, props.onMount])
+  }, [props.onMount])
 
   return <>
     <style>{styleLiteral}</style>
