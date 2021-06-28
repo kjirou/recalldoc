@@ -18,7 +18,7 @@ export type FootprintProps = {
 export type Props = {
   footprints: FootprintProps[];
   onClickDeleteButton: (url: FootprintProps['url']) => void;
-  onInput: (inputValue: string) => void;
+  onInput: (inputValue: string, stopPropagation: () => void) => void;
   onKeyDown: (event: KeyboardEvent) => void;
   onMount: (searchFieldElement: HTMLInputElement) => void;
   totalCount: number,
@@ -112,7 +112,7 @@ export const Searcher: VFC<Props> = (props) => {
           ref={searchFieldRef}
           placeholder="キーワード検索"
           onInput={event => {
-            props.onInput(event.currentTarget.value)
+            props.onInput(event.currentTarget.value, () => event.stopPropagation())
           }}
           onKeyDown={props.onKeyDown}
         />

@@ -49,8 +49,8 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const displayableFootprints = searchedFootprints.slice(0, 10)
   const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
-  // TODO: kibera は検索フィールドに focus して "/" を入力したときも、既存の「検索」へ focus を移動してしまう。
-  const onInput = useCallback((newInputValue: string) => {
+  const onInput = useCallback<SearcherProps['onInput']>((newInputValue, stopPropagation) => {
+    stopPropagation()
     setInputValue(newInputValue)
     setCursoredIndex(defaultCursoredIndex)
   }, [])
@@ -59,6 +59,8 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     const key: string = event.key
     const isComposing: boolean = event.nativeEvent.isComposing
     const preventDefault: () => void = () => event.preventDefault()
+    const stopPropagation: () => void = () => event.stopPropagation()
+    stopPropagation()
     if (key === 'ArrowUp' && !isComposing) {
       preventDefault()
       setCursoredIndex(s => s - 1)
