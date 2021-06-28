@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import {
-  KeyboardEvent,
   VFC,
   useEffect,
   useRef,
@@ -19,7 +18,10 @@ export type Props = {
   footprints: FootprintProps[];
   onClickDeleteButton: (url: FootprintProps['url']) => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
-  onKeyDown: (event: KeyboardEvent) => void;
+  /**
+   * @todo key へキーリストの型付けをする。どこかに定義があった記憶がある。
+   */
+  onKeyDown: (key: string, isComposing: boolean, stopPropagation: () => void, preventDefault: () => void) => void;
   onMount: (searchFieldElement: HTMLInputElement) => void;
   totalCount: number,
 }
@@ -114,7 +116,11 @@ export const Searcher: VFC<Props> = (props) => {
           onInput={event => {
             props.onInput(event.currentTarget.value, () => event.stopPropagation())
           }}
-          onKeyDown={props.onKeyDown}
+          onKeyDown={(event) => {
+            const key: string = event.key
+            const isComposing: boolean = event.nativeEvent.isComposing
+            props.onKeyDown(key, isComposing, () => event.stopPropagation(), () => event.preventDefault())
+          }}
         />
         <div className="searcher__totalCount">全 {props.totalCount} 件</div>
       </div>

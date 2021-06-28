@@ -54,12 +54,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     setInputValue(newInputValue)
     setCursoredIndex(defaultCursoredIndex)
   }, [])
-  const onKeyDown = useCallback((event) => {
-    // TODO: キーリストの型付け方法があった気がする。
-    const key: string = event.key
-    const isComposing: boolean = event.nativeEvent.isComposing
-    const preventDefault: () => void = () => event.preventDefault()
-    const stopPropagation: () => void = () => event.stopPropagation()
+  const onKeyDown = useCallback<SearcherProps['onKeyDown']>((key, isComposing, stopPropagation, preventDefault) => {
     stopPropagation()
     if (key === 'ArrowUp' && !isComposing) {
       preventDefault()
