@@ -21,6 +21,7 @@ import {
 } from './storage'
 import {
   Footprint,
+  rotateIndex,
   searchFootprints,
 } from './utils'
 
@@ -28,11 +29,6 @@ export type Props = {
   footprints: Footprint[];
   onClose: () => void;
   storage: Storage;
-}
-
-// TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
-const rotateIndex = (length: number, index: number): number => {
-  return (length * 1000 + index) % length
 }
 
 const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {

@@ -2,11 +2,38 @@ import {
   Footprint,
   PageMetaData,
   classifyPage,
+  rotateIndex,
   searchFootprints,
   splitSearchQueryIntoMultipulKeywords,
 } from './utils'
 
 describe('utils', () => {
+  describe('rotateIndex', () => {
+    const table: {
+      expected: number,
+      index: number,
+      length: number,
+    }[] = [
+      {
+        length: 1,
+        index: 0,
+        expected: 0,
+      },
+      {
+        length: 3,
+        index: 4,
+        expected: 1,
+      },
+      {
+        length: 3,
+        index: -1,
+        expected: 2,
+      },
+    ]
+    test.each(table)(`($length, $index) -> $expected`, ({length, index, expected}) => {
+      expect(rotateIndex(length, index)).toBe(expected)
+    })
+  })
   describe('classifyPage', () => {
     const table: {
       expected: PageMetaData,
