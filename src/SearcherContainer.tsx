@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -101,11 +102,15 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
 }
 
 const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
+  const previousFootprints = useRef<Footprint[] | undefined>(undefined)
   useEffect(() => {
-    // TODO: 処理順序保証、二重実行回避。
-    // TODO: ummount時のキャンセル。
-    storage.saveFootprints(footprints)
-  }, [storage, footprints])
+    if (footprints !== previousFootprints.current) {
+      // TODO: 処理順序保証、二重実行回避。
+      // TODO: ummount時のキャンセル。
+      storage.saveFootprints(footprints)
+      previousFootprints.current = footprints
+    }
+  }, [storage.saveFootprints, footprints])
 }
 
 const useShadowRoot = (): ShadowRoot | undefined => {
