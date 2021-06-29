@@ -101,8 +101,8 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   }
 }
 
-const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
-  const previousFootprints = useRef<Footprint[] | undefined>(undefined)
+export const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
+  const previousFootprints = useRef<Footprint[]>(footprints)
   useEffect(() => {
     if (footprints !== previousFootprints.current) {
       // TODO: 処理順序保証、二重実行回避。
