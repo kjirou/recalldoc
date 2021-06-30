@@ -13,7 +13,7 @@ describe('updateFootprints', () => {
     newFootprint: Footprint,
   }[] = [
     {
-      name: 'It appends a new footprint to the top when there is no same one',
+      name: 'it appends a new footprint to the top when there is no same one',
       footprints: [
         {title: 'Foo', url: 'https://example.com/foo'},
       ],
@@ -24,7 +24,7 @@ describe('updateFootprints', () => {
       ],
     },
     {
-      name: 'It moves the footprint to the top when there is same one',
+      name: 'it moves the footprint to the top when there is same one',
       footprints: [
         {title: 'Foo', url: 'https://example.com/foo'},
         {title: 'Bar', url: 'https://example.com/bar'},
@@ -38,7 +38,7 @@ describe('updateFootprints', () => {
       ],
     },
     {
-      name: 'It updates a title of the new footprint',
+      name: 'it updates a title of the new footprint',
       footprints: [
         {title: 'Foo', url: 'https://example.com/foo'},
       ],
@@ -51,7 +51,7 @@ describe('updateFootprints', () => {
   test.each(table)('$name', ({footprints, newFootprint, expected}) => {
     expect(updateFootprints(newFootprint)(footprints)).toStrictEqual(expected)
   })
-  test('It returns up to 1000', () => {
+  test('it returns up to 1000', () => {
     const footprints1000: Footprint[] = []
     for (let i = 0; i < 1000; i++) {
       footprints1000.push({

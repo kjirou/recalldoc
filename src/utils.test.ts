@@ -124,19 +124,19 @@ describe('searchFootprints', () => {
     searchQuery: string,
   }[] = [
     {
-      name: 'It searches by partial match',
+      name: 'it searches by partial match',
       footprints: createFootprints('foox', 'bar', 'baz'),
       searchQuery: 'ba',
       expected: createFootprints('bar', 'baz'),
     },
     {
-      name: 'It searches by case insensitive',
+      name: 'it searches by case insensitive',
       footprints: createFootprints('abc', 'ABC'),
       searchQuery: 'AbC',
       expected: createFootprints('abc', 'ABC'),
     },
     {
-      name: 'It returns all footprints when the search query is empty',
+      name: 'it returns all footprints when the search query is empty',
       footprints: createFootprints('foo', 'bar', 'baz'),
       searchQuery: '',
       expected: createFootprints('foo', 'bar', 'baz'),
