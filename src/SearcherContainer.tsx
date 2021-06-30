@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -21,6 +22,7 @@ import {
 } from './storage'
 import {
   Footprint,
+  rotateIndex,
   searchFootprints,
 } from './utils'
 
@@ -28,11 +30,6 @@ export type Props = {
   footprints: Footprint[];
   onClose: () => void;
   storage: Storage;
-}
-
-// TODO: 負のcursoredIndexの値を正の数へ変換する方法が雑。
-const rotateIndex = (length: number, index: number): number => {
-  return (length * 1000 + index) % length
 }
 
 const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
@@ -104,12 +101,16 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   }
 }
 
-const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
+export const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
+  const previousFootprints = useRef<Footprint[]>(footprints)
   useEffect(() => {
-    // TODO: 処理順序保証、二重実行回避。
-    // TODO: ummount時のキャンセル。
-    storage.saveFootprints(footprints)
-  }, [storage, footprints])
+    if (footprints !== previousFootprints.current) {
+      // TODO: 処理順序保証、二重実行回避。
+      // TODO: ummount時のキャンセル。
+      storage.saveFootprints(footprints)
+      previousFootprints.current = footprints
+    }
+  }, [storage.saveFootprints, footprints])
 }
 
 const useShadowRoot = (): ShadowRoot | undefined => {

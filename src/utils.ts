@@ -15,6 +15,14 @@ export type Footprint = {
   url: string;
 }
 
+/**
+ * 整数を配列の要素番号へ変換する。
+ * @param index 0 を除く整数。
+ */
+export const rotateIndex = (length: number, index: number): number => {
+  return ((index % length) + length) % length
+}
+
 export const classifyPage = (url: string): PageMetaData => {
   const {host, pathname, hash} = new URL(url)
   if (host.endsWith('.esa.io')) {
