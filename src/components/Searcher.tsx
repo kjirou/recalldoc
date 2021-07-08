@@ -3,6 +3,7 @@ import {
   VFC,
   useEffect,
   useRef,
+  useCallback,
 } from 'react'
 import {
   Footprint
@@ -17,6 +18,7 @@ export type FootprintProps = {
 export type Props = {
   footprints: FootprintProps[];
   onClickDeleteButton: (url: FootprintProps['url']) => void;
+  onClickPageCover: () => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
   /**
    * @todo key へキーリストの型付けをする。どこかに定義があった記憶がある。
@@ -45,7 +47,7 @@ const styleLiteral = `
     position: fixed;
     top: 20px;
     left: calc(50% - var(--width)/2);
-    z-index: 7;
+    z-index: 8;
     border: 1px solid #ccc;
   }
   .searcher__upper {
@@ -93,6 +95,14 @@ const styleLiteral = `
   .searcher__itemListItem > :last-child > button {
     font-size: 12px;
   }
+  .pageCover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 7;
+  }
 `
 
 // TODO: 検索キーワードがマッチしている箇所をハイライトする。
@@ -122,7 +132,7 @@ export const Searcher: VFC<Props> = (props) => {
             props.onKeyDown(key, isComposing, () => event.stopPropagation(), () => event.preventDefault())
           }}
         />
-        <div className="searcher__totalCount">全 {props.totalCount} 件</div>
+        <div className="searcher__totalCount">{props.footprints.length}/{props.totalCount} 件</div>
       </div>
       {
         props.footprints.length > 0 && <ul className="searcher__itemList">
@@ -148,5 +158,9 @@ export const Searcher: VFC<Props> = (props) => {
         </ul>
       }
     </div>
+    <div
+      className="pageCover"
+      onClick={props.onClickPageCover}
+    />
   </>
 }

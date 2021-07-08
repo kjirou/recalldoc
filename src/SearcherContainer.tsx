@@ -82,6 +82,9 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
+  const onClickPageCover = useCallback(() => {
+    onClose()
+  }, [onClose])
 
   const searcherProps: SearcherProps = {
     footprints: displayableFootprints.map((footprint) => ({
@@ -91,6 +94,7 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
     onInput,
     onKeyDown,
     onClickDeleteButton,
+    onClickPageCover,
     onMount,
     totalCount: searchedFootprints.length,
   }
