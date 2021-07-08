@@ -3,6 +3,7 @@ import {
   VFC,
   useEffect,
   useRef,
+  useCallback,
 } from 'react'
 import {
   Footprint
@@ -17,6 +18,7 @@ export type FootprintProps = {
 export type Props = {
   footprints: FootprintProps[];
   onClickDeleteButton: (url: FootprintProps['url']) => void;
+  onClickPageCover: () => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
   /**
    * @todo key へキーリストの型付けをする。どこかに定義があった記憶がある。
@@ -45,7 +47,7 @@ const styleLiteral = `
     position: fixed;
     top: 20px;
     left: calc(50% - var(--width)/2);
-    z-index: 7;
+    z-index: 8;
     border: 1px solid #ccc;
   }
   .searcher__upper {
@@ -92,6 +94,14 @@ const styleLiteral = `
   }
   .searcher__itemListItem > :last-child > button {
     font-size: 12px;
+  }
+  .pageCover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 7;
   }
 `
 
@@ -148,5 +158,9 @@ export const Searcher: VFC<Props> = (props) => {
         </ul>
       }
     </div>
+    <div
+      className="pageCover"
+      onClick={props.onClickPageCover}
+    />
   </>
 }
