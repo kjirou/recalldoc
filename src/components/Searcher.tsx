@@ -122,7 +122,7 @@ export const Searcher: VFC<Props> = (props) => {
             props.onKeyDown(key, isComposing, () => event.stopPropagation(), () => event.preventDefault())
           }}
         />
-        <div className="searcher__totalCount">全 {props.totalCount} 件</div>
+        <div className="searcher__totalCount">{props.footprints.length}/{props.totalCount} 件</div>
       </div>
       {
         props.footprints.length > 0 && <ul className="searcher__itemList">
