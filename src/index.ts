@@ -11,6 +11,7 @@ import {
   classifyPage,
 } from './utils'
 import {
+  Storage,
   getStorage,
 } from './storage'
 
@@ -80,14 +81,33 @@ switch (pageMataData.siteId) {
         }
         storage.updateFootprints(newFootprint)
       }
-    // TODO: folder の画面から他のフォルダーに遷移する上部のリンクが Ajax になっているので、その画面遷移経路だとここの分岐を通らず保存されない。
     } else if (pageMataData.contentKind === 'folder') {
-      const folder = decodeURIComponent(location.pathname.replace(/^\/notes\/folder\//, ''))
-      const newFootprint: Footprint = {
-        title: folder,
-        url: location.origin + location.pathname,
+      const saveFootprintOfKibelaFolder = (storage: Storage, origin: string, pathname: string): void => {
+        const folder = decodeURIComponent(pathname.replace(/^\/notes\/folder\//, ''))
+        const newFootprint: Footprint = {
+          title: folder,
+          url: origin + pathname,
+        }
+        storage.updateFootprints(newFootprint)
       }
-      storage.updateFootprints(newFootprint)
+      // NOTE: folder ページ内で別 folder を選択すると基本的に Ajax で遷移するため、その経路でも Footprint を保存できるようにしている。
+      // NOTE: folder のパンくずリストの枠である .folder-breadcrumb の中には、各パンくずである .folder-breadcrumb-item-wrapper だけが入っている。
+      //       folder の表記は full path 的であるため、変更されれば必ず要素が変化する。
+      const foldPageObserverTarget = document.querySelector('[data-hypernova-key="FolderContainer"] .folder-breadcrumb')
+      if (foldPageObserverTarget) {
+        const mo = new MutationObserver((mutations, observer) => {
+          // TODO: ここより後に URL が変更されるので、一拍置いてから保存している。ただ雑なので、DOM から抽出するように変更する方がより良い。
+          setTimeout(() => {
+            saveFootprintOfKibelaFolder(storage, location.origin, location.pathname)
+          }, 100)
+        })
+        mo.observe(foldPageObserverTarget, {
+          attributes: false,
+          childList: true,
+          subtree: false,
+        })
+      }
+      saveFootprintOfKibelaFolder(storage, location.origin, location.pathname)
     }
     break
   }
