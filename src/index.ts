@@ -101,7 +101,7 @@ switch (pageMataData.siteId) {
           // TODO: ここより後に URL が変更されるので、一拍置いてから保存している。ただ雑なので、DOM から抽出するように変更する方がより良い。
           setTimeout(() => {
             updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
-          }, 100)
+          }, 500)
         })
         mo.observe(folderPageObserverTarget, {
           characterData: true,
