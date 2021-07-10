@@ -59,6 +59,10 @@ describe('classifyPage', () => {
       expected: {siteId: 'kibela', contentKind: 'folder', teamId: 'foo'},
     },
     {
+      url: 'https://foo.kibe.la/notes/folder?order_by=title&group_id=1',
+      expected: {siteId: 'kibela', contentKind: 'unknown', teamId: 'foo'},
+    },
+    {
       url: 'https://foo.kibe.la/notes/123/edit',
       expected: {siteId: 'kibela', contentKind: 'unknown', teamId: 'foo'},
     },
