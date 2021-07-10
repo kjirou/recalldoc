@@ -35,20 +35,20 @@ export const updateFootprint = async (storage: Storage, footprint: Footprint): P
   return storage.saveFootprints(updateFootprintReducer(footprint)(footprints))
 }
 
-export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, hash: string): void => {
+export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, hash: string): Promise<void> => {
   const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
   const newFootprint: Footprint = {
     title: categoryPath,
     url: origin + '/' + hash,
   }
-  updateFootprint(storage, newFootprint)
+  return updateFootprint(storage, newFootprint)
 }
 
-export const updateFootprintOfKibelaFolder = (storage: Storage, origin: string, pathname: string): void => {
+export const updateFootprintOfKibelaFolder = (storage: Storage, origin: string, pathname: string): Promise<void> => {
   const folder = decodeURIComponent(pathname.replace(/^\/notes\/folder\//, ''))
   const newFootprint: Footprint = {
     title: folder,
     url: origin + pathname,
   }
-  updateFootprint(storage, newFootprint)
+  return updateFootprint(storage, newFootprint)
 }
