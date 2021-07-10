@@ -57,14 +57,30 @@ switch (pageMataData.siteId) {
       }
     // TODO: 左ナビからのカテゴリ画面への遷移は Ajax なので、その画面遷移経路だとここの分岐を通らず保存されない。
     } else if (pageMataData.contentKind === 'category') {
-      const categoryPath = decodeURIComponent(location.hash.replace(/^#path=/, '')).replace(/^\//, '')
-      if (categoryPath) {
+      const saveFootprintOfEsaCategory = (storage: Storage, origin: string, pathname: string, hash: string): void => {
+        const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
         const newFootprint: Footprint = {
           title: categoryPath,
-          url: location.origin + location.pathname + location.hash,
+          url: origin + pathname + hash,
         }
         storage.updateFootprints(newFootprint)
       }
+      // NOTE: 監視対象の DOM が存在しないことがある。一方で、その時に #js_autopagerize_content は存在するので、おそらくその中を非同期で描画している。
+      // TODO: 非同期の描画を待つ対応が雑。
+      setTimeout(() => {
+        const categoryPageObserverTarget = document.querySelector('.category-heading .category-path')
+        if (categoryPageObserverTarget) {
+          const mo = new MutationObserver((mutations, observer) => {
+            saveFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
+          })
+          mo.observe(categoryPageObserverTarget, {
+            characterData: true,
+            childList: true,
+            subtree: true,
+          })
+        }
+      }, 500)
+      saveFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
     }
     break
   }
