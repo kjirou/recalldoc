@@ -95,16 +95,18 @@ switch (pageMataData.siteId) {
     } else if (pageMataData.contentKind === 'folder') {
       // NOTE: folder のパンくずリストの枠である .folder-breadcrumb の中には、各パンくずである .folder-breadcrumb-item-wrapper だけが入っている。
       //       folder の表記は full path 的であるため、変更されれば必ず要素が変化する。
-      const foldPageObserverTarget = document.querySelector('[data-hypernova-key="FolderContainer"] .folder-breadcrumb')
-      if (foldPageObserverTarget) {
+      const folderPageObserverTarget = document.querySelector('[data-hypernova-key="FolderContainer"] .folder-breadcrumb')
+      if (folderPageObserverTarget) {
         const mo = new MutationObserver((mutations, observer) => {
           // TODO: ここより後に URL が変更されるので、一拍置いてから保存している。ただ雑なので、DOM から抽出するように変更する方がより良い。
           setTimeout(() => {
             updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
-          }, 100)
+          }, 500)
         })
-        mo.observe(foldPageObserverTarget, {
+        mo.observe(folderPageObserverTarget, {
+          characterData: true,
           childList: true,
+          subtree: true,
         })
       }
       updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
