@@ -1,5 +1,5 @@
 import {
-  updateFootprints,
+  updateFootprint as updateFootprintReducer,
 } from './reducers'
 import {
   Footprint,
@@ -32,7 +32,7 @@ export const getStorage = (): Storage => {
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {
   // TODO: トランザクションになっていない。
   const footprints = await storage.loadFootprints()
-  return storage.saveFootprints(updateFootprints(footprint)(footprints))
+  return storage.saveFootprints(updateFootprintReducer(footprint)(footprints))
 }
 
 export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, pathname: string, hash: string): void => {

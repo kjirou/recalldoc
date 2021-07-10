@@ -4,7 +4,10 @@ import {
 
 const maxFootprints = 1000 as const
 
-export const updateFootprints = (newFootprint: Footprint) => {
+/**
+ * Footprintを追加または更新する。識別子はURL。
+ */
+export const updateFootprint = (newFootprint: Footprint) => {
   return (footprints: Footprint[]): Footprint[] => {
     const sameFootprintIndex = footprints.findIndex(e => e.url === newFootprint.url)
     let newFootprints: Footprint[]
