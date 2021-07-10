@@ -118,9 +118,7 @@ switch (pageMataData.siteId) {
           }, 100)
         })
         mo.observe(foldPageObserverTarget, {
-          attributes: false,
           childList: true,
-          subtree: false,
         })
       }
       saveFootprintOfKibelaFolder(storage, location.origin, location.pathname)
