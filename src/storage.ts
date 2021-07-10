@@ -9,7 +9,6 @@ export type Storage = {
   loadFootprints: () => Promise<Footprint[]>;
   // TODO: 保存する件数に上限を設ける。
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
-  updateFootprints: (footprint: Footprint) => Promise<void>;
 }
 
 const localStorageFootprintsKey = 'recalldoc_footprints' as const
@@ -24,15 +23,16 @@ const localStorage: Storage = {
     const serializedFootprints = JSON.stringify(footprints)
     window.localStorage.setItem(localStorageFootprintsKey, serializedFootprints)
   },
-  updateFootprints: async (footprint: Footprint) => {
-    // TODO: トランザクションになっていない。
-    const footprints = await localStorage.loadFootprints()
-    return localStorage.saveFootprints(updateFootprints(footprint)(footprints))
-  },
 }
 
 export const getStorage = (): Storage => {
   return localStorage
+}
+
+export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {
+  // TODO: トランザクションになっていない。
+  const footprints = await storage.loadFootprints()
+  return storage.saveFootprints(updateFootprints(footprint)(footprints))
 }
 
 export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, pathname: string, hash: string): void => {
@@ -41,7 +41,7 @@ export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, p
     title: categoryPath,
     url: origin + pathname + hash,
   }
-  storage.updateFootprints(newFootprint)
+  updateFootprint(storage, newFootprint)
 }
 
 export const updateFootprintOfKibelaFolder = (storage: Storage, origin: string, pathname: string): void => {
@@ -50,5 +50,5 @@ export const updateFootprintOfKibelaFolder = (storage: Storage, origin: string, 
     title: folder,
     url: origin + pathname,
   }
-  storage.updateFootprints(newFootprint)
+  updateFootprint(storage, newFootprint)
 }

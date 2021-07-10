@@ -12,6 +12,7 @@ import {
 } from './utils'
 import {
   getStorage,
+  updateFootprint,
   updateFootprintOfEsaCategory,
   updateFootprintOfKibelaFolder,
 } from './storage'
@@ -54,7 +55,7 @@ switch (pageMataData.siteId) {
           title: [...categoryPathItems, titleNameElement.textContent].join('/'),
           url: location.origin + location.pathname,
         }
-        storage.updateFootprints(newFootprint)
+        updateFootprint(storage, newFootprint)
       }
     // TODO: 左ナビからのカテゴリ画面への遷移は Ajax なので、その画面遷移経路だとここの分岐を通らず保存されない。
     } else if (pageMataData.contentKind === 'category') {
@@ -88,7 +89,7 @@ switch (pageMataData.siteId) {
           title: `${folderIndicatorElement.textContent}/${titleElement.textContent}`,
           url: location.origin + location.pathname,
         }
-        storage.updateFootprints(newFootprint)
+        updateFootprint(storage, newFootprint)
       }
     } else if (pageMataData.contentKind === 'folder') {
       // NOTE: folder ページ内で別 folder を選択すると基本的に Ajax で遷移するため、その経路でも Footprint を保存できるようにしている。
