@@ -65,7 +65,7 @@ switch (pageMataData.siteId) {
         const categoryPageObserverTarget = document.querySelector('.category-heading .category-path')
         if (categoryPageObserverTarget) {
           const mo = new MutationObserver((mutations, observer) => {
-            updateFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
+            updateFootprintOfEsaCategory(storage, location.origin, location.hash)
           })
           mo.observe(categoryPageObserverTarget, {
             characterData: true,
@@ -74,7 +74,7 @@ switch (pageMataData.siteId) {
           })
         }
       }, 500)
-      updateFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
+      updateFootprintOfEsaCategory(storage, location.origin, location.hash)
     }
     break
   }
