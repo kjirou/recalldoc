@@ -24,7 +24,6 @@ describe('useStorageSynchronization', () => {
     storage = {
       loadFootprints: jest.fn(),
       saveFootprints: jest.fn(),
-      updateFootprints: jest.fn(),
     }
   })
 

@@ -1,11 +1,11 @@
 import {
-  updateFootprints,
+  updateFootprint,
 } from './reducers'
 import {
   Footprint,
 } from './utils'
 
-describe('updateFootprints', () => {
+describe('updateFootprint', () => {
   const table: {
     name: string,
     expected: Footprint[],
@@ -49,7 +49,7 @@ describe('updateFootprints', () => {
     },
   ]
   test.each(table)('$name', ({footprints, newFootprint, expected}) => {
-    expect(updateFootprints(newFootprint)(footprints)).toStrictEqual(expected)
+    expect(updateFootprint(newFootprint)(footprints)).toStrictEqual(expected)
   })
   test('it returns up to 1000', () => {
     const footprints1000: Footprint[] = []
@@ -60,6 +60,6 @@ describe('updateFootprints', () => {
       })
     }
     expect(footprints1000).toHaveLength(1000)
-    expect(updateFootprints({title: '', url: 'https://not-example.com'})(footprints1000)).toHaveLength(1000)
+    expect(updateFootprint({title: '', url: 'https://not-example.com'})(footprints1000)).toHaveLength(1000)
   })
 })
