@@ -34,3 +34,21 @@ const localStorage: Storage = {
 export const getStorage = (): Storage => {
   return localStorage
 }
+
+export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, pathname: string, hash: string): void => {
+  const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
+  const newFootprint: Footprint = {
+    title: categoryPath,
+    url: origin + pathname + hash,
+  }
+  storage.updateFootprints(newFootprint)
+}
+
+export const updateFootprintOfKibelaFolder = (storage: Storage, origin: string, pathname: string): void => {
+  const folder = decodeURIComponent(pathname.replace(/^\/notes\/folder\//, ''))
+  const newFootprint: Footprint = {
+    title: folder,
+    url: origin + pathname,
+  }
+  storage.updateFootprints(newFootprint)
+}

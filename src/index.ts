@@ -11,8 +11,9 @@ import {
   classifyPage,
 } from './utils'
 import {
-  Storage,
   getStorage,
+  updateFootprintOfEsaCategory,
+  updateFootprintOfKibelaFolder,
 } from './storage'
 
 const storage = getStorage()
@@ -57,21 +58,13 @@ switch (pageMataData.siteId) {
       }
     // TODO: 左ナビからのカテゴリ画面への遷移は Ajax なので、その画面遷移経路だとここの分岐を通らず保存されない。
     } else if (pageMataData.contentKind === 'category') {
-      const saveFootprintOfEsaCategory = (storage: Storage, origin: string, pathname: string, hash: string): void => {
-        const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
-        const newFootprint: Footprint = {
-          title: categoryPath,
-          url: origin + pathname + hash,
-        }
-        storage.updateFootprints(newFootprint)
-      }
       // NOTE: 監視対象の DOM が存在しないことがある。一方で、その時に #js_autopagerize_content は存在するので、おそらくその中を非同期で描画している。
       // TODO: 非同期の描画を待つ対応が雑。
       setTimeout(() => {
         const categoryPageObserverTarget = document.querySelector('.category-heading .category-path')
         if (categoryPageObserverTarget) {
           const mo = new MutationObserver((mutations, observer) => {
-            saveFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
+            updateFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
           })
           mo.observe(categoryPageObserverTarget, {
             characterData: true,
@@ -80,7 +73,7 @@ switch (pageMataData.siteId) {
           })
         }
       }, 500)
-      saveFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
+      updateFootprintOfEsaCategory(storage, location.origin, location.pathname, location.hash)
     }
     break
   }
@@ -98,14 +91,6 @@ switch (pageMataData.siteId) {
         storage.updateFootprints(newFootprint)
       }
     } else if (pageMataData.contentKind === 'folder') {
-      const saveFootprintOfKibelaFolder = (storage: Storage, origin: string, pathname: string): void => {
-        const folder = decodeURIComponent(pathname.replace(/^\/notes\/folder\//, ''))
-        const newFootprint: Footprint = {
-          title: folder,
-          url: origin + pathname,
-        }
-        storage.updateFootprints(newFootprint)
-      }
       // NOTE: folder ページ内で別 folder を選択すると基本的に Ajax で遷移するため、その経路でも Footprint を保存できるようにしている。
       // NOTE: folder のパンくずリストの枠である .folder-breadcrumb の中には、各パンくずである .folder-breadcrumb-item-wrapper だけが入っている。
       //       folder の表記は full path 的であるため、変更されれば必ず要素が変化する。
@@ -114,14 +99,14 @@ switch (pageMataData.siteId) {
         const mo = new MutationObserver((mutations, observer) => {
           // TODO: ここより後に URL が変更されるので、一拍置いてから保存している。ただ雑なので、DOM から抽出するように変更する方がより良い。
           setTimeout(() => {
-            saveFootprintOfKibelaFolder(storage, location.origin, location.pathname)
+            updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
           }, 100)
         })
         mo.observe(foldPageObserverTarget, {
           childList: true,
         })
       }
-      saveFootprintOfKibelaFolder(storage, location.origin, location.pathname)
+      updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
     }
     break
   }
