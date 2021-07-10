@@ -27,17 +27,19 @@ describe('updateFootprintOfEsaCategory', () => {
     },
     name: string,
     expected: Footprint[],
-  }[] = [{
-    name: 'it works',
-    args: {
-      origin: 'https://nowhere.esa.io',
-      hash: '#path=%2Ffoo%2F%E3%81%B0%E3%83%BC',
+  }[] = [
+    {
+      name: 'it works',
+      args: {
+        origin: 'https://nowhere.esa.io',
+        hash: '#path=%2Ffoo%2F%E3%81%B0%E3%83%BC',
+      },
+      expected: [{
+        title: 'foo/ばー',
+        url: 'https://nowhere.esa.io/#path=%2Ffoo%2F%E3%81%B0%E3%83%BC',
+      }],
     },
-    expected: [{
-      title: 'foo/ばー',
-      url: 'https://nowhere.esa.io/#path=%2Ffoo%2F%E3%81%B0%E3%83%BC',
-    }],
-  }]
+  ]
   test.each(table)('$name', async ({args, expected}) => {
     await updateFootprintOfEsaCategory(storage, args.origin, args.hash)
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
@@ -62,17 +64,19 @@ describe('updateFootprintOfKibelaFolder', () => {
     },
     name: string,
     expected: Footprint[],
-  }[] = [{
-    name: 'it works',
-    args: {
-      origin: 'https://nowhere.kibe.la',
-      pathname: '/notes/folder/foo/%E3%81%B0%E3%83%BC',
+  }[] = [
+    {
+      name: 'it works',
+      args: {
+        origin: 'https://nowhere.kibe.la',
+        pathname: '/notes/folder/foo/%E3%81%B0%E3%83%BC',
+      },
+      expected: [{
+        title: 'foo/ばー',
+        url: 'https://nowhere.kibe.la/notes/folder/foo/%E3%81%B0%E3%83%BC',
+      }],
     },
-    expected: [{
-      title: 'foo/ばー',
-      url: 'https://nowhere.kibe.la/notes/folder/foo/%E3%81%B0%E3%83%BC',
-    }],
-  }]
+  ]
   test.each(table)('$name', async ({args, expected}) => {
     await updateFootprintOfKibelaFolder(storage, args.origin, args.pathname)
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
