@@ -104,7 +104,9 @@ switch (pageMataData.siteId) {
           }, 100)
         })
         mo.observe(folderPageObserverTarget, {
+          characterData: true,
           childList: true,
+          subtree: true,
         })
       }
       updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
