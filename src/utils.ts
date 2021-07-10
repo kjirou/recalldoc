@@ -41,6 +41,9 @@ export const classifyPage = (url: string): PageMetaData => {
       teamId: host.replace(/\.kibe\.la$/, ''),
       contentKind: /^\/notes\/\d+$/.test(pathname)
         ? 'note'
+        // NOTE: 「すべて」と表示される "/notes/folder" は除外する。
+        //       folder を表示する DOM 要素がなくなるので、非同期で保存する処理が難しくなるため。
+        //       また、構造上は他の folder のトップになるはずだが、それが基本的には folder の表記に含まれていないので、混乱させそう。
         : pathname.startsWith('/notes/folder/')
           ? 'folder'
           : 'unknown'
