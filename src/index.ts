@@ -57,7 +57,7 @@ switch (pageMataData.siteId) {
         }
         updateFootprint(storage, newFootprint)
       }
-    // TODO: 左ナビからのカテゴリ画面への遷移は Ajax なので、その画面遷移経路だとここの分岐を通らず保存されない。
+    // NOTE: category 間の画面遷移は基本的に Ajax なので、その経路でも Footprint を保存できるように工夫している。
     } else if (pageMataData.contentKind === 'category') {
       // NOTE: 監視対象の DOM が存在しないことがある。一方で、その時に #js_autopagerize_content は存在するので、おそらくその中を非同期で描画している。
       // TODO: 非同期の描画を待つ対応が雑。
@@ -91,8 +91,8 @@ switch (pageMataData.siteId) {
         }
         updateFootprint(storage, newFootprint)
       }
+    // NOTE: folder 間の画面遷移は基本的に Ajax なので、その経路でも Footprint を保存できるように工夫している。
     } else if (pageMataData.contentKind === 'folder') {
-      // NOTE: folder ページ内で別 folder を選択すると基本的に Ajax で遷移するため、その経路でも Footprint を保存できるようにしている。
       // NOTE: folder のパンくずリストの枠である .folder-breadcrumb の中には、各パンくずである .folder-breadcrumb-item-wrapper だけが入っている。
       //       folder の表記は full path 的であるため、変更されれば必ず要素が変化する。
       const foldPageObserverTarget = document.querySelector('[data-hypernova-key="FolderContainer"] .folder-breadcrumb')
