@@ -3,37 +3,37 @@ import {
 } from './reducers'
 import {
   Footprint,
+  PageMetaData,
 } from './utils'
 
 export type Storage = {
+  footprintsKey: string;
   loadFootprints: () => Promise<Footprint[]>;
   // TODO: 保存する件数に上限を設ける。
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
 }
 
-const chromeStorageFootprintsKey = 'recalldoc_footprints' as const
-
-const chromeStorage: Storage = {
-  loadFootprints: () => {
-    return new Promise(resolve => {
-      chrome.storage.sync.get([chromeStorageFootprintsKey], (result) => {
-        const rawFootprints = result[chromeStorageFootprintsKey]
-        resolve(rawFootprints ? JSON.parse(rawFootprints) : [])
+export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: string): Storage => {
+  const footprintsKey = `recalldoc_footprints_${siteId}_${teamId}`
+  return {
+    footprintsKey,
+    loadFootprints: () => {
+      return new Promise(resolve => {
+        chrome.storage.sync.get([footprintsKey], (result) => {
+          const rawFootprints = result[footprintsKey]
+          resolve(rawFootprints ? JSON.parse(rawFootprints) : [])
+        })
       })
-    })
-  },
-  saveFootprints: (footprints: Footprint[]) => {
-    const serializedFootprints = JSON.stringify(footprints)
-    return new Promise(resolve => {
-      chrome.storage.sync.set({[chromeStorageFootprintsKey]: serializedFootprints}, () => {
-        resolve()
+    },
+    saveFootprints: (footprints: Footprint[]) => {
+      const serializedFootprints = JSON.stringify(footprints)
+      return new Promise(resolve => {
+        chrome.storage.sync.set({[footprintsKey]: serializedFootprints}, () => {
+          resolve()
+        })
       })
-    })
-  },
-}
-
-export const getStorage = (): Storage => {
-  return chromeStorage
+    },
+  } as const
 }
 
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {

@@ -11,15 +11,14 @@ import {
   classifyPage,
 } from './utils'
 import {
-  getStorage,
+  Storage,
+  createChromeStorage,
   updateFootprint,
   updateFootprintOfEsaCategory,
   updateFootprintOfKibelaFolder,
 } from './storage'
 
-const storage = getStorage()
-
-const prepareUi = (): void => {
+const prepareUi = (storage: Storage): void => {
   const searcherRootElement = document.createElement('div')
   searcherRootElement.style.display = 'none'
   document.body.appendChild(searcherRootElement)
@@ -46,7 +45,8 @@ const prepareUi = (): void => {
 const pageMataData = classifyPage(document.URL)
 switch (pageMataData.siteId) {
   case 'esa': {
-    prepareUi()
+    const storage = createChromeStorage(pageMataData.siteId, pageMataData.teamId)
+    prepareUi(storage)
     if (pageMataData.contentKind === 'post') {
       // NOTE: カテゴリは無いこともある。
       const categoryPathItems = Array.from(document.querySelectorAll('.post-header .category-path__item'))
@@ -81,7 +81,8 @@ switch (pageMataData.siteId) {
     break
   }
   case 'kibela': {
-    prepareUi()
+    const storage = createChromeStorage(pageMataData.siteId, pageMataData.teamId)
+    prepareUi(storage)
     if (pageMataData.contentKind === 'note') {
       const titleElement = document.querySelector('#title span')
       // NOTE: .folderIndicator の中には複数要素が含まれていおり、それを textContent で強引に結合している。
