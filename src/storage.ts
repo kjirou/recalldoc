@@ -14,7 +14,7 @@ export type Storage = {
 }
 
 export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: string): Storage => {
-  const footprintsKey = `recalldoc_footprints_${siteId}_${teamId}`
+  const footprintsKey = `footprints_${siteId}_${teamId}`
   return {
     footprintsKey,
     loadFootprints: () => {
