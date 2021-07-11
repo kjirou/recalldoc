@@ -95,7 +95,6 @@ switch (pageMataData.siteId) {
         }
         updateFootprint(storage, newFootprint)
       }
-    // TODO: フォルダのトップである「すべて」へランディングすると、folder ページだと認識されないのでその後の Ajax の保存もできない。やっぱり "/notes/folder" も含めないとダメ。
     // NOTE: folder 間の画面遷移は基本的に Ajax なので、その経路でも Footprint を保存できるように工夫している。
     } else if (pageMataData.contentKind === 'folder') {
       // NOTE: folder のパンくずリストの枠である .folder-breadcrumb の中には、各パンくずである .folder-breadcrumb-item-wrapper だけが入っている。
