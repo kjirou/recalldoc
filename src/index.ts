@@ -29,6 +29,7 @@ const prepareUi = (): void => {
       const footprints = await storage.loadFootprints()
       render(
         createElement(SearcherContainer, {
+          portalDestination: document.body,
           storage,
           footprints,
           onClose: () => {

@@ -29,6 +29,7 @@ import {
 export type Props = {
   footprints: Footprint[];
   onClose: () => void;
+  portalDestination: HTMLElement,
   storage: Storage;
 }
 
@@ -117,24 +118,24 @@ export const useStorageSynchronization = (storage: Storage, footprints: Footprin
   }, [storage.saveFootprints, footprints])
 }
 
-const useShadowRoot = (): ShadowRoot | undefined => {
+const useShadowRoot = (portalDestination: Props['portalDestination']): ShadowRoot | undefined => {
   const [shadowRoot, setShadowRoot] = useState<ShadowRoot | undefined>(undefined)
   useEffect(() => {
     const shadowContainer = document.createElement('div')
-    document.body.appendChild(shadowContainer)
+    portalDestination.appendChild(shadowContainer)
     const sr = shadowContainer.attachShadow({mode: 'open'})
     setShadowRoot(sr)
     return () => {
-      document.body.removeChild(shadowContainer)
+      portalDestination.removeChild(shadowContainer)
     }
-  }, [])
+  }, [portalDestination])
   return shadowRoot
 }
 
 export const SearcherContainer: VFC<Props> = (props) => {
   const {footprints, searcherProps} = useVariables(props.footprints, props.onClose)
   useStorageSynchronization(props.storage, footprints)
-  const shadowRoot = useShadowRoot()
+  const shadowRoot = useShadowRoot(props.portalDestination)
   // NOTE: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html
   return shadowRoot ? createPortal(<Searcher {...searcherProps}/>, shadowRoot as any) : null
