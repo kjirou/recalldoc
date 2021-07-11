@@ -121,12 +121,12 @@ export const useStorageSynchronization = (storage: Storage, footprints: Footprin
 const useShadowRoot = (portalDestination: Props['portalDestination']): ShadowRoot | undefined => {
   const [shadowRoot, setShadowRoot] = useState<ShadowRoot | undefined>(undefined)
   useEffect(() => {
-    const shadowContainer = document.createElement('div')
-    portalDestination.appendChild(shadowContainer)
-    const sr = shadowContainer.attachShadow({mode: 'open'})
+    const shadowHost = document.createElement('div')
+    portalDestination.appendChild(shadowHost)
+    const sr = shadowHost.attachShadow({mode: 'open'})
     setShadowRoot(sr)
     return () => {
-      portalDestination.removeChild(shadowContainer)
+      portalDestination.removeChild(shadowHost)
     }
   }, [portalDestination])
   return shadowRoot
