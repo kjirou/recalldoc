@@ -11,22 +11,29 @@ export type Storage = {
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
 }
 
-const localStorageFootprintsKey = 'recalldoc_footprints' as const
+const chromeStorageFootprintsKey = 'recalldoc_footprints' as const
 
-  // TODO: ChromeのAPIを使うようにすべきかも。要調査。
-const localStorage: Storage = {
-  loadFootprints: async () => {
-    const rawFootprints = window.localStorage.getItem(localStorageFootprintsKey)
-    return rawFootprints ? JSON.parse(rawFootprints) : []
+const chromeStorage: Storage = {
+  loadFootprints: () => {
+    return new Promise(resolve => {
+      chrome.storage.sync.get([chromeStorageFootprintsKey], (result) => {
+        const rawFootprints = result[chromeStorageFootprintsKey]
+        resolve(rawFootprints ? JSON.parse(rawFootprints) : [])
+      })
+    })
   },
-  saveFootprints: async (footprints: Footprint[]) => {
+  saveFootprints: (footprints: Footprint[]) => {
     const serializedFootprints = JSON.stringify(footprints)
-    window.localStorage.setItem(localStorageFootprintsKey, serializedFootprints)
+    return new Promise(resolve => {
+      chrome.storage.sync.set({[chromeStorageFootprintsKey]: serializedFootprints}, () => {
+        resolve()
+      })
+    })
   },
 }
 
 export const getStorage = (): Storage => {
-  return localStorage
+  return chromeStorage
 }
 
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {
