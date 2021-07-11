@@ -78,6 +78,7 @@ if (pageMataData.siteId === 'esa') {
     }, 500)
     updateFootprintOfEsaCategory(storage, location.origin, location.hash)
   }
+// TODO: グループを含めないと URL が一意にならなかった。
 } else if (pageMataData.siteId === 'kibela') {
   const storage = createChromeStorage(pageMataData.siteId, pageMataData.teamId)
   prepareUi(storage)
