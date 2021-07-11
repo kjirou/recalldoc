@@ -109,6 +109,7 @@ const styleLiteral = `
 export const Searcher: VFC<Props> = (props) => {
   const searchFieldRef = useRef<HTMLInputElement>(null)
 
+  // TODO: onMount が変更しただけで発火する。
   useEffect(() => {
     if (searchFieldRef.current) {
       props.onMount(searchFieldRef.current)

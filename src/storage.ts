@@ -3,30 +3,37 @@ import {
 } from './reducers'
 import {
   Footprint,
+  PageMetaData,
 } from './utils'
 
 export type Storage = {
+  footprintsKey: string;
   loadFootprints: () => Promise<Footprint[]>;
   // TODO: 保存する件数に上限を設ける。
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
 }
 
-const localStorageFootprintsKey = 'recalldoc_footprints' as const
-
-  // TODO: ChromeのAPIを使うようにすべきかも。要調査。
-const localStorage: Storage = {
-  loadFootprints: async () => {
-    const rawFootprints = window.localStorage.getItem(localStorageFootprintsKey)
-    return rawFootprints ? JSON.parse(rawFootprints) : []
-  },
-  saveFootprints: async (footprints: Footprint[]) => {
-    const serializedFootprints = JSON.stringify(footprints)
-    window.localStorage.setItem(localStorageFootprintsKey, serializedFootprints)
-  },
-}
-
-export const getStorage = (): Storage => {
-  return localStorage
+export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: string): Storage => {
+  const footprintsKey = `footprints_${siteId}_${teamId}`
+  return {
+    footprintsKey,
+    loadFootprints: () => {
+      return new Promise(resolve => {
+        chrome.storage.sync.get([footprintsKey], (result) => {
+          const rawFootprints = result[footprintsKey]
+          resolve(rawFootprints ? JSON.parse(rawFootprints) : [])
+        })
+      })
+    },
+    saveFootprints: (footprints: Footprint[]) => {
+      const serializedFootprints = JSON.stringify(footprints)
+      return new Promise(resolve => {
+        chrome.storage.sync.set({[footprintsKey]: serializedFootprints}, () => {
+          resolve()
+        })
+      })
+    },
+  } as const
 }
 
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {

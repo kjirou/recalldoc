@@ -30,6 +30,7 @@ describe('useStorageSynchronization', () => {
 
   beforeEach(() => {
     storage = {
+      footprintsKey: 'key',
       loadFootprints: jest.fn(),
       saveFootprints: jest.fn(),
     }
@@ -78,6 +79,7 @@ describe('SearcherContainer', () => {
   beforeEach(() => {
     defaultProps = {
       storage: {
+        footprintsKey: 'key',
         loadFootprints: jest.fn().mockResolvedValue([]),
         saveFootprints: jest.fn().mockResolvedValue(undefined),
       },
