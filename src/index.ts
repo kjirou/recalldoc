@@ -59,6 +59,7 @@ switch (pageMataData.siteId) {
         }
         updateFootprint(storage, newFootprint)
       }
+    // TODO: トップページへランディングしてから左のカテゴリ操作の時に履歴が保存できていない。
     // NOTE: category 間の画面遷移は基本的に Ajax なので、その経路でも Footprint を保存できるように工夫している。
     } else if (pageMataData.contentKind === 'category') {
       // NOTE: 監視対象の DOM が存在しないことがある。一方で、その時に #js_autopagerize_content は存在するので、おそらくその中を非同期で描画している。
