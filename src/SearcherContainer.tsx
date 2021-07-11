@@ -123,7 +123,10 @@ export const useStorageSynchronization = (storage: Storage, footprints: Footprin
   }, [storage.saveFootprints, footprints])
 }
 
-const usePortalRoot = (
+/**
+ * @todo 正常系のテストしか書いていない。引数が変わった時の処理が危ない。
+ */
+export const usePortalRoot = (
   portalDestination: Props['portalDestination'],
   enableShadowDom: Props['enableShadowDom'],
 ): HTMLDivElement | ShadowRoot | undefined => {

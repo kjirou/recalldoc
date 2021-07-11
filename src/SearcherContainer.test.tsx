@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event'
 import {
   Props,
   SearcherContainer,
+  usePortalRoot,
   useStorageSynchronization,
 } from './SearcherContainer'
 import {
@@ -46,6 +47,28 @@ describe('useStorageSynchronization', () => {
     const newFootprints: Footprint[] = [{title: '', url: ''}]
     rerender({storage, footprints: newFootprints})
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('usePortalRoot', () => {
+  const renderUsePortalRoot = (...args: Parameters<typeof usePortalRoot>) => {
+    return renderHook(
+      ({portalDestination, enableShadowDom}) => usePortalRoot(portalDestination, enableShadowDom),
+      {initialProps: {portalDestination: args[0], enableShadowDom: args[1]}},
+    )
+  }
+
+  test('it returns a ShadowRoot when `enableShadowDom` is true', () => {
+    const portalDestination = document.createElement('div')
+    const enableShadowDom = true
+    const {result} = renderUsePortalRoot(portalDestination, enableShadowDom)
+    expect(result.current).toBeInstanceOf(ShadowRoot)
+  })
+  test('it returns a HTMLDivElement when `enableShadowDom` is false', () => {
+    const portalDestination = document.createElement('div')
+    const enableShadowDom = false
+    const {result} = renderUsePortalRoot(portalDestination, enableShadowDom)
+    expect(result.current).toBeInstanceOf(HTMLDivElement)
   })
 })
 
