@@ -95,7 +95,7 @@ const styleLiteral = `
   .searcher__itemListItem > :last-child > button {
     font-size: 12px;
   }
-  .pageCover {
+  .backdrop {
     position: absolute;
     top: 0;
     left: 0;
@@ -160,7 +160,7 @@ export const Searcher: VFC<Props> = (props) => {
       }
     </div>
     <div
-      className="pageCover"
+      className="backdrop"
       data-testid="recalldoc-searcher-backdrop"
       onClick={props.onClickPageCover}
     />
