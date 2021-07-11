@@ -27,8 +27,14 @@ import {
 } from './utils'
 
 export type Props = {
+  /**
+   * 描画先を Shadow DOM にするか。Shadow DOM を介すとテストが動かないので追加した。
+   * @see https://github.com/kjirou/recalldoc/pull/29
+   */
+  enableShadowDom: boolean,
   footprints: Footprint[];
   onClose: () => void;
+  portalDestination: HTMLElement,
   storage: Storage;
 }
 
@@ -117,25 +123,44 @@ export const useStorageSynchronization = (storage: Storage, footprints: Footprin
   }, [storage.saveFootprints, footprints])
 }
 
-const useShadowRoot = (): ShadowRoot | undefined => {
-  const [shadowRoot, setShadowRoot] = useState<ShadowRoot | undefined>(undefined)
+/**
+ * @todo 正常系のテストしか書いていない。引数が変わった時の処理が危ない。
+ */
+export const usePortalRoot = (
+  portalDestination: Props['portalDestination'],
+  enableShadowDom: Props['enableShadowDom'],
+): HTMLDivElement | ShadowRoot | undefined => {
+  const shadowHostRef = useRef<HTMLDivElement | undefined>(undefined)
+  const [portalRoot, setPortalRoot] = useState<HTMLDivElement | ShadowRoot | undefined>(undefined)
   useEffect(() => {
-    const shadowContainer = document.createElement('div')
-    document.body.appendChild(shadowContainer)
-    const sr = shadowContainer.attachShadow({mode: 'open'})
-    setShadowRoot(sr)
-    return () => {
-      document.body.removeChild(shadowContainer)
+    if (shadowHostRef.current) {
+      portalDestination.removeChild(shadowHostRef.current)
+      shadowHostRef.current = undefined
     }
-  }, [])
-  return shadowRoot
+    if (!shadowHostRef.current) {
+      shadowHostRef.current = document.createElement('div')
+      portalDestination.appendChild(shadowHostRef.current)
+      if (enableShadowDom) {
+        const shadowRoot = shadowHostRef.current.attachShadow({mode: 'open'})
+        setPortalRoot(shadowRoot)
+      } else {
+        setPortalRoot(shadowHostRef.current)
+      }
+    }
+    return () => {
+      if (shadowHostRef.current) {
+        portalDestination.removeChild(shadowHostRef.current)
+      }
+    }
+  }, [portalDestination, enableShadowDom])
+  return portalRoot
 }
 
 export const SearcherContainer: VFC<Props> = (props) => {
   const {footprints, searcherProps} = useVariables(props.footprints, props.onClose)
   useStorageSynchronization(props.storage, footprints)
-  const shadowRoot = useShadowRoot()
-  // NOTE: 少なくとも @types/react は createPortal の引数に shadowRoot を許容していない。
+  const portalRoot = usePortalRoot(props.portalDestination, props.enableShadowDom)
+  // NOTE: 少なくとも @types/react は createPortal の引数に ShadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html
-  return shadowRoot ? createPortal(<Searcher {...searcherProps}/>, shadowRoot as any) : null
+  return portalRoot ? createPortal(<Searcher {...searcherProps}/>, portalRoot as any) : null
 }
