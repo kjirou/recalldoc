@@ -3,7 +3,7 @@ export type PageMetaData = {
   siteId: 'esa';
   teamId: string;
 } | {
-  contentKind: 'folder' | 'note' | 'unknown';
+  contentKind: 'folderOthers' | 'folderTop' | 'note' | 'unknown';
   siteId: 'kibela';
   teamId: string;
 } | {
@@ -41,9 +41,11 @@ export const classifyPage = (url: string): PageMetaData => {
       teamId: host.replace(/\.kibe\.la$/, ''),
       contentKind: /^\/notes\/\d+$/.test(pathname)
         ? 'note'
-        : /^\/notes\/folder(\/|$)/.test(pathname)
-          ? 'folder'
-          : 'unknown'
+        : pathname === '/notes/folder'
+          ? 'folderTop'
+          : pathname.startsWith('/notes/folder/')
+            ? 'folderOthers'
+            : 'unknown'
     }
   } else {
     return {
