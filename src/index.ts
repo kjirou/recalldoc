@@ -30,6 +30,7 @@ const prepareUi = (): void => {
       render(
         createElement(SearcherContainer, {
           portalDestination: document.body,
+          enableShadowDom: true,
           storage,
           footprints,
           onClose: () => {
