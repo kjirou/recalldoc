@@ -122,6 +122,7 @@ export const Searcher: VFC<Props> = (props) => {
         <input
           className="searcher__searchQuery"
           ref={searchFieldRef}
+          data-testid="recalldoc-searcher-input"
           placeholder="キーワード検索"
           onInput={event => {
             props.onInput(event.currentTarget.value, () => event.stopPropagation())
@@ -160,6 +161,7 @@ export const Searcher: VFC<Props> = (props) => {
     </div>
     <div
       className="pageCover"
+      data-testid="recalldoc-searcher-backdrop"
       onClick={props.onClickPageCover}
     />
   </>
