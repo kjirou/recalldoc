@@ -9,7 +9,9 @@ import {
 export type Storage = {
   footprintsKey: string;
   loadFootprints: () => Promise<Footprint[]>;
-  // TODO: 保存する件数に上限を設ける。
+  /**
+   * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
+   */
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
 }
 
@@ -19,16 +21,17 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
     footprintsKey,
     loadFootprints: () => {
       return new Promise(resolve => {
-        chrome.storage.sync.get([footprintsKey], (result) => {
+        chrome.storage.local.get([footprintsKey], (result) => {
           const rawFootprints = result[footprintsKey]
           resolve(rawFootprints ? JSON.parse(rawFootprints) : [])
         })
       })
     },
     saveFootprints: (footprints: Footprint[]) => {
+      // TODO: chrome.storage.local の最大容量（5mb）を超えたときのことを考慮する。 
       const serializedFootprints = JSON.stringify(footprints)
       return new Promise(resolve => {
-        chrome.storage.sync.set({[footprintsKey]: serializedFootprints}, () => {
+        chrome.storage.local.set({[footprintsKey]: serializedFootprints}, () => {
           resolve()
         })
       })
