@@ -2,7 +2,7 @@ import {
   Footprint,
 } from './utils'
 
-const maxFootprints = 1000 as const
+const maxFootprints = 10000 as const
 
 /**
  * Footprintを追加または更新する。識別子はURL。

@@ -51,15 +51,15 @@ describe('updateFootprint', () => {
   test.each(table)('$name', ({footprints, newFootprint, expected}) => {
     expect(updateFootprint(newFootprint)(footprints)).toStrictEqual(expected)
   })
-  test('it returns up to 1000', () => {
-    const footprints1000: Footprint[] = []
-    for (let i = 0; i < 1000; i++) {
-      footprints1000.push({
+  test('it returns up to 10000', () => {
+    const footprints10001: Footprint[] = []
+    for (let i = 0; i < 10001; i++) {
+      footprints10001.push({
         title: '',
         url: `https://example.com/${i}`,
       })
     }
-    expect(footprints1000).toHaveLength(1000)
-    expect(updateFootprint({title: '', url: 'https://not-example.com'})(footprints1000)).toHaveLength(1000)
+    expect(footprints10001).toHaveLength(10001)
+    expect(updateFootprint({title: '', url: 'https://not-example.com'})(footprints10001)).toHaveLength(10000)
   })
 })
