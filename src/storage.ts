@@ -21,7 +21,7 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
     footprintsKey,
     loadFootprints: () => {
       return new Promise(resolve => {
-        chrome.storage.sync.get([footprintsKey], (result) => {
+        chrome.storage.local.get([footprintsKey], (result) => {
           const rawFootprints = result[footprintsKey]
           resolve(rawFootprints ? JSON.parse(rawFootprints) : [])
         })
@@ -30,7 +30,7 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
     saveFootprints: (footprints: Footprint[]) => {
       const serializedFootprints = JSON.stringify(footprints)
       return new Promise(resolve => {
-        chrome.storage.sync.set({[footprintsKey]: serializedFootprints}, () => {
+        chrome.storage.local.set({[footprintsKey]: serializedFootprints}, () => {
           resolve()
         })
       })
