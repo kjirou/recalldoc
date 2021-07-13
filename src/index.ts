@@ -58,16 +58,19 @@ if (pageMataData.siteId === 'esa') {
       }
       updateFootprint(storage, newFootprint)
     }
-  // TODO: トップページへランディングしてから左のカテゴリ操作の時に履歴が保存できていない。
   // NOTE: category 間の画面遷移は基本的に Ajax なので、その経路でも Footprint を保存できるように工夫している。
-  } else if (pageMataData.contentKind === 'category') {
+  } else if (pageMataData.contentKind === 'top' || pageMataData.contentKind === 'category') {
     // NOTE: 監視対象の DOM が存在しないことがある。一方で、その時に #js_autopagerize_content は存在するので、おそらくその中を非同期で描画している。
     // TODO: 非同期の描画を待つ対応が雑。
     setTimeout(() => {
-      const categoryPageObserverTarget = document.querySelector('.category-heading .category-path')
+      const categoryPageObserverTarget = document.querySelector('#js_autopagerize_content')
       if (categoryPageObserverTarget) {
         const mo = new MutationObserver((mutations, observer) => {
-          updateFootprintOfEsaCategory(storage, location.origin, location.hash)
+          // NOTE: top ページから左ナビを操作して category ページへ遷移したときに、遷移先を保存している。
+          const currentPageMataData = classifyPage(location.href)
+          if (currentPageMataData.siteId === 'esa' && currentPageMataData.contentKind === 'category') {
+            updateFootprintOfEsaCategory(storage, location.origin, location.hash)
+          }
         })
         mo.observe(categoryPageObserverTarget, {
           characterData: true,
@@ -76,7 +79,9 @@ if (pageMataData.siteId === 'esa') {
         })
       }
     }, 500)
-    updateFootprintOfEsaCategory(storage, location.origin, location.hash)
+    if (pageMataData.contentKind === 'category') {
+      updateFootprintOfEsaCategory(storage, location.origin, location.hash)
+    }
   }
 // TODO: グループを含めないと URL が一意にならなかった。
 } else if (pageMataData.siteId === 'kibela') {

@@ -1,5 +1,5 @@
 export type PageMetaData = {
-  contentKind: 'category' | 'post' | 'unknown';
+  contentKind: 'category' | 'post' | 'unknown' | 'top';
   siteId: 'esa';
   teamId: string;
 } | {
@@ -37,10 +37,12 @@ export const classifyPage = (url: string): PageMetaData => {
       siteId: 'esa',
       teamId: host.replace(/\.esa\.io$/, ''),
       contentKind: /^\/posts\/\d+$/.test(pathname)
-        ? 'post'
-        : pathname === '/' && hash.startsWith('#path=')
-          ? 'category'
-          : 'unknown'
+          ? 'post'
+          : pathname === '/' && hash.startsWith('#path=')
+            ? 'category'
+            : pathname === '/' && hash === ''
+              ? 'top'
+              : 'unknown'
     }
   } else if (host.endsWith('.kibe.la')) {
     return {

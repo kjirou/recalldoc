@@ -47,6 +47,10 @@ describe('classifyPage', () => {
       expected: {siteId: 'esa', contentKind: 'category', teamId: 'foo'},
     },
     {
+      url: 'https://foo.esa.io/',
+      expected: {siteId: 'esa', contentKind: 'top', teamId: 'foo'},
+    },
+    {
       url: 'https://foo.esa.io/posts/123/edit',
       expected: {siteId: 'esa', contentKind: 'unknown', teamId: 'foo'},
     },
