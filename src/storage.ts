@@ -51,11 +51,14 @@ export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, h
   return updateFootprint(storage, newFootprint)
 }
 
-export const updateFootprintOfKibelaFolder = (storage: Storage, origin: string, pathname: string): Promise<void> => {
-  const folder = decodeURIComponent(pathname.replace(/^\/notes\/folder\//, ''))
+export const updateFootprintOfKibelaFolder = (storage: Storage, url: string): Promise<void> => {
+  const urlObj = new URL(url)
+  const folder = decodeURIComponent(urlObj.pathname.replace(/^\/notes\/folder\//, ''))
+  const groupId = urlObj.searchParams.get('group_id')
+  const queryString = groupId ? `?group_id=${encodeURIComponent(groupId)}` : ''
   const newFootprint: Footprint = {
     title: folder,
-    url: origin + pathname,
+    url: urlObj.origin + urlObj.pathname + queryString,
   }
   return updateFootprint(storage, newFootprint)
 }

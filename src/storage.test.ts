@@ -61,8 +61,7 @@ describe('updateFootprintOfKibelaFolder', () => {
 
   const table: {
     args: {
-      origin: UpdateFootprintOfKibelaFolderParameters[1];
-      pathname: UpdateFootprintOfKibelaFolderParameters[2];
+      url: UpdateFootprintOfKibelaFolderParameters[1];
     },
     name: string,
     expected: Footprint[],
@@ -70,17 +69,26 @@ describe('updateFootprintOfKibelaFolder', () => {
     {
       name: 'it works',
       args: {
-        origin: 'https://nowhere.kibe.la',
-        pathname: '/notes/folder/foo/%E3%81%B0%E3%83%BC',
+        url: 'https://nowhere.kibe.la/notes/folder/foo/%E3%81%B0%E3%83%BC',
       },
       expected: [{
         title: 'foo/ばー',
         url: 'https://nowhere.kibe.la/notes/folder/foo/%E3%81%B0%E3%83%BC',
       }],
     },
+    {
+      name: 'it appends "group_id" param to url when the passed url includes it',
+      args: {
+        url: 'https://nowhere.kibe.la/notes/folder/foo?group_id=2&order_by=title',
+      },
+      expected: [{
+        title: 'foo',
+        url: 'https://nowhere.kibe.la/notes/folder/foo?group_id=2',
+      }],
+    },
   ]
   test.each(table)('$name', async ({args, expected}) => {
-    await updateFootprintOfKibelaFolder(storage, args.origin, args.pathname)
+    await updateFootprintOfKibelaFolder(storage, args.url)
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
     expect(storage.saveFootprints).toHaveBeenCalledWith(expected)
   })

@@ -11,7 +11,14 @@ export type PageMetaData = {
 }
 
 export type Footprint = {
+  /**
+   * 画面のタイトル。Searcher の選択肢の表示名になる。
+   * Kibela の folder のときは、グループを横断した重複は可能なので一意にならない。
+   */
   title: string;
+  /**
+   * 画面の URL。一意。
+   */
   url: string;
 }
 

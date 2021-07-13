@@ -106,7 +106,7 @@ if (pageMataData.siteId === 'esa') {
           //       また、既存 UI に遷移元がたくさんあるので、困らないはず。
           const currentPageMataData = classifyPage(location.href)
           if (currentPageMataData.siteId === 'kibela' && currentPageMataData.contentKind === 'folderOthers') {
-            updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
+            updateFootprintOfKibelaFolder(storage, location.href)
           }
         }, 500)
       })
@@ -117,7 +117,7 @@ if (pageMataData.siteId === 'esa') {
       })
     }
     if (pageMataData.contentKind === 'folderOthers') {
-      updateFootprintOfKibelaFolder(storage, location.origin, location.pathname)
+      updateFootprintOfKibelaFolder(storage, location.href)
     }
   }
 }
