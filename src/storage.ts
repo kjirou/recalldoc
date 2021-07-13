@@ -9,7 +9,9 @@ import {
 export type Storage = {
   footprintsKey: string;
   loadFootprints: () => Promise<Footprint[]>;
-  // TODO: 保存する件数に上限を設ける。
+  /**
+   * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
+   */
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
 }
 
