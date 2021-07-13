@@ -28,6 +28,7 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
       })
     },
     saveFootprints: (footprints: Footprint[]) => {
+      // TODO: chrome.storage.local の最大容量（5mb）を超えたときのことを考慮する。 
       const serializedFootprints = JSON.stringify(footprints)
       return new Promise(resolve => {
         chrome.storage.local.set({[footprintsKey]: serializedFootprints}, () => {
