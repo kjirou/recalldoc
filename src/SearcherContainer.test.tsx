@@ -1,8 +1,8 @@
 import {
-  getByText,
   render,
 } from '@testing-library/react'
 import {
+  act,
   renderHook,
 } from '@testing-library/react-hooks'
 import userEvent from '@testing-library/user-event'
@@ -11,6 +11,7 @@ import {
   SearcherContainer,
   usePortalRoot,
   useStorageSynchronization,
+  useVariables,
 } from './SearcherContainer'
 import {
   Footprint,
@@ -18,6 +19,28 @@ import {
 import {
   Storage,
 } from './storage'
+
+describe('useVariables', () => {
+  const renderUseVariables = (...args: Parameters<typeof useVariables>) => {
+    return renderHook(
+      (args) => useVariables(...args),
+      {initialProps: args},
+    )
+  }
+
+  describe('searcherProps', () => {
+    describe('enableRomajiSearch, onChangeButtonOfRomajiSearch', () => {
+      test('it works', () => {
+        const {result} = renderUseVariables([], () => {})
+        expect(result.current.searcherProps.enableRomajiSearch).toBe(false)
+        act(() => {
+          result.current.searcherProps.onChangeButtonOfRomajiSearch(true)
+        })
+        expect(result.current.searcherProps.enableRomajiSearch).toBe(true)
+      })
+    })
+  })
+})
 
 describe('useStorageSynchronization', () => {
   const renderUseStorageSynchronization = (...args: Parameters<typeof useStorageSynchronization>) => {

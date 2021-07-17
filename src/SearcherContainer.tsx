@@ -38,7 +38,7 @@ export type Props = {
   storage: Storage;
 }
 
-const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
+export const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
   footprints: Footprint[];
   searcherProps: SearcherProps;
 } => {
@@ -47,6 +47,8 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
   const [cursoredIndex, setCursoredIndex] = useState(defaultCursoredIndex)
   const [inputValue, setInputValue] = useState('')
+  // TODO: 設定値を永続化
+  const [enableRomajiSearch, setEnableRomajiSearch] = useState(false)
 
   const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
   const displayableFootprints = searchedFootprints.slice(0, 10)
@@ -85,6 +87,9 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       throw new Error('The deleted footprint must exist in searched footprints.')
     }
   }, [displayableFootprints])
+  const onChangeButtonOfRomajiSearch = useCallback<SearcherProps['onChangeButtonOfRomajiSearch']>((checked) => {
+    setEnableRomajiSearch(checked)
+  }, [])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
@@ -97,9 +102,11 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       ...footprint,
       highlighted: footprint === cursoredFootprint,
     })),
+    enableRomajiSearch,
     onInput,
     onKeyDown,
     onClickDeleteButton,
+    onChangeButtonOfRomajiSearch,
     onClickPageCover,
     onMount,
     totalCount: searchedFootprints.length,
