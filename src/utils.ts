@@ -67,10 +67,20 @@ export const splitSearchQueryIntoMultipulKeywords = (query: string): string[] =>
   return query.split(/[ \u3000]+/).filter(e => e !== '')
 }
 
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
+ */
+const escapeRegExp = (str: string): string => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 export const searchFootprints = (footprints: Footprint[], searchQuery: string): Footprint[] => {
-  const keywords = splitSearchQueryIntoMultipulKeywords(searchQuery)
+  const keywordMatchers = splitSearchQueryIntoMultipulKeywords(searchQuery)
+    .map(e => new RegExp(escapeRegExp(e), 'i'))
+  if (keywordMatchers.length === 0) {
+    return footprints
+  }
   return footprints.filter(footprint => {
-    const upperCasedTitle = footprint.title.toUpperCase()
-    return keywords.length === 0 || keywords.some(keyword => upperCasedTitle.includes(keyword.toUpperCase()))
+    return keywordMatchers.some(e => e.test(footprint.title))
   })
 }

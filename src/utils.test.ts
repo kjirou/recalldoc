@@ -149,6 +149,18 @@ describe('searchFootprints', () => {
       searchQuery: '',
       expected: createFootprints('foo', 'bar', 'baz'),
     },
+    {
+      name: 'it does not throw any regexp syntax errors',
+      footprints: createFootprints('a.*+?^${}()|[]/b', 'cd'),
+      searchQuery: '.*+?^${}()|[]/',
+      expected: createFootprints('a.*+?^${}()|[]/b'),
+    },
+    {
+      name: 'it does not use dots as any single character',
+      footprints: createFootprints('a', '.', 'A'),
+      searchQuery: '.',
+      expected: createFootprints('.'),
+    },
   ]
   test.each(table)(`$name`, ({footprints, searchQuery, expected}) => {
     expect(searchFootprints(footprints, searchQuery)).toStrictEqual(expected)
