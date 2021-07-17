@@ -45,8 +45,8 @@ describe('useVariables', () => {
 describe('useStorageSynchronization', () => {
   const renderUseStorageSynchronization = (...args: Parameters<typeof useStorageSynchronization>) => {
     return renderHook(
-      ({storage, footprints}) => useStorageSynchronization(storage, footprints),
-      {initialProps: {storage: args[0], footprints: args[1]}},
+      (args) => useStorageSynchronization(...args),
+      {initialProps: args},
     )
   }
   let storage: Storage
@@ -62,14 +62,14 @@ describe('useStorageSynchronization', () => {
   test('it does not call saveFootprints when footprints is the same', () => {
     const footprints: Footprint[] = []
     const {rerender} = renderUseStorageSynchronization(storage, footprints)
-    rerender({storage, footprints})
+    rerender([storage, footprints])
     expect(storage.saveFootprints).not.toHaveBeenCalled()
   })
   test('it calls saveFootprints when footprints is different', () => {
     const footprints: Footprint[] = []
     const {rerender} = renderUseStorageSynchronization(storage, footprints)
     const newFootprints: Footprint[] = [{title: '', url: ''}]
-    rerender({storage, footprints: newFootprints})
+    rerender([storage, newFootprints])
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
   })
 })
@@ -77,8 +77,8 @@ describe('useStorageSynchronization', () => {
 describe('usePortalRoot', () => {
   const renderUsePortalRoot = (...args: Parameters<typeof usePortalRoot>) => {
     return renderHook(
-      ({portalDestination, enableShadowDom}) => usePortalRoot(portalDestination, enableShadowDom),
-      {initialProps: {portalDestination: args[0], enableShadowDom: args[1]}},
+      (args) => usePortalRoot(...args),
+      {initialProps: args},
     )
   }
 
