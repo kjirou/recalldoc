@@ -14,6 +14,7 @@ import {
   useVariables,
 } from './SearcherContainer'
 import {
+  Config,
   Footprint,
   createDefaultConfig,
 } from './utils'
@@ -32,7 +33,7 @@ describe('useVariables', () => {
   describe('searcherProps', () => {
     describe('enableRomajiSearch, onChangeButtonOfRomajiSearch', () => {
       test('it works', () => {
-        const {result} = renderUseVariables([], () => {})
+        const {result} = renderUseVariables(createDefaultConfig(), [], () => {})
         expect(result.current.searcherProps.enableRomajiSearch).toBe(false)
         act(() => {
           result.current.searcherProps.onChangeButtonOfRomajiSearch(true)
@@ -62,17 +63,30 @@ describe('useStorageSynchronization', () => {
     }
   })
 
-  test('it does not call saveFootprints when footprints is the same', () => {
+  test('it does not call save methods when all args are the same', () => {
+    const config = createDefaultConfig()
     const footprints: Footprint[] = []
-    const {rerender} = renderUseStorageSynchronization(storage, footprints)
-    rerender([storage, footprints])
+    const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
+    rerender([storage, config, footprints])
+    expect(storage.saveConfig).not.toHaveBeenCalled()
     expect(storage.saveFootprints).not.toHaveBeenCalled()
   })
-  test('it calls saveFootprints when footprints is different', () => {
+  test('it calls save methods when `config` is different', () => {
+    const config = createDefaultConfig()
     const footprints: Footprint[] = []
-    const {rerender} = renderUseStorageSynchronization(storage, footprints)
+    const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
+    const newConfig: Config = {...config, enableRomajiSearch: true}
+    rerender([storage, newConfig, footprints])
+    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
+    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
+  })
+  test('it calls save methods when `footprints` is different', () => {
+    const config = createDefaultConfig()
+    const footprints: Footprint[] = []
+    const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newFootprints: Footprint[] = [{title: '', url: ''}]
-    rerender([storage, newFootprints])
+    rerender([storage, config, newFootprints])
+    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
   })
 })
@@ -111,6 +125,7 @@ describe('SearcherContainer', () => {
         loadFootprints: jest.fn().mockResolvedValue([]),
         saveFootprints: jest.fn().mockResolvedValue(undefined),
       },
+      config: createDefaultConfig(),
       footprints: [],
       portalDestination: document.createElement('div'),
       enableShadowDom: false,
