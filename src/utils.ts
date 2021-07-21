@@ -1,3 +1,7 @@
+export type Config = {
+  enableRomajiSearch: boolean;
+}
+
 export type PageMetaData = {
   contentKind: 'category' | 'post' | 'unknown' | 'top';
   siteId: 'esa';
@@ -23,6 +27,12 @@ export type Footprint = {
 }
 
 type RomajiDictionaryItem = readonly [string, string, string]
+
+export const createDefaultConfig = (): Config => {
+  return {
+    enableRomajiSearch: false,
+  }
+}
 
 /**
  * 整数を配列の要素番号へ変換する。

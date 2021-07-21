@@ -2,23 +2,45 @@ import {
   updateFootprint as updateFootprintReducer,
 } from './reducers'
 import {
+  Config,
   Footprint,
   PageMetaData,
+  createDefaultConfig,
 } from './utils'
 
 export type Storage = {
   footprintsKey: string;
+  loadConfig: () => Promise<Config>;
   loadFootprints: () => Promise<Footprint[]>;
+  saveConfig: (config: Config) => Promise<void>;
   /**
    * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
    */
   saveFootprints: (footprints: Footprint[]) => Promise<void>;
 }
 
+const configKey = 'config' as const
+
 export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: string): Storage => {
   const footprintsKey = `footprints_${siteId}_${teamId}`
   return {
     footprintsKey,
+    loadConfig: () => {
+      return new Promise(resolve => {
+        chrome.storage.local.get([configKey], (result) => {
+          const rawConfig = result[configKey]
+          resolve(rawConfig ? JSON.parse(rawConfig) : createDefaultConfig())
+        })
+      })
+    },
+    saveConfig: (config: Config) => {
+      const serializedConfig = JSON.stringify(config)
+      return new Promise(resolve => {
+        chrome.storage.local.set({[configKey]: serializedConfig}, () => {
+          resolve()
+        })
+      })
+    },
     loadFootprints: () => {
       return new Promise(resolve => {
         chrome.storage.local.get([footprintsKey], (result) => {

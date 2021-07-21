@@ -15,6 +15,7 @@ import {
 } from './SearcherContainer'
 import {
   Footprint,
+  createDefaultConfig,
 } from './utils'
 import {
   Storage,
@@ -54,6 +55,8 @@ describe('useStorageSynchronization', () => {
   beforeEach(() => {
     storage = {
       footprintsKey: 'key',
+      loadConfig: jest.fn().mockResolvedValue(createDefaultConfig()),
+      saveConfig: jest.fn().mockResolvedValue(undefined),
       loadFootprints: jest.fn(),
       saveFootprints: jest.fn(),
     }
@@ -103,6 +106,8 @@ describe('SearcherContainer', () => {
     defaultProps = {
       storage: {
         footprintsKey: 'key',
+        loadConfig: jest.fn().mockResolvedValue(createDefaultConfig()),
+        saveConfig: jest.fn().mockResolvedValue(undefined),
         loadFootprints: jest.fn().mockResolvedValue([]),
         saveFootprints: jest.fn().mockResolvedValue(undefined),
       },
