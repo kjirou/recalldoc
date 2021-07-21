@@ -90,7 +90,7 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
       throw new Error('The deleted footprint must exist in searched footprints.')
     }
   }, [displayableFootprints])
-  const onChangeButtonOfRomajiSearch = useCallback<SearcherProps['onChangeButtonOfRomajiSearch']>((checked) => {
+  const onChangeCheckboxOfRomajiSearch = useCallback<SearcherProps['onChangeCheckboxOfRomajiSearch']>((checked) => {
     // TODO: この時にも検索する。
     setConfig(s => ({
       ...s,
@@ -113,7 +113,7 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
     onInput,
     onKeyDown,
     onClickDeleteButton,
-    onChangeButtonOfRomajiSearch,
+    onChangeCheckboxOfRomajiSearch,
     onClickPageCover,
     onMount,
     totalCount: searchedFootprints.length,
