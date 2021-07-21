@@ -31,12 +31,12 @@ describe('useVariables', () => {
   }
 
   describe('searcherProps', () => {
-    describe('enableRomajiSearch, onChangeButtonOfRomajiSearch', () => {
+    describe('enableRomajiSearch, onChangeCheckboxOfRomajiSearch', () => {
       test('it works', () => {
         const {result} = renderUseVariables(createDefaultConfig(), [], () => {})
         expect(result.current.searcherProps.enableRomajiSearch).toBe(false)
         act(() => {
-          result.current.searcherProps.onChangeButtonOfRomajiSearch(true)
+          result.current.searcherProps.onChangeCheckboxOfRomajiSearch(true)
         })
         expect(result.current.searcherProps.enableRomajiSearch).toBe(true)
       })

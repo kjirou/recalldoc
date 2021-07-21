@@ -48,12 +48,12 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
 } => {
   const defaultCursoredIndex = 0
 
+  const [config, setConfig] = useState<Config>(initialConfig)
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
   const [cursoredIndex, setCursoredIndex] = useState(defaultCursoredIndex)
   const [inputValue, setInputValue] = useState('')
-  const [config, setConfig] = useState<Config>(initialConfig)
 
-  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue, config.enableRomajiSearch), [footprints, inputValue])
+  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue, config.enableRomajiSearch), [config, footprints, inputValue])
   const displayableFootprints = searchedFootprints.slice(0, 10)
   const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
@@ -72,7 +72,6 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
       setCursoredIndex(s => s + 1)
     } else if (key === 'Enter' && !isComposing) {
       preventDefault()
-      // TODO: 画面遷移処理は useEffect へ移動する。
       if (cursoredFootprint) {
         window.location.href = cursoredFootprint.url
       }
@@ -90,8 +89,7 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
       throw new Error('The deleted footprint must exist in searched footprints.')
     }
   }, [displayableFootprints])
-  const onChangeButtonOfRomajiSearch = useCallback<SearcherProps['onChangeButtonOfRomajiSearch']>((checked) => {
-    // TODO: この時にも検索する。
+  const onChangeCheckboxOfRomajiSearch = useCallback<SearcherProps['onChangeCheckboxOfRomajiSearch']>((checked) => {
     setConfig(s => ({
       ...s,
       enableRomajiSearch: checked,
@@ -113,7 +111,7 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
     onInput,
     onKeyDown,
     onClickDeleteButton,
-    onChangeButtonOfRomajiSearch,
+    onChangeCheckboxOfRomajiSearch,
     onClickPageCover,
     onMount,
     totalCount: searchedFootprints.length,

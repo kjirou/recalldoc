@@ -18,7 +18,7 @@ export type FootprintProps = {
 export type Props = {
   enableRomajiSearch: boolean,
   footprints: FootprintProps[];
-  onChangeButtonOfRomajiSearch: (checked: boolean) => void;
+  onChangeCheckboxOfRomajiSearch: (checked: boolean) => void;
   onClickDeleteButton: (url: FootprintProps['url']) => void;
   onClickPageCover: () => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
@@ -154,7 +154,7 @@ export const Searcher: VFC<Props> = (props) => {
             id="recalldoc_romaji_search"
             checked={props.enableRomajiSearch}
             onChange={(event) => {
-              props.onChangeButtonOfRomajiSearch(event.target.checked)
+              props.onChangeCheckboxOfRomajiSearch(event.target.checked)
             }}
           />
           <label htmlFor="recalldoc_romaji_search">ローマ字検索</label>
