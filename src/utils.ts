@@ -366,9 +366,15 @@ export const createRomajiSearchRegexp = (keyword: string): string => {
   return result
 }
 
-export const searchFootprints = (footprints: Footprint[], searchQuery: string): Footprint[] => {
+export const searchFootprints = (footprints: Footprint[], searchQuery: string, enableRomajiSearch: boolean): Footprint[] => {
   const keywordMatchers = splitSearchQueryIntoMultipulKeywords(searchQuery)
-    .map(e => new RegExp(escapeRegExp(e), 'i'))
+    .map(keyword => {
+      if (enableRomajiSearch) {
+        return new RegExp(createRomajiSearchRegexp(keyword), 'i')
+      } else {
+        return new RegExp(escapeRegExp(keyword), 'i')
+      }
+    })
   if (keywordMatchers.length === 0) {
     return footprints
   }

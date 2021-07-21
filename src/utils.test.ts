@@ -190,43 +190,66 @@ describe('searchFootprints', () => {
     return titles.map(title => ({title, url: ''}))
   }
   const table: {
-    expected: Footprint[],
-    footprints: Footprint[],
+    args: Parameters<typeof searchFootprints>,
+    expected: ReturnType<typeof searchFootprints>,
     name: string,
-    searchQuery: string,
   }[] = [
     {
       name: 'it searches by partial match',
-      footprints: createFootprints('foox', 'bar', 'baz'),
-      searchQuery: 'ba',
+      args: [
+        createFootprints('foox', 'bar', 'baz'),
+        'ba',
+        false,
+      ],
       expected: createFootprints('bar', 'baz'),
     },
     {
       name: 'it searches by case insensitive',
-      footprints: createFootprints('abc', 'ABC'),
-      searchQuery: 'AbC',
+      args: [
+        createFootprints('abc', 'ABC'),
+        'AbC',
+        false,
+      ],
       expected: createFootprints('abc', 'ABC'),
     },
     {
       name: 'it returns all footprints when the search query is empty',
-      footprints: createFootprints('foo', 'bar', 'baz'),
-      searchQuery: '',
+      args: [
+        createFootprints('foo', 'bar', 'baz'),
+        '',
+        false,
+      ],
       expected: createFootprints('foo', 'bar', 'baz'),
     },
     {
       name: 'it does not throw any regexp syntax errors',
-      footprints: createFootprints('a.*+?^${}()|[]/b', 'cd'),
-      searchQuery: '.*+?^${}()|[]/',
+      args: [
+        createFootprints('a.*+?^${}()|[]/b', 'cd'),
+        '.*+?^${}()|[]/',
+        false,
+      ],
       expected: createFootprints('a.*+?^${}()|[]/b'),
     },
     {
       name: 'it does not use dots as any single character',
-      footprints: createFootprints('a', '.', 'A'),
-      searchQuery: '.',
+      args: [
+        createFootprints('a', '.', 'A'),
+        '.',
+        false,
+      ],
       expected: createFootprints('.'),
     },
+    {
+      name: 'it can search as romaji',
+      args: [
+        createFootprints('nyan', 'にゃん', 'ニャン', 'にゃーん'),
+        'nyaん',
+        true,
+      ],
+      expected: createFootprints('にゃん'),
+    },
   ]
-  test.each(table)(`$name`, ({footprints, searchQuery, expected}) => {
-    expect(searchFootprints(footprints, searchQuery)).toStrictEqual(expected)
+  test.each(table)(`$name`, ({args, expected}) => {
+    expect(searchFootprints(...args)).toStrictEqual(expected)
   })
 })

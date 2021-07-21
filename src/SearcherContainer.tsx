@@ -50,7 +50,7 @@ export const useVariables = (initialFootprints: Footprint[], onClose: Props['onC
   // TODO: 設定値を永続化
   const [enableRomajiSearch, setEnableRomajiSearch] = useState(false)
 
-  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
+  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue, enableRomajiSearch), [footprints, inputValue])
   const displayableFootprints = searchedFootprints.slice(0, 10)
   const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
