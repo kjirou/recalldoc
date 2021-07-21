@@ -53,7 +53,7 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
   const [cursoredIndex, setCursoredIndex] = useState(defaultCursoredIndex)
   const [inputValue, setInputValue] = useState('')
 
-  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue, config.enableRomajiSearch), [footprints, inputValue])
+  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue, config.enableRomajiSearch), [config, footprints, inputValue])
   const displayableFootprints = searchedFootprints.slice(0, 10)
   const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
@@ -90,7 +90,6 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
     }
   }, [displayableFootprints])
   const onChangeCheckboxOfRomajiSearch = useCallback<SearcherProps['onChangeCheckboxOfRomajiSearch']>((checked) => {
-    // TODO: この時にも検索する。
     setConfig(s => ({
       ...s,
       enableRomajiSearch: checked,
