@@ -48,10 +48,10 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
 } => {
   const defaultCursoredIndex = 0
 
+  const [config, setConfig] = useState<Config>(initialConfig)
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
   const [cursoredIndex, setCursoredIndex] = useState(defaultCursoredIndex)
   const [inputValue, setInputValue] = useState('')
-  const [config, setConfig] = useState<Config>(initialConfig)
 
   const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue, config.enableRomajiSearch), [footprints, inputValue])
   const displayableFootprints = searchedFootprints.slice(0, 10)
