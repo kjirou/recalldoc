@@ -120,6 +120,8 @@ const romajiDictionary: Readonly<RomajiDictionaryItem[]> = [
   ['e', ...hiraWithKata('え')],
   ['o', ...hiraWithKata('お')],
   ['n', ...hiraWithKata('ん')],
+  // TODO: ひらなが・カタカナの分類ではない。
+  ['-', 'ー', 'ー'],
 
   //
   // 2 文字
