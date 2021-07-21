@@ -16,7 +16,9 @@ export type FootprintProps = {
 }
 
 export type Props = {
+  enableRomajiSearch: boolean,
   footprints: FootprintProps[];
+  onChangeButtonOfRomajiSearch: (checked: boolean) => void;
   onClickDeleteButton: (url: FootprintProps['url']) => void;
   onClickPageCover: () => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
@@ -61,11 +63,23 @@ const styleLiteral = `
     height: 24px;
     font-size: 14px;
   }
+  .searcher__romajiSearch {
+    margin-left: 8px;
+    line-height: 24px;
+  }
+  .searcher__romajiSearch > label {
+    margin-left: 2px;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    user-select: none;
+  }
   .searcher__totalCount {
     flex: 1;
-    margin-left: 4px;
+    margin-right: 4px;
     line-height: 24px;
     font-size: 14px;
+    text-align: right;
     color: #666;
   }
   .searcher__itemList {
@@ -134,6 +148,17 @@ export const Searcher: VFC<Props> = (props) => {
             props.onKeyDown(key, isComposing, () => event.stopPropagation(), () => event.preventDefault())
           }}
         />
+        <div className="searcher__romajiSearch">
+          <input
+            type="checkbox"
+            id="recalldoc_romaji_search"
+            checked={props.enableRomajiSearch}
+            onChange={(event) => {
+              props.onChangeButtonOfRomajiSearch(event.target.checked)
+            }}
+          />
+          <label htmlFor="recalldoc_romaji_search">ローマ字検索</label>
+        </div>
         <div className="searcher__totalCount">{props.footprints.length}/{props.totalCount} 件</div>
       </div>
       {

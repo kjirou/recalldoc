@@ -21,12 +21,15 @@ import {
   Storage,
 } from './storage'
 import {
+  Config,
   Footprint,
+  createDefaultConfig,
   rotateIndex,
   searchFootprints,
 } from './utils'
 
 export type Props = {
+  config: Config,
   /**
    * 描画先を Shadow DOM にするか。Shadow DOM を介すとテストが動かないので追加した。
    * @see https://github.com/kjirou/recalldoc/pull/29
@@ -38,7 +41,8 @@ export type Props = {
   storage: Storage;
 }
 
-const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose']): {
+export const useVariables = (initialConfig: Config, initialFootprints: Footprint[], onClose: Props['onClose']): {
+  config: Config;
   footprints: Footprint[];
   searcherProps: SearcherProps;
 } => {
@@ -47,8 +51,9 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
   const [footprints, setFootprints] = useState<Footprint[]>(initialFootprints)
   const [cursoredIndex, setCursoredIndex] = useState(defaultCursoredIndex)
   const [inputValue, setInputValue] = useState('')
+  const [config, setConfig] = useState<Config>(initialConfig)
 
-  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue), [footprints, inputValue])
+  const searchedFootprints = useMemo(() => searchFootprints(footprints, inputValue, config.enableRomajiSearch), [footprints, inputValue])
   const displayableFootprints = searchedFootprints.slice(0, 10)
   const cursoredFootprint = displayableFootprints[rotateIndex(displayableFootprints.length, cursoredIndex)]
 
@@ -85,6 +90,13 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       throw new Error('The deleted footprint must exist in searched footprints.')
     }
   }, [displayableFootprints])
+  const onChangeButtonOfRomajiSearch = useCallback<SearcherProps['onChangeButtonOfRomajiSearch']>((checked) => {
+    // TODO: この時にも検索する。
+    setConfig(s => ({
+      ...s,
+      enableRomajiSearch: checked,
+    }))
+  }, [])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
@@ -97,30 +109,36 @@ const useVariables = (initialFootprints: Footprint[], onClose: Props['onClose'])
       ...footprint,
       highlighted: footprint === cursoredFootprint,
     })),
+    enableRomajiSearch: config.enableRomajiSearch,
     onInput,
     onKeyDown,
     onClickDeleteButton,
+    onChangeButtonOfRomajiSearch,
     onClickPageCover,
     onMount,
     totalCount: searchedFootprints.length,
   }
 
   return {
+    config,
     footprints,
     searcherProps,
   }
 }
 
-export const useStorageSynchronization = (storage: Storage, footprints: Footprint[]): void => {
-  const previousFootprints = useRef<Footprint[]>(footprints)
+export const useStorageSynchronization = (storage: Storage, config: Config, footprints: Footprint[]): void => {
+  const previousConfigRef = useRef<Config>(config)
+  const previousFootprintsRef = useRef<Footprint[]>(footprints)
   useEffect(() => {
-    if (footprints !== previousFootprints.current) {
+    if (config !== previousConfigRef.current || footprints !== previousFootprintsRef.current) {
       // TODO: 処理順序保証、二重実行回避。
       // TODO: ummount時のキャンセル。
+      storage.saveConfig(config)
       storage.saveFootprints(footprints)
-      previousFootprints.current = footprints
+      previousConfigRef.current = config
+      previousFootprintsRef.current = footprints
     }
-  }, [storage.saveFootprints, footprints])
+  }, [storage.saveConfig, storage.saveFootprints, config, footprints])
 }
 
 /**
@@ -157,8 +175,8 @@ export const usePortalRoot = (
 }
 
 export const SearcherContainer: VFC<Props> = (props) => {
-  const {footprints, searcherProps} = useVariables(props.footprints, props.onClose)
-  useStorageSynchronization(props.storage, footprints)
+  const {config, footprints, searcherProps} = useVariables(props.config, props.footprints, props.onClose)
+  useStorageSynchronization(props.storage, config, footprints)
   const portalRoot = usePortalRoot(props.portalDestination, props.enableShadowDom)
   // NOTE: 少なくとも @types/react は createPortal の引数に ShadowRoot を許容していない。
   //       本来の仕様としても、日本語ドキュメントを読む限りは明示的に許容はしていなさそう。 https://ja.reactjs.org/docs/portals.html

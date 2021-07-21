@@ -2,6 +2,8 @@ import {
   Footprint,
   PageMetaData,
   classifyPage,
+  convertHiraganaToKatakana,
+  createRomajiSearchRegexp,
   rotateIndex,
   searchFootprints,
   splitSearchQueryIntoMultipulKeywords,
@@ -121,36 +123,133 @@ describe('splitSearchQueryIntoMultipulKeywords', () => {
     expect(splitSearchQueryIntoMultipulKeywords(query)).toStrictEqual(expected)
   })
 })
+describe('convertHiraganaToKatakana', () => {
+  const table: {
+    args: Parameters<typeof convertHiraganaToKatakana>,
+    expected: ReturnType<typeof convertHiraganaToKatakana>,
+    name: string,
+  }[] = [
+    {
+      name: 'it works',
+      args: ['ぁゔゝゞ'],
+      expected: 'ァヴヽヾ',
+    },
+  ]
+  test.each(table)('$name', ({args, expected}) => {
+    expect(convertHiraganaToKatakana(...args)).toBe(expected)
+  })
+  test('it throws an error when it receives any non-target characters', () => {
+    expect(() => {
+      convertHiraganaToKatakana('a')
+    }).toThrowError(/ convert the code point /)
+  })
+})
+describe('createRomajiSearchRegexp', () => {
+  const table: {
+    args: Parameters<typeof createRomajiSearchRegexp>,
+    expected: ReturnType<typeof createRomajiSearchRegexp>,
+    name: string,
+  }[] = [
+    {
+      name: 'it replaces one romaji',
+      args: ['a'],
+      expected: '(?:a|あ|ア)',
+    },
+    {
+      name: 'it replaces two romaji',
+      args: ['ka'],
+      expected: '(?:ka|か|カ)',
+    },
+    {
+      name: 'it replaces three romaji',
+      args: ['kya'],
+      expected: '(?:kya|きゃ|キャ)',
+    },
+    {
+      name: 'it does not replace a character that is not a romaji',
+      args: ['k'],
+      expected: 'k',
+    },
+    {
+      name: 'it escapes characters of regexp pattern',
+      args: ['?'],
+      expected: '\\?',
+    },
+    {
+      name: 'it gives priority to long phrases',
+      args: ['kyayaay'],
+      expected: '(?:kya|きゃ|キャ)(?:ya|や|ヤ)(?:a|あ|ア)y',
+    },
+  ]
+  test.each(table)('$name', ({args, expected}) => {
+    expect(createRomajiSearchRegexp(...args)).toBe(expected)
+  })
+})
 describe('searchFootprints', () => {
   const createFootprints = (...titles: Footprint['title'][]): Footprint[] => {
     return titles.map(title => ({title, url: ''}))
   }
   const table: {
-    expected: Footprint[],
-    footprints: Footprint[],
+    args: Parameters<typeof searchFootprints>,
+    expected: ReturnType<typeof searchFootprints>,
     name: string,
-    searchQuery: string,
   }[] = [
     {
       name: 'it searches by partial match',
-      footprints: createFootprints('foox', 'bar', 'baz'),
-      searchQuery: 'ba',
+      args: [
+        createFootprints('foox', 'bar', 'baz'),
+        'ba',
+        false,
+      ],
       expected: createFootprints('bar', 'baz'),
     },
     {
       name: 'it searches by case insensitive',
-      footprints: createFootprints('abc', 'ABC'),
-      searchQuery: 'AbC',
+      args: [
+        createFootprints('abc', 'ABC'),
+        'AbC',
+        false,
+      ],
       expected: createFootprints('abc', 'ABC'),
     },
     {
       name: 'it returns all footprints when the search query is empty',
-      footprints: createFootprints('foo', 'bar', 'baz'),
-      searchQuery: '',
+      args: [
+        createFootprints('foo', 'bar', 'baz'),
+        '',
+        false,
+      ],
       expected: createFootprints('foo', 'bar', 'baz'),
     },
+    {
+      name: 'it does not throw any regexp syntax errors',
+      args: [
+        createFootprints('a.*+?^${}()|[]/b', 'cd'),
+        '.*+?^${}()|[]/',
+        false,
+      ],
+      expected: createFootprints('a.*+?^${}()|[]/b'),
+    },
+    {
+      name: 'it does not use dots as any single character',
+      args: [
+        createFootprints('a', '.', 'A'),
+        '.',
+        false,
+      ],
+      expected: createFootprints('.'),
+    },
+    {
+      name: 'it can search as romaji',
+      args: [
+        createFootprints('nyan', 'にゃん', 'ニャン', 'にゃーん'),
+        'nyaん',
+        true,
+      ],
+      expected: createFootprints('にゃん'),
+    },
   ]
-  test.each(table)(`$name`, ({footprints, searchQuery, expected}) => {
-    expect(searchFootprints(footprints, searchQuery)).toStrictEqual(expected)
+  test.each(table)(`$name`, ({args, expected}) => {
+    expect(searchFootprints(...args)).toStrictEqual(expected)
   })
 })

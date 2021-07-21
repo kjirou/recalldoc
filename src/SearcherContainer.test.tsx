@@ -1,8 +1,8 @@
 import {
-  getByText,
   render,
 } from '@testing-library/react'
 import {
+  act,
   renderHook,
 } from '@testing-library/react-hooks'
 import userEvent from '@testing-library/user-event'
@@ -11,19 +11,44 @@ import {
   SearcherContainer,
   usePortalRoot,
   useStorageSynchronization,
+  useVariables,
 } from './SearcherContainer'
 import {
+  Config,
   Footprint,
+  createDefaultConfig,
 } from './utils'
 import {
   Storage,
 } from './storage'
 
+describe('useVariables', () => {
+  const renderUseVariables = (...args: Parameters<typeof useVariables>) => {
+    return renderHook(
+      (args) => useVariables(...args),
+      {initialProps: args},
+    )
+  }
+
+  describe('searcherProps', () => {
+    describe('enableRomajiSearch, onChangeButtonOfRomajiSearch', () => {
+      test('it works', () => {
+        const {result} = renderUseVariables(createDefaultConfig(), [], () => {})
+        expect(result.current.searcherProps.enableRomajiSearch).toBe(false)
+        act(() => {
+          result.current.searcherProps.onChangeButtonOfRomajiSearch(true)
+        })
+        expect(result.current.searcherProps.enableRomajiSearch).toBe(true)
+      })
+    })
+  })
+})
+
 describe('useStorageSynchronization', () => {
   const renderUseStorageSynchronization = (...args: Parameters<typeof useStorageSynchronization>) => {
     return renderHook(
-      ({storage, footprints}) => useStorageSynchronization(storage, footprints),
-      {initialProps: {storage: args[0], footprints: args[1]}},
+      (args) => useStorageSynchronization(...args),
+      {initialProps: args},
     )
   }
   let storage: Storage
@@ -31,22 +56,37 @@ describe('useStorageSynchronization', () => {
   beforeEach(() => {
     storage = {
       footprintsKey: 'key',
+      loadConfig: jest.fn().mockResolvedValue(createDefaultConfig()),
+      saveConfig: jest.fn().mockResolvedValue(undefined),
       loadFootprints: jest.fn(),
       saveFootprints: jest.fn(),
     }
   })
 
-  test('it does not call saveFootprints when footprints is the same', () => {
+  test('it does not call save methods when all args are the same', () => {
+    const config = createDefaultConfig()
     const footprints: Footprint[] = []
-    const {rerender} = renderUseStorageSynchronization(storage, footprints)
-    rerender({storage, footprints})
+    const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
+    rerender([storage, config, footprints])
+    expect(storage.saveConfig).not.toHaveBeenCalled()
     expect(storage.saveFootprints).not.toHaveBeenCalled()
   })
-  test('it calls saveFootprints when footprints is different', () => {
+  test('it calls save methods when `config` is different', () => {
+    const config = createDefaultConfig()
     const footprints: Footprint[] = []
-    const {rerender} = renderUseStorageSynchronization(storage, footprints)
+    const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
+    const newConfig: Config = {...config, enableRomajiSearch: true}
+    rerender([storage, newConfig, footprints])
+    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
+    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
+  })
+  test('it calls save methods when `footprints` is different', () => {
+    const config = createDefaultConfig()
+    const footprints: Footprint[] = []
+    const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newFootprints: Footprint[] = [{title: '', url: ''}]
-    rerender({storage, footprints: newFootprints})
+    rerender([storage, config, newFootprints])
+    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
   })
 })
@@ -54,8 +94,8 @@ describe('useStorageSynchronization', () => {
 describe('usePortalRoot', () => {
   const renderUsePortalRoot = (...args: Parameters<typeof usePortalRoot>) => {
     return renderHook(
-      ({portalDestination, enableShadowDom}) => usePortalRoot(portalDestination, enableShadowDom),
-      {initialProps: {portalDestination: args[0], enableShadowDom: args[1]}},
+      (args) => usePortalRoot(...args),
+      {initialProps: args},
     )
   }
 
@@ -80,9 +120,12 @@ describe('SearcherContainer', () => {
     defaultProps = {
       storage: {
         footprintsKey: 'key',
+        loadConfig: jest.fn().mockResolvedValue(createDefaultConfig()),
+        saveConfig: jest.fn().mockResolvedValue(undefined),
         loadFootprints: jest.fn().mockResolvedValue([]),
         saveFootprints: jest.fn().mockResolvedValue(undefined),
       },
+      config: createDefaultConfig(),
       footprints: [],
       portalDestination: document.createElement('div'),
       enableShadowDom: false,
