@@ -2,6 +2,8 @@ import {
   Footprint,
   PageMetaData,
   classifyPage,
+  convertHiraganaToKatakana,
+  createRomajiSearchRegexp,
   rotateIndex,
   searchFootprints,
   splitSearchQueryIntoMultipulKeywords,
@@ -119,6 +121,68 @@ describe('splitSearchQueryIntoMultipulKeywords', () => {
   ]
   test.each(table)(`"$query" -> $expected`, ({query, expected}) => {
     expect(splitSearchQueryIntoMultipulKeywords(query)).toStrictEqual(expected)
+  })
+})
+describe('convertHiraganaToKatakana', () => {
+  const table: {
+    args: Parameters<typeof convertHiraganaToKatakana>,
+    expected: ReturnType<typeof convertHiraganaToKatakana>,
+    name: string,
+  }[] = [
+    {
+      name: 'it works',
+      args: ['ぁゔゝゞ'],
+      expected: 'ァヴヽヾ',
+    },
+  ]
+  test.each(table)('$name', ({args, expected}) => {
+    expect(convertHiraganaToKatakana(...args)).toBe(expected)
+  })
+  test('it throws an error when it receives any non-target characters', () => {
+    expect(() => {
+      convertHiraganaToKatakana('a')
+    }).toThrowError(/ convert the code point /)
+  })
+})
+describe('createRomajiSearchRegexp', () => {
+  const table: {
+    args: Parameters<typeof createRomajiSearchRegexp>,
+    expected: ReturnType<typeof createRomajiSearchRegexp>,
+    name: string,
+  }[] = [
+    {
+      name: 'it replaces one romaji',
+      args: ['a'],
+      expected: '(?:a|あ|ア)',
+    },
+    {
+      name: 'it replaces two romaji',
+      args: ['ka'],
+      expected: '(?:ka|か|カ)',
+    },
+    {
+      name: 'it replaces three romaji',
+      args: ['kya'],
+      expected: '(?:kya|きゃ|キャ)',
+    },
+    {
+      name: 'it does not replace a character that is not a romaji',
+      args: ['k'],
+      expected: 'k',
+    },
+    {
+      name: 'it escapes characters of regexp pattern',
+      args: ['?'],
+      expected: '\\?',
+    },
+    {
+      name: 'it gives priority to long phrases',
+      args: ['kyayaay'],
+      expected: '(?:kya|きゃ|キャ)(?:ya|や|ヤ)(?:a|あ|ア)y',
+    },
+  ]
+  test.each(table)('$name', ({args, expected}) => {
+    expect(createRomajiSearchRegexp(...args)).toBe(expected)
   })
 })
 describe('searchFootprints', () => {
