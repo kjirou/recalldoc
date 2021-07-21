@@ -72,7 +72,6 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
       setCursoredIndex(s => s + 1)
     } else if (key === 'Enter' && !isComposing) {
       preventDefault()
-      // TODO: 画面遷移処理は useEffect へ移動する。
       if (cursoredFootprint) {
         window.location.href = cursoredFootprint.url
       }
