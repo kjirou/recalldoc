@@ -43,7 +43,7 @@ export const loadConfig = async (storage: Storage): Promise<Config> => {
   return rawConfig ? JSON.parse(rawConfig) : createDefaultConfig()
 }
 
-export const saveConfig = async (storage: Storage, config: Config): Promise<void> => {
+export const saveConfig = (storage: Storage, config: Config): Promise<void> => {
   return storage.saveItem(configKey, JSON.stringify(config))
 }
 
