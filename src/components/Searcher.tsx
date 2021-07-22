@@ -6,7 +6,8 @@ import {
 } from 'react'
 import {
   Config,
-  Footprint
+  Footprint,
+  isStartupKeyCombinationType,
 } from '../utils'
 
 export type FootprintProps = {
@@ -182,8 +183,9 @@ export const Searcher: VFC<Props> = (props) => {
             id="recalldoc_startup_key_combinations"
             value={props.startupKeyCombination}
             onChange={(event) => {
-              // TODO: Type gurad
-              props.onChangeSelectOfStartupKeyCombination(event.target.value as Config['startupKeyCombination'])
+              if (isStartupKeyCombinationType(event.target.value)) {
+                props.onChangeSelectOfStartupKeyCombination(event.target.value)
+              }
             }}
           >
             <option value="1">Ctrl+R</option>

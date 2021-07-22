@@ -3,6 +3,9 @@ export type Config = {
   startupKeyCombination: '1' | '2' | '99';
 }
 
+export const isStartupKeyCombinationType = (value: any): value is Config['startupKeyCombination'] =>
+  ['1', '2', '99'].indexOf(value) !== -1
+
 export type PageMetaData = {
   contentKind: 'category' | 'post' | 'unknown' | 'top';
   siteId: 'esa';
