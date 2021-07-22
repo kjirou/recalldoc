@@ -4,7 +4,7 @@ import {
   classifyPage,
   convertHiraganaToKatakana,
   createRomajiSearchRegexp,
-  isStartupKeyCombination,
+  canStartupSearcher,
   rotateIndex,
   searchFootprints,
   splitSearchQueryIntoMultipulKeywords,
@@ -88,8 +88,8 @@ describe('classifyPage', () => {
 })
 describe('isStartupKeyCombination', () => {
   const table: {
-    args: Parameters<typeof isStartupKeyCombination>,
-    expected: ReturnType<typeof isStartupKeyCombination>,
+    args: Parameters<typeof canStartupSearcher>,
+    expected: ReturnType<typeof canStartupSearcher>,
   }[] = [
     {
       args: ['1', true, false, false, 'r'],
@@ -149,7 +149,7 @@ describe('isStartupKeyCombination', () => {
     },
   ]
   test.each(table)('Config="$args.0",Ctrl=$args.1,Cmd=$args.2,Shift=$args.3,Key="$args.4" => $expected', ({args, expected}) => {
-    expect(isStartupKeyCombination(...args)).toBe(expected)
+    expect(canStartupSearcher(...args)).toBe(expected)
   })
 })
 describe('splitSearchQueryIntoMultipulKeywords', () => {

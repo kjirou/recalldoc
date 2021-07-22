@@ -81,7 +81,7 @@ export const classifyPage = (url: string): PageMetaData => {
 }
 
 // TODO: alt や option 同時押しも考慮した上で除外した方が丁寧。
-export const isStartupKeyCombination = (
+export const canStartupSearcher = (
   startupKeyCombination: Config['startupKeyCombination'],
   ctrlKey: boolean,
   metaKey: boolean,

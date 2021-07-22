@@ -8,8 +8,8 @@ import {
 } from './SearcherContainer'
 import {
   Footprint,
+  canStartupSearcher,
   classifyPage,
-  isStartupKeyCombination,
 } from './utils'
 import {
   Storage,
@@ -27,7 +27,7 @@ const prepareUi = (storage: Storage): void => {
     // TODO: 二重実行の回避。
     const config = await storage.loadConfig()
     if (
-      isStartupKeyCombination(
+      canStartupSearcher(
         config.startupKeyCombination,
         event.ctrlKey,
         event.metaKey,
