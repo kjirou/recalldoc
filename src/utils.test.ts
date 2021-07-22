@@ -4,6 +4,7 @@ import {
   classifyPage,
   convertHiraganaToKatakana,
   createRomajiSearchRegexp,
+  isStartupKeyCombination,
   rotateIndex,
   searchFootprints,
   splitSearchQueryIntoMultipulKeywords,
@@ -83,6 +84,72 @@ describe('classifyPage', () => {
   ]
   test.each(table)(`$url -> $expected`, ({url, expected}) => {
     expect(classifyPage(url)).toStrictEqual(expected)
+  })
+})
+describe('isStartupKeyCombination', () => {
+  const table: {
+    args: Parameters<typeof isStartupKeyCombination>,
+    expected: ReturnType<typeof isStartupKeyCombination>,
+  }[] = [
+    {
+      args: ['1', true, false, false, 'r'],
+      expected: true,
+    },
+    {
+      args: ['99', true, false, false, 'r'],
+      expected: true,
+    },
+    {
+      args: ['1', false, false, false, 'r'],
+      expected: false,
+    },
+    {
+      args: ['1', true, true, false, 'r'],
+      expected: false,
+    },
+    {
+      args: ['1', true, false, true, 'r'],
+      expected: false,
+    },
+    {
+      args: ['1', true, false, false, 'a'],
+      expected: false,
+    },
+    {
+      args: ['2', true, false, true, 'l'],
+      expected: true,
+    },
+    {
+      args: ['2', false, true, true, 'l'],
+      expected: true,
+    },
+    {
+      args: ['99', true, false, true, 'l'],
+      expected: true,
+    },
+    {
+      args: ['99', false, true, true, 'l'],
+      expected: true,
+    },
+    {
+      args: ['2', true, true, true, 'l'],
+      expected: false,
+    },
+    {
+      args: ['2', false, false, true, 'l'],
+      expected: false,
+    },
+    {
+      args: ['2', true, false, false, 'l'],
+      expected: false,
+    },
+    {
+      args: ['2', true, false, true, 'a'],
+      expected: false,
+    },
+  ]
+  test.each(table)('Config="$args.0",Ctrl=$args.1,Cmd=$args.2,Shift=$args.3,Key="$args.4" => $expected', ({args, expected}) => {
+    expect(isStartupKeyCombination(...args)).toBe(expected)
   })
 })
 describe('splitSearchQueryIntoMultipulKeywords', () => {

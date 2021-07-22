@@ -77,6 +77,22 @@ export const classifyPage = (url: string): PageMetaData => {
   }
 }
 
+// TODO: alt や option 同時押しも考慮した上で除外した方が丁寧。
+export const isStartupKeyCombination = (
+  startupKeyCombination: Config['startupKeyCombination'],
+  ctrlKey: boolean,
+  metaKey: boolean,
+  shiftKey: boolean,
+  key: string,
+): boolean => {
+  return (
+    (startupKeyCombination === '1' || startupKeyCombination === '99') &&
+      ctrlKey && !metaKey && !shiftKey && key === 'r' ||
+      (startupKeyCombination === '2' || startupKeyCombination === '99') &&
+        (ctrlKey && !metaKey || !ctrlKey && metaKey) && shiftKey && key === 'l'
+  )
+}
+
 export const splitSearchQueryIntoMultipulKeywords = (query: string): string[] => {
   return query.split(/[ \u3000]+/).filter(e => e !== '')
 }
