@@ -128,7 +128,7 @@ export const Searcher: VFC<Props> = (props) => {
     if (searchFieldRef.current) {
       props.onMount(searchFieldRef.current)
     }
-  }, [props.onMount])
+  }, [props, props.onMount])
 
   return <>
     <style>{styleLiteral}</style>

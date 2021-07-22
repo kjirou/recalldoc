@@ -136,7 +136,7 @@ export const useStorageSynchronization = (storage: Storage, config: Config, foot
       previousConfigRef.current = config
       previousFootprintsRef.current = footprints
     }
-  }, [storage.saveConfig, storage.saveFootprints, config, footprints])
+  }, [storage, storage.saveConfig, storage.saveFootprints, config, footprints])
 }
 
 /**

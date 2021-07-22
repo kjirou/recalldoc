@@ -10,4 +10,5 @@ jobs:
         with:
           node-version: '16.4.2'
       - run: npm ci
+      - run: npm run lint
       - run: npm run test -- --verbose
