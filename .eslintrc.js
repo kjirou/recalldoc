@@ -5,5 +5,9 @@ module.exports = {
     '@typescript-eslint',
   ],
   extends: [
+    'plugin:react-hooks/recommended',
   ],
+  rules: {
+    'react-hooks/exhaustive-deps': 'error',
+  },
 }
