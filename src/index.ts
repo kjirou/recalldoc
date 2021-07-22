@@ -14,6 +14,7 @@ import {
 import {
   Storage,
   createChromeStorage,
+  loadConfig,
   updateFootprint,
   updateFootprintOfEsaCategory,
   updateFootprintOfKibelaFolder,
@@ -29,7 +30,7 @@ const prepareUi = (storage: Storage): void => {
       return
     }
     isRunning = true
-    const config = await storage.loadConfig()
+    const config = await loadConfig(storage)
     if (
       canStartupSearcher(
         config.startupKeyCombination,

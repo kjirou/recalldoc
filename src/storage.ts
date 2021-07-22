@@ -11,9 +11,8 @@ import {
 // TODO: saveItem と loadItem にまとめる。
 export type Storage = {
   footprintsKey: string;
-  // TODO: 設定値が足りない時に初期値で補完する。
-  loadConfig: () => Promise<Config>;
   loadFootprints: () => Promise<Footprint[]>;
+  loadItem: (key: string) => Promise<string | undefined>;
   saveConfig: (config: Config) => Promise<void>;
   /**
    * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
@@ -27,11 +26,10 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
   const footprintsKey = `footprints_${siteId}_${teamId}`
   return {
     footprintsKey,
-    loadConfig: () => {
+    loadItem: (key) => {
       return new Promise(resolve => {
-        chrome.storage.local.get([configKey], (result) => {
-          const rawConfig = result[configKey]
-          resolve(rawConfig ? JSON.parse(rawConfig) : createDefaultConfig())
+        chrome.storage.local.get([key], (result) => {
+          resolve(result[key])
         })
       })
     },
@@ -61,6 +59,12 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
       })
     },
   } as const
+}
+
+export const loadConfig = async (storage: Storage): Promise<Config> => {
+  const rawConfig = await storage.loadItem(configKey)
+  // TODO: 設定値が足りない時に初期値で補完する。
+  return rawConfig ? JSON.parse(rawConfig) : createDefaultConfig()
 }
 
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {
