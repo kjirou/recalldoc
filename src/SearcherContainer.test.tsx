@@ -66,10 +66,8 @@ describe('useStorageSynchronization', () => {
   beforeEach(() => {
     storage = {
       footprintsKey: 'key',
-      loadConfig: jest.fn().mockResolvedValue(createDefaultConfig()),
-      saveConfig: jest.fn().mockResolvedValue(undefined),
-      loadFootprints: jest.fn(),
-      saveFootprints: jest.fn(),
+      loadItem: jest.fn().mockResolvedValue(undefined),
+      saveItem: jest.fn().mockResolvedValue(undefined),
     }
   })
 
@@ -78,8 +76,7 @@ describe('useStorageSynchronization', () => {
     const footprints: Footprint[] = []
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     rerender([storage, config, footprints])
-    expect(storage.saveConfig).not.toHaveBeenCalled()
-    expect(storage.saveFootprints).not.toHaveBeenCalled()
+    expect(storage.saveItem).not.toHaveBeenCalled()
   })
   test('it calls save methods when `config` is different', () => {
     const config = createDefaultConfig()
@@ -87,8 +84,7 @@ describe('useStorageSynchronization', () => {
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newConfig: Config = {...config, enableRomajiSearch: true}
     rerender([storage, newConfig, footprints])
-    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
-    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledTimes(2)
   })
   test('it calls save methods when `footprints` is different', () => {
     const config = createDefaultConfig()
@@ -96,8 +92,7 @@ describe('useStorageSynchronization', () => {
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newFootprints: Footprint[] = [{title: '', url: ''}]
     rerender([storage, config, newFootprints])
-    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
-    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledTimes(2)
   })
 })
 
@@ -130,10 +125,8 @@ describe('SearcherContainer', () => {
     defaultProps = {
       storage: {
         footprintsKey: 'key',
-        loadConfig: jest.fn().mockResolvedValue(createDefaultConfig()),
-        saveConfig: jest.fn().mockResolvedValue(undefined),
-        loadFootprints: jest.fn().mockResolvedValue([]),
-        saveFootprints: jest.fn().mockResolvedValue(undefined),
+        loadItem: jest.fn().mockResolvedValue(undefined),
+        saveItem: jest.fn().mockResolvedValue(undefined),
       },
       config: createDefaultConfig(),
       footprints: [],

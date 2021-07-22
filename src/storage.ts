@@ -8,17 +8,10 @@ import {
   createDefaultConfig,
 } from './utils'
 
-// TODO: saveItem と loadItem にまとめる。
 export type Storage = {
   footprintsKey: string;
-  // TODO: 設定値が足りない時に初期値で補完する。
-  loadConfig: () => Promise<Config>;
-  loadFootprints: () => Promise<Footprint[]>;
-  saveConfig: (config: Config) => Promise<void>;
-  /**
-   * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
-   */
-  saveFootprints: (footprints: Footprint[]) => Promise<void>;
+  loadItem: (key: string) => Promise<string | undefined>;
+  saveItem: (key: string, value: string) => Promise<void>;
 }
 
 const configKey = 'config' as const
@@ -27,35 +20,16 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
   const footprintsKey = `footprints_${siteId}_${teamId}`
   return {
     footprintsKey,
-    loadConfig: () => {
+    loadItem: (key) => {
       return new Promise(resolve => {
-        chrome.storage.local.get([configKey], (result) => {
-          const rawConfig = result[configKey]
-          resolve(rawConfig ? JSON.parse(rawConfig) : createDefaultConfig())
+        chrome.storage.local.get([key], (result) => {
+          resolve(result[key])
         })
       })
     },
-    saveConfig: (config: Config) => {
-      const serializedConfig = JSON.stringify(config)
+    saveItem: (key, value) => {
       return new Promise(resolve => {
-        chrome.storage.local.set({[configKey]: serializedConfig}, () => {
-          resolve()
-        })
-      })
-    },
-    loadFootprints: () => {
-      return new Promise(resolve => {
-        chrome.storage.local.get([footprintsKey], (result) => {
-          const rawFootprints = result[footprintsKey]
-          resolve(rawFootprints ? JSON.parse(rawFootprints) : [])
-        })
-      })
-    },
-    saveFootprints: (footprints: Footprint[]) => {
-      // TODO: chrome.storage.local の最大容量（5mb）を超えたときのことを考慮する。 
-      const serializedFootprints = JSON.stringify(footprints)
-      return new Promise(resolve => {
-        chrome.storage.local.set({[footprintsKey]: serializedFootprints}, () => {
+        chrome.storage.local.set({[key]: value}, () => {
           resolve()
         })
       })
@@ -63,10 +37,34 @@ export const createChromeStorage = (siteId: PageMetaData['siteId'], teamId: stri
   } as const
 }
 
+export const loadConfig = async (storage: Storage): Promise<Config> => {
+  const rawConfig = await storage.loadItem(configKey)
+  // TODO: 設定値が足りない時に初期値で補完する。
+  return rawConfig ? JSON.parse(rawConfig) : createDefaultConfig()
+}
+
+export const saveConfig = (storage: Storage, config: Config): Promise<void> => {
+  return storage.saveItem(configKey, JSON.stringify(config))
+}
+
+export const loadFootprints = async (storage: Storage): Promise<Footprint[]> => {
+  const rawFootprints = await storage.loadItem(storage.footprintsKey)
+  return rawFootprints ? JSON.parse(rawFootprints) : []
+}
+
+/**
+ * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
+ */
+export const saveFootprints = (storage: Storage, footprints: Footprint[]): Promise<void> => {
+  // TODO: chrome.storage.local の最大容量（5mb）を超えたときのことを考慮する。 
+  const serializedFootprints = JSON.stringify(footprints)
+  return storage.saveItem(storage.footprintsKey, serializedFootprints)
+}
+
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {
   // TODO: トランザクションになっていない。
-  const footprints = await storage.loadFootprints()
-  return storage.saveFootprints(updateFootprintReducer(footprint)(footprints))
+  const footprints = await loadFootprints(storage)
+  return saveFootprints(storage, updateFootprintReducer(footprint)(footprints))
 }
 
 export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, hash: string): Promise<void> => {

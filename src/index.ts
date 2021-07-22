@@ -14,6 +14,8 @@ import {
 import {
   Storage,
   createChromeStorage,
+  loadConfig,
+  loadFootprints,
   updateFootprint,
   updateFootprintOfEsaCategory,
   updateFootprintOfKibelaFolder,
@@ -29,7 +31,7 @@ const prepareUi = (storage: Storage): void => {
       return
     }
     isRunning = true
-    const config = await storage.loadConfig()
+    const config = await loadConfig(storage)
     if (
       canStartupSearcher(
         config.startupKeyCombination,
@@ -39,7 +41,7 @@ const prepareUi = (storage: Storage): void => {
         event.key,
       )
     ) {
-      const footprints = await storage.loadFootprints()
+      const footprints = await loadFootprints(storage)
       render(
         createElement(SearcherContainer, {
           portalDestination: document.body,
