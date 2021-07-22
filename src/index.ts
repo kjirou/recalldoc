@@ -8,6 +8,7 @@ import {
 } from './SearcherContainer'
 import {
   Footprint,
+  canStartupSearcher,
   classifyPage,
 } from './utils'
 import {
@@ -22,10 +23,22 @@ const prepareUi = (storage: Storage): void => {
   const searcherRootElement = document.createElement('div')
   searcherRootElement.style.display = 'none'
   document.body.appendChild(searcherRootElement)
+  let isRunning = false
   window.addEventListener('keydown', async (event) => {
-    if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'l') {
-      // TODO: 二重実行の回避。
-      const config = await storage.loadConfig()
+    if (isRunning) {
+      return
+    }
+    isRunning = true
+    const config = await storage.loadConfig()
+    if (
+      canStartupSearcher(
+        config.startupKeyCombination,
+        event.ctrlKey,
+        event.metaKey,
+        event.shiftKey,
+        event.key,
+      )
+    ) {
       const footprints = await storage.loadFootprints()
       render(
         createElement(SearcherContainer, {
@@ -41,6 +54,7 @@ const prepareUi = (storage: Storage): void => {
         searcherRootElement,
       )
     }
+    isRunning = false
   })
 }
 

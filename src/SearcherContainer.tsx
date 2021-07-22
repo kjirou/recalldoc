@@ -95,6 +95,12 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
       enableRomajiSearch: checked,
     }))
   }, [])
+  const onChangeSelectOfStartupKeyCombination = useCallback<SearcherProps['onChangeSelectOfStartupKeyCombination']>((startupKeyCombination) => {
+    setConfig(s => ({
+      ...s,
+      startupKeyCombination,
+    }))
+  }, [])
   const onMount = useCallback((searchFieldElement: HTMLInputElement) => {
     searchFieldElement.focus()
   }, [])
@@ -108,10 +114,12 @@ export const useVariables = (initialConfig: Config, initialFootprints: Footprint
       highlighted: footprint === cursoredFootprint,
     })),
     enableRomajiSearch: config.enableRomajiSearch,
+    startupKeyCombination: config.startupKeyCombination,
     onInput,
     onKeyDown,
     onClickDeleteButton,
     onChangeCheckboxOfRomajiSearch,
+    onChangeSelectOfStartupKeyCombination,
     onClickPageCover,
     onMount,
     totalCount: searchedFootprints.length,

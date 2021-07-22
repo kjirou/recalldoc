@@ -1,6 +1,10 @@
 export type Config = {
   enableRomajiSearch: boolean;
+  startupKeyCombination: '1' | '2' | '99';
 }
+
+export const isStartupKeyCombinationType = (value: any): value is Config['startupKeyCombination'] =>
+  ['1', '2', '99'].indexOf(value) !== -1
 
 export type PageMetaData = {
   contentKind: 'category' | 'post' | 'unknown' | 'top';
@@ -31,6 +35,7 @@ type RomajiDictionaryItem = readonly [string, string, string]
 export const createDefaultConfig = (): Config => {
   return {
     enableRomajiSearch: false,
+    startupKeyCombination: '1',
   }
 }
 
@@ -73,6 +78,22 @@ export const classifyPage = (url: string): PageMetaData => {
       siteId: 'unknown',
     }
   }
+}
+
+// TODO: alt や option 同時押しも考慮した上で除外した方が丁寧。
+export const canStartupSearcher = (
+  startupKeyCombination: Config['startupKeyCombination'],
+  ctrlKey: boolean,
+  metaKey: boolean,
+  shiftKey: boolean,
+  key: string,
+): boolean => {
+  return (
+    (startupKeyCombination === '1' || startupKeyCombination === '99') &&
+      ctrlKey && !metaKey && !shiftKey && key === 'r' ||
+      (startupKeyCombination === '2' || startupKeyCombination === '99') &&
+        (ctrlKey && !metaKey || !ctrlKey && metaKey) && shiftKey && key === 'l'
+  )
 }
 
 export const splitSearchQueryIntoMultipulKeywords = (query: string): string[] => {

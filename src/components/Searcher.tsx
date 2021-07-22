@@ -3,10 +3,11 @@ import {
   VFC,
   useEffect,
   useRef,
-  useCallback,
 } from 'react'
 import {
-  Footprint
+  Config,
+  Footprint,
+  isStartupKeyCombinationType,
 } from '../utils'
 
 export type FootprintProps = {
@@ -19,6 +20,7 @@ export type Props = {
   enableRomajiSearch: boolean,
   footprints: FootprintProps[];
   onChangeCheckboxOfRomajiSearch: (checked: boolean) => void;
+  onChangeSelectOfStartupKeyCombination: (startupKeyCombination: Config['startupKeyCombination']) => void;
   onClickDeleteButton: (url: FootprintProps['url']) => void;
   onClickPageCover: () => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
@@ -27,7 +29,8 @@ export type Props = {
    */
   onKeyDown: (key: string, isComposing: boolean, stopPropagation: () => void, preventDefault: () => void) => void;
   onMount: (searchFieldElement: HTMLInputElement) => void;
-  totalCount: number,
+  startupKeyCombination: Config['startupKeyCombination'];
+  totalCount: number;
 }
 
 /**
@@ -74,6 +77,19 @@ const styleLiteral = `
     color: #666;
     cursor: pointer;
     user-select: none;
+  }
+  .searcher__startupKeyCombinations {
+    margin-left: 8px;
+    line-height: 24px;
+  }
+  .searcher__startupKeyCombinations > label {
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    user-select: none;
+  }
+  .searcher__startupKeyCombinations > select {
+    margin-left: 4px;
   }
   .searcher__totalCount {
     flex: 1;
@@ -160,6 +176,22 @@ export const Searcher: VFC<Props> = (props) => {
             }}
           />
           <label htmlFor="recalldoc_romaji_search">ローマ字検索</label>
+        </div>
+        <div className="searcher__startupKeyCombinations">
+          <label htmlFor="recalldoc_startup_key_combinations">起動</label>
+          <select
+            id="recalldoc_startup_key_combinations"
+            value={props.startupKeyCombination}
+            onChange={(event) => {
+              if (isStartupKeyCombinationType(event.target.value)) {
+                props.onChangeSelectOfStartupKeyCombination(event.target.value)
+              }
+            }}
+          >
+            <option value="1">Ctrl+R</option>
+            <option value="2">Ctrl|Cmd+Shift+L</option>
+            <option value="99">全て</option>
+          </select>
         </div>
         <div className="searcher__totalCount">{props.footprints.length}/{props.totalCount} 件</div>
       </div>

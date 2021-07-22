@@ -8,8 +8,10 @@ import {
   createDefaultConfig,
 } from './utils'
 
+// TODO: saveItem と loadItem にまとめる。
 export type Storage = {
   footprintsKey: string;
+  // TODO: 設定値が足りない時に初期値で補完する。
   loadConfig: () => Promise<Config>;
   loadFootprints: () => Promise<Footprint[]>;
   saveConfig: (config: Config) => Promise<void>;

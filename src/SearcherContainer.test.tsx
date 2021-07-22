@@ -41,6 +41,16 @@ describe('useVariables', () => {
         expect(result.current.searcherProps.enableRomajiSearch).toBe(true)
       })
     })
+    describe('startupKeyCombination, onChangeSelectOfStartupKeyCombination', () => {
+      test('it works', () => {
+        const {result} = renderUseVariables(createDefaultConfig(), [], () => {})
+        expect(result.current.searcherProps.startupKeyCombination).toBe('1')
+        act(() => {
+          result.current.searcherProps.onChangeSelectOfStartupKeyCombination('2')
+        })
+        expect(result.current.searcherProps.startupKeyCombination).toBe('2')
+      })
+    })
   })
 })
 
