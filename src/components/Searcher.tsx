@@ -50,8 +50,7 @@ const styleLiteral = `
     top: 20px;
     left: calc(50% - var(--width)/2);
     z-index: 8;
-    border: 1px solid #ddd;
-    box-shadow: 8px 8px rgba(0, 0, 0, 0.1);
+    border: 4px solid #ddd;
   }
   .searcher__upper {
     padding: 8px;
