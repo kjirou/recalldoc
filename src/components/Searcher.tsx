@@ -24,9 +24,6 @@ export type Props = {
   onClickDeleteButton: (url: FootprintProps['url']) => void;
   onClickPageCover: () => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
-  /**
-   * @todo key へキーリストの型付けをする。どこかに定義があった記憶がある。
-   */
   onKeyDown: (key: string, isComposing: boolean, stopPropagation: () => void, preventDefault: () => void) => void;
   onMount: (searchFieldElement: HTMLInputElement) => void;
   startupKeyCombination: Config['startupKeyCombination'];
