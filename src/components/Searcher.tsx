@@ -50,11 +50,13 @@ const styleLiteral = `
     top: 20px;
     left: calc(50% - var(--width)/2);
     z-index: 8;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
+    box-shadow: 8px 8px rgba(0, 0, 0, 0.1);
   }
   .searcher__upper {
+    padding: 8px;
     display: flex;
-    background-color: #fff;
+    background-color: #eee;
   }
   .searcher__searchQuery {
     display: block;
@@ -87,7 +89,7 @@ const styleLiteral = `
     background-color: #fff;
   }
   .searcher__itemListItem {
-    min-height: 28px;
+    min-height: 32px;
     display: flex;
     align-items: center;
     line-height: 1;
