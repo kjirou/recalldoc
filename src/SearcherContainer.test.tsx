@@ -153,8 +153,8 @@ describe('SearcherContainer', () => {
         ],
       }} />,
     )
-    expect(queryByText('Foo/Bar')).toBeInTheDocument()
-    expect(queryByText('ふー/ばー')).toBeInTheDocument()
+    expect(queryByText('Bar')).toBeInTheDocument()
+    expect(queryByText('ばー')).toBeInTheDocument()
   })
   test('it can search the footprints', () => {
     const {queryByText, getByTestId} = render(
