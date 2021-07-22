@@ -123,13 +123,14 @@ const styleLiteral = `
 // TODO: 検索キーワードがマッチしている箇所をハイライトする。
 export const Searcher: VFC<Props> = (props) => {
   const searchFieldRef = useRef<HTMLInputElement>(null)
+  const onMount = props.onMount
 
   // TODO: onMount が変更しただけで発火する。
   useEffect(() => {
     if (searchFieldRef.current) {
-      props.onMount(searchFieldRef.current)
+      onMount(searchFieldRef.current)
     }
-  }, [props, props.onMount])
+  }, [onMount])
 
   return <>
     <style>{styleLiteral}</style>
