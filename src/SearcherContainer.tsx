@@ -20,6 +20,7 @@ import {
 import {
   Storage,
   saveConfig,
+  saveFootprints,
 } from './storage'
 import {
   Config,
@@ -141,11 +142,11 @@ export const useStorageSynchronization = (storage: Storage, config: Config, foot
       // TODO: 処理順序保証、二重実行回避。
       // TODO: ummount時のキャンセル。
       saveConfig(storage, config)
-      storage.saveFootprints(footprints)
+      saveFootprints(storage, footprints)
       previousConfigRef.current = config
       previousFootprintsRef.current = footprints
     }
-  }, [storage, storage.saveFootprints, config, footprints])
+  }, [storage, config, footprints])
 }
 
 /**

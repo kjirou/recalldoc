@@ -68,7 +68,6 @@ describe('useStorageSynchronization', () => {
       footprintsKey: 'key',
       loadItem: jest.fn().mockResolvedValue(undefined),
       saveItem: jest.fn().mockResolvedValue(undefined),
-      saveFootprints: jest.fn(),
     }
   })
 
@@ -78,7 +77,6 @@ describe('useStorageSynchronization', () => {
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     rerender([storage, config, footprints])
     expect(storage.saveItem).not.toHaveBeenCalled()
-    expect(storage.saveFootprints).not.toHaveBeenCalled()
   })
   test('it calls save methods when `config` is different', () => {
     const config = createDefaultConfig()
@@ -86,8 +84,7 @@ describe('useStorageSynchronization', () => {
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newConfig: Config = {...config, enableRomajiSearch: true}
     rerender([storage, newConfig, footprints])
-    expect(storage.saveItem).toHaveBeenCalledTimes(1)
-    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledTimes(2)
   })
   test('it calls save methods when `footprints` is different', () => {
     const config = createDefaultConfig()
@@ -95,8 +92,7 @@ describe('useStorageSynchronization', () => {
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newFootprints: Footprint[] = [{title: '', url: ''}]
     rerender([storage, config, newFootprints])
-    expect(storage.saveItem).toHaveBeenCalledTimes(1)
-    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledTimes(2)
   })
 })
 
@@ -131,7 +127,6 @@ describe('SearcherContainer', () => {
         footprintsKey: 'key',
         loadItem: jest.fn().mockResolvedValue(undefined),
         saveItem: jest.fn().mockResolvedValue(undefined),
-        saveFootprints: jest.fn().mockResolvedValue(undefined),
       },
       config: createDefaultConfig(),
       footprints: [],

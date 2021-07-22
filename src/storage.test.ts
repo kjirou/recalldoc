@@ -19,7 +19,6 @@ describe('updateFootprintOfEsaCategory', () => {
       footprintsKey: 'key',
       loadItem: jest.fn().mockResolvedValue(undefined),
       saveItem: jest.fn().mockResolvedValue(undefined),
-      saveFootprints: jest.fn().mockResolvedValue(undefined),
     }
   })
 
@@ -45,8 +44,8 @@ describe('updateFootprintOfEsaCategory', () => {
   ]
   test.each(table)('$name', async ({args, expected}) => {
     await updateFootprintOfEsaCategory(storage, args.origin, args.hash)
-    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
-    expect(storage.saveFootprints).toHaveBeenCalledWith(expected)
+    expect(storage.saveItem).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledWith(storage.footprintsKey, JSON.stringify(expected))
   })
 })
 
@@ -58,7 +57,6 @@ describe('updateFootprintOfKibelaFolder', () => {
       footprintsKey: 'key',
       loadItem: jest.fn().mockResolvedValue(undefined),
       saveItem: jest.fn().mockResolvedValue(undefined),
-      saveFootprints: jest.fn().mockResolvedValue(undefined),
     }
   })
 
@@ -92,7 +90,7 @@ describe('updateFootprintOfKibelaFolder', () => {
   ]
   test.each(table)('$name', async ({args, expected}) => {
     await updateFootprintOfKibelaFolder(storage, args.url)
-    expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
-    expect(storage.saveFootprints).toHaveBeenCalledWith(expected)
+    expect(storage.saveItem).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledWith(storage.footprintsKey, JSON.stringify(expected))
   })
 })
