@@ -204,6 +204,15 @@ describe('searchFootprints', () => {
       expected: createFootprints('bar', 'baz'),
     },
     {
+      name: 'it evaluates multiple keywords with AND logic',
+      args: [
+        createFootprints('ab', 'bc'),
+        'b c',
+        false,
+      ],
+      expected: createFootprints('bc'),
+    },
+    {
       name: 'it searches by case insensitive',
       args: [
         createFootprints('abc', 'ABC'),

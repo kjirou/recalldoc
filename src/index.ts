@@ -92,6 +92,7 @@ if (pageMataData.siteId === 'esa') {
   if (pageMataData.contentKind === 'note') {
     const titleElement = document.querySelector('#title span')
     // NOTE: .folderIndicator の中には複数要素が含まれていおり、それを textContent で強引に結合している。
+    // TODO: 記事は複数グループの folder に所属できるため、以下のセレクタにマッチする要素は複数存在する。
     const folderIndicatorElement = document.querySelector('.folderIndicator')
     if (titleElement && folderIndicatorElement) {
       const newFootprint: Footprint = {
