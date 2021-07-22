@@ -396,6 +396,6 @@ export const searchFootprints = (footprints: Footprint[], searchQuery: string, e
     return footprints
   }
   return footprints.filter(footprint => {
-    return keywordMatchers.some(e => e.test(footprint.title))
+    return keywordMatchers.every(e => e.test(footprint.title))
   })
 }
