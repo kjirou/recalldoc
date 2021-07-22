@@ -167,14 +167,16 @@ export const Searcher: VFC<Props> = (props) => {
         props.footprints.length > 0 && <ul className="searcher__itemList">
           {
             props.footprints.map(footprint => {
+              const titleParts = footprint.title.split('/')
               return <li
                 key={ footprint.url }
                 className={classNames('searcher__itemListItem', {'searcher__itemListItem--highlighted': footprint.highlighted})}
               >
                 <div>
-                  <a
-                    href={ footprint.url }
-                  >{ footprint.title }</a>
+                  <a href={footprint.url}>
+                    <span>{titleParts.slice(0, titleParts.length - 1).join('/')}/</span>
+                    <strong>{titleParts[titleParts.length - 1]}</strong>
+                  </a>
                 </div>
                 <div>
                   <button onClick={() => {
