@@ -299,6 +299,16 @@ const romajiDictionary: Readonly<RomajiDictionaryItem[]> = [
   ['dye', ...hiraWithKata('ぢぇ')],
   ['dyo', ...hiraWithKata('ぢょ')],
   ['tsu', ...hiraWithKata('つ')],
+  ['tha', ...hiraWithKata('てゃ')],
+  ['thi', ...hiraWithKata('てぃ')],
+  ['thu', ...hiraWithKata('てゅ')],
+  ['the', ...hiraWithKata('てぇ')],
+  ['tho', ...hiraWithKata('てょ')],
+  ['dha', ...hiraWithKata('でゃ')],
+  ['dhi', ...hiraWithKata('でぃ')],
+  ['dhu', ...hiraWithKata('でゅ')],
+  ['dhe', ...hiraWithKata('でぇ')],
+  ['dho', ...hiraWithKata('でょ')],
   ['nya', ...hiraWithKata('にゃ')],
   ['nyi', ...hiraWithKata('にぃ')],
   ['nyu', ...hiraWithKata('にゅ')],
@@ -396,6 +406,6 @@ export const searchFootprints = (footprints: Footprint[], searchQuery: string, e
     return footprints
   }
   return footprints.filter(footprint => {
-    return keywordMatchers.some(e => e.test(footprint.title))
+    return keywordMatchers.every(e => e.test(footprint.title))
   })
 }

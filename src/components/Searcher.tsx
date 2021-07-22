@@ -50,11 +50,12 @@ const styleLiteral = `
     top: 20px;
     left: calc(50% - var(--width)/2);
     z-index: 8;
-    border: 1px solid #ccc;
+    border: 4px solid #ddd;
   }
   .searcher__upper {
+    padding: 8px;
     display: flex;
-    background-color: #fff;
+    background-color: #eee;
   }
   .searcher__searchQuery {
     display: block;
@@ -87,7 +88,7 @@ const styleLiteral = `
     background-color: #fff;
   }
   .searcher__itemListItem {
-    min-height: 28px;
+    min-height: 32px;
     display: flex;
     align-items: center;
     line-height: 1;
@@ -166,14 +167,18 @@ export const Searcher: VFC<Props> = (props) => {
         props.footprints.length > 0 && <ul className="searcher__itemList">
           {
             props.footprints.map(footprint => {
+              const titlePaths = footprint.title.split('/')
+              const lastPath = titlePaths[titlePaths.length - 1]
+              const otherPaths = titlePaths.slice(0, titlePaths.length - 1)
               return <li
                 key={ footprint.url }
                 className={classNames('searcher__itemListItem', {'searcher__itemListItem--highlighted': footprint.highlighted})}
               >
                 <div>
-                  <a
-                    href={ footprint.url }
-                  >{ footprint.title }</a>
+                  <a href={footprint.url}>
+                    {otherPaths.length > 0 && <span>{otherPaths.join('/')}/</span>}
+                    <strong>{lastPath}</strong>
+                  </a>
                 </div>
                 <div>
                   <button onClick={() => {
