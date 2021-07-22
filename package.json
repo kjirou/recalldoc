@@ -4,7 +4,11 @@
     "build": "NODE_ENV=production webpack",
     "develop": "webpack --watch",
     "lint": "eslint './src/**/*.@(ts|tsx)'",
-    "test": "jest"
+    "test": "jest",
+    "zip": "npm run zip:clean && npm run zip:prepare-dir && npm run zip:execute",
+    "zip:clean": "rm -rf ./recalldoc && rm -rf ./dist",
+    "zip:execute": "zip -r recalldoc.zip ./recalldoc",
+    "zip:prepare-dir": "mkdir -p ./recalldoc/dist && cp ./manifest.json ./recalldoc && npm run build && cp ./dist/webpacked-prod.js ./recalldoc/dist/webpacked.js"
   },
   "repository": {
     "type": "git",
