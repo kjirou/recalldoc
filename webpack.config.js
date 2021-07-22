@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/index.ts',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'webpacked.js',
+    filename: productionMode ? 'webpacked-prod.js' : 'webpacked.js',
   },
   module: {
     rules: [
