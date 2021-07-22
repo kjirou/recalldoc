@@ -23,8 +23,12 @@ const prepareUi = (storage: Storage): void => {
   const searcherRootElement = document.createElement('div')
   searcherRootElement.style.display = 'none'
   document.body.appendChild(searcherRootElement)
+  let isRunning = false
   window.addEventListener('keydown', async (event) => {
-    // TODO: 二重実行の回避。
+    if (isRunning) {
+      return
+    }
+    isRunning = true
     const config = await storage.loadConfig()
     if (
       canStartupSearcher(
@@ -50,6 +54,7 @@ const prepareUi = (storage: Storage): void => {
         searcherRootElement,
       )
     }
+    isRunning = false
   })
 }
 
