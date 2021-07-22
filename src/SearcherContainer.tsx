@@ -19,6 +19,7 @@ import {
 } from './reducers'
 import {
   Storage,
+  saveConfig,
 } from './storage'
 import {
   Config,
@@ -139,12 +140,12 @@ export const useStorageSynchronization = (storage: Storage, config: Config, foot
     if (config !== previousConfigRef.current || footprints !== previousFootprintsRef.current) {
       // TODO: 処理順序保証、二重実行回避。
       // TODO: ummount時のキャンセル。
-      storage.saveConfig(config)
+      saveConfig(storage, config)
       storage.saveFootprints(footprints)
       previousConfigRef.current = config
       previousFootprintsRef.current = footprints
     }
-  }, [storage, storage.saveConfig, storage.saveFootprints, config, footprints])
+  }, [storage, storage.saveFootprints, config, footprints])
 }
 
 /**

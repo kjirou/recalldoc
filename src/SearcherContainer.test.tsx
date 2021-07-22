@@ -67,7 +67,7 @@ describe('useStorageSynchronization', () => {
     storage = {
       footprintsKey: 'key',
       loadItem: jest.fn().mockResolvedValue(undefined),
-      saveConfig: jest.fn().mockResolvedValue(undefined),
+      saveItem: jest.fn().mockResolvedValue(undefined),
       loadFootprints: jest.fn(),
       saveFootprints: jest.fn(),
     }
@@ -78,7 +78,7 @@ describe('useStorageSynchronization', () => {
     const footprints: Footprint[] = []
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     rerender([storage, config, footprints])
-    expect(storage.saveConfig).not.toHaveBeenCalled()
+    expect(storage.saveItem).not.toHaveBeenCalled()
     expect(storage.saveFootprints).not.toHaveBeenCalled()
   })
   test('it calls save methods when `config` is different', () => {
@@ -87,7 +87,7 @@ describe('useStorageSynchronization', () => {
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newConfig: Config = {...config, enableRomajiSearch: true}
     rerender([storage, newConfig, footprints])
-    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledTimes(1)
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
   })
   test('it calls save methods when `footprints` is different', () => {
@@ -96,7 +96,7 @@ describe('useStorageSynchronization', () => {
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
     const newFootprints: Footprint[] = [{title: '', url: ''}]
     rerender([storage, config, newFootprints])
-    expect(storage.saveConfig).toHaveBeenCalledTimes(1)
+    expect(storage.saveItem).toHaveBeenCalledTimes(1)
     expect(storage.saveFootprints).toHaveBeenCalledTimes(1)
   })
 })
@@ -131,7 +131,7 @@ describe('SearcherContainer', () => {
       storage: {
         footprintsKey: 'key',
         loadItem: jest.fn().mockResolvedValue(undefined),
-        saveConfig: jest.fn().mockResolvedValue(undefined),
+        saveItem: jest.fn().mockResolvedValue(undefined),
         loadFootprints: jest.fn().mockResolvedValue([]),
         saveFootprints: jest.fn().mockResolvedValue(undefined),
       },
