@@ -19,7 +19,6 @@ describe('updateFootprintOfEsaCategory', () => {
       footprintsKey: 'key',
       loadItem: jest.fn().mockResolvedValue(undefined),
       saveItem: jest.fn().mockResolvedValue(undefined),
-      loadFootprints: jest.fn().mockResolvedValue([]),
       saveFootprints: jest.fn().mockResolvedValue(undefined),
     }
   })
@@ -59,7 +58,6 @@ describe('updateFootprintOfKibelaFolder', () => {
       footprintsKey: 'key',
       loadItem: jest.fn().mockResolvedValue(undefined),
       saveItem: jest.fn().mockResolvedValue(undefined),
-      loadFootprints: jest.fn().mockResolvedValue([]),
       saveFootprints: jest.fn().mockResolvedValue(undefined),
     }
   })

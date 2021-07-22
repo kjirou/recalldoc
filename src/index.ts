@@ -15,6 +15,7 @@ import {
   Storage,
   createChromeStorage,
   loadConfig,
+  loadFootprints,
   updateFootprint,
   updateFootprintOfEsaCategory,
   updateFootprintOfKibelaFolder,
@@ -40,7 +41,7 @@ const prepareUi = (storage: Storage): void => {
         event.key,
       )
     ) {
-      const footprints = await storage.loadFootprints()
+      const footprints = await loadFootprints(storage)
       render(
         createElement(SearcherContainer, {
           portalDestination: document.body,

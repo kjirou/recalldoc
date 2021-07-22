@@ -68,7 +68,6 @@ describe('useStorageSynchronization', () => {
       footprintsKey: 'key',
       loadItem: jest.fn().mockResolvedValue(undefined),
       saveItem: jest.fn().mockResolvedValue(undefined),
-      loadFootprints: jest.fn(),
       saveFootprints: jest.fn(),
     }
   })
@@ -132,7 +131,6 @@ describe('SearcherContainer', () => {
         footprintsKey: 'key',
         loadItem: jest.fn().mockResolvedValue(undefined),
         saveItem: jest.fn().mockResolvedValue(undefined),
-        loadFootprints: jest.fn().mockResolvedValue([]),
         saveFootprints: jest.fn().mockResolvedValue(undefined),
       },
       config: createDefaultConfig(),
