@@ -3,7 +3,6 @@ import {
   VFC,
   useEffect,
   useRef,
-  useCallback,
 } from 'react'
 import {
   Footprint
@@ -74,6 +73,19 @@ const styleLiteral = `
     color: #666;
     cursor: pointer;
     user-select: none;
+  }
+  .searcher__startupKeyCombinations {
+    margin-left: 8px;
+    line-height: 24px;
+  }
+  .searcher__startupKeyCombinations > label {
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    user-select: none;
+  }
+  .searcher__startupKeyCombinations > select {
+    margin-left: 4px;
   }
   .searcher__totalCount {
     flex: 1;
@@ -160,6 +172,14 @@ export const Searcher: VFC<Props> = (props) => {
             }}
           />
           <label htmlFor="recalldoc_romaji_search">ローマ字検索</label>
+        </div>
+        <div className="searcher__startupKeyCombinations">
+          <label htmlFor="recalldoc_startup_key_combinations">起動</label>
+          <select id="recalldoc_startup_key_combinations">
+            <option value="1">Ctrl+R</option>
+            <option value="2">Ctrl|Cmd+Shift+L</option>
+            <option value="99">全て</option>
+          </select>
         </div>
         <div className="searcher__totalCount">{props.footprints.length}/{props.totalCount} 件</div>
       </div>
