@@ -5,6 +5,7 @@ import {
   useRef,
 } from 'react'
 import {
+  Config,
   Footprint
 } from '../utils'
 
@@ -18,6 +19,7 @@ export type Props = {
   enableRomajiSearch: boolean,
   footprints: FootprintProps[];
   onChangeCheckboxOfRomajiSearch: (checked: boolean) => void;
+  onChangeSelectOfStartupKeyCombination: (startupKeyCombination: Config['startupKeyCombination']) => void;
   onClickDeleteButton: (url: FootprintProps['url']) => void;
   onClickPageCover: () => void;
   onInput: (inputValue: string, stopPropagation: () => void) => void;
@@ -26,7 +28,8 @@ export type Props = {
    */
   onKeyDown: (key: string, isComposing: boolean, stopPropagation: () => void, preventDefault: () => void) => void;
   onMount: (searchFieldElement: HTMLInputElement) => void;
-  totalCount: number,
+  startupKeyCombination: Config['startupKeyCombination'];
+  totalCount: number;
 }
 
 /**
@@ -175,7 +178,14 @@ export const Searcher: VFC<Props> = (props) => {
         </div>
         <div className="searcher__startupKeyCombinations">
           <label htmlFor="recalldoc_startup_key_combinations">起動</label>
-          <select id="recalldoc_startup_key_combinations">
+          <select
+            id="recalldoc_startup_key_combinations"
+            value={props.startupKeyCombination}
+            onChange={(event) => {
+              // TODO: Type gurad
+              props.onChangeSelectOfStartupKeyCombination(event.target.value as Config['startupKeyCombination'])
+            }}
+          >
             <option value="1">Ctrl+R</option>
             <option value="2">Ctrl|Cmd+Shift+L</option>
             <option value="99">全て</option>

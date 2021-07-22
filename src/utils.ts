@@ -1,5 +1,6 @@
 export type Config = {
   enableRomajiSearch: boolean;
+  startupKeyCombination: '1' | '2' | '99';
 }
 
 export type PageMetaData = {
@@ -31,6 +32,7 @@ type RomajiDictionaryItem = readonly [string, string, string]
 export const createDefaultConfig = (): Config => {
   return {
     enableRomajiSearch: false,
+    startupKeyCombination: '1',
   }
 }
 
