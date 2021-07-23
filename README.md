@@ -34,7 +34,7 @@ npm install
 npm run develop
 ```
 
-Chrome の機能　である「パッケージ化されてない拡張機能を読み込む」の対象へ、本リポジトリをローカルへ clone したディレクトリを指定します。
+Chrome の機能である「パッケージ化されてない拡張機能を読み込む」の対象へ、本リポジトリをローカルへ clone したディレクトリを指定します。
 
 #### Chrome Web Store用のアイコンを更新する
 
@@ -43,4 +43,10 @@ Chrome の機能　である「パッケージ化されてない拡張機能を�
 以下のコマンドで、他のサイズの画像を生成します。
 ```
 npm run generate-icons
+```
+
+#### Chrome Web Store登録用の.zipを生成する
+
+```
+npm run zip
 ```
