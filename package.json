@@ -6,10 +6,10 @@
     "generate-icons": "node ./scripts/generate-icons.js",
     "lint": "eslint './src/**/*.@(ts|tsx)'",
     "test": "jest",
-    "zip": "npm run zip:clean && npm run zip:prepare-dir && npm run zip:execute",
-    "zip:clean": "rm -rf ./recalldoc && rm -rf ./dist",
-    "zip:execute": "zip -r recalldoc.zip ./recalldoc",
-    "zip:prepare-dir": "mkdir -p ./recalldoc/dist && cp ./manifest.json ./recalldoc && npm run build && cp ./dist/webpacked-prod.js ./recalldoc/dist/webpacked.js"
+    "zip": "npm run zip:clean && npm run build && npm run zip:collect-files && npm run zip:execute",
+    "zip:clean": "rm -rf ./recalldoc.zip && rm -rf ./recalldoc && rm -rf ./dist",
+    "zip:collect-files": "mkdir -p ./recalldoc/dist && cp ./manifest.json ./recalldoc && cp ./dist/webpacked-prod.js ./recalldoc/dist/webpacked.js && cp -r ./icons ./recalldoc",
+    "zip:execute": "zip -r recalldoc.zip ./recalldoc"
   },
   "repository": {
     "type": "git",
