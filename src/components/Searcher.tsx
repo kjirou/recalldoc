@@ -185,9 +185,9 @@ export const Searcher: VFC<Props> = (props) => {
               }
             }}
           >
+            <option value="99">全て有効</option>
             <option value="1">Ctrl+R</option>
             <option value="2">Ctrl|Cmd+Shift+L</option>
-            <option value="99">全て</option>
           </select>
         </div>
         <div className="searcher__totalCount">{props.footprints.length}/{props.totalCount} 件</div>
