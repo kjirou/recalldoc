@@ -88,11 +88,13 @@ export const canStartupSearcher = (
   shiftKey: boolean,
   key: string,
 ): boolean => {
+  // NOTE: Windows だと、Shift を同時押ししているときは key が大文字になっていた。
+  const lowerCaseKey = key.toLocaleLowerCase()
   return (
     (startupKeyCombination === '1' || startupKeyCombination === '99') &&
-      ctrlKey && !metaKey && !shiftKey && key === 'r' ||
+      ctrlKey && !metaKey && !shiftKey && lowerCaseKey === 'r' ||
       (startupKeyCombination === '2' || startupKeyCombination === '99') &&
-        (ctrlKey && !metaKey || !ctrlKey && metaKey) && shiftKey && key === 'l'
+        (ctrlKey && !metaKey || !ctrlKey && metaKey) && shiftKey && lowerCaseKey === 'l'
   )
 }
 

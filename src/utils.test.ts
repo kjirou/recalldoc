@@ -84,7 +84,7 @@ describe('classifyPage', () => {
     expect(classifyPage(url)).toStrictEqual(expected)
   })
 })
-describe('isStartupKeyCombination', () => {
+describe('canStartupSearcher', () => {
   const table: {
     args: Parameters<typeof canStartupSearcher>,
     expected: ReturnType<typeof canStartupSearcher>,
@@ -115,6 +115,10 @@ describe('isStartupKeyCombination', () => {
     },
     {
       args: ['2', true, false, true, 'l'],
+      expected: true,
+    },
+    {
+      args: ['2', true, false, true, 'L'],
       expected: true,
     },
     {
