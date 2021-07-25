@@ -1,3 +1,5 @@
+import {convertToRegExp} from 'romaji-fuzzy-search'
+
 export type Config = {
   enableRomajiSearch: boolean;
   startupKeyCombination: '1' | '2' | '99';
@@ -479,7 +481,7 @@ export const searchFootprints = (footprints: Footprint[], searchQuery: string, e
   const keywordMatchers = splitSearchQueryIntoMultipulKeywords(searchQuery)
     .map(keyword => {
       if (enableRomajiSearch) {
-        return new RegExp(createRomajiSearchRegexp(keyword), 'i')
+        return new RegExp(convertToRegExp(keyword), 'i')
       } else {
         return new RegExp(escapeRegExp(keyword), 'i')
       }
