@@ -44,7 +44,7 @@ describe('useVariables', () => {
     describe('startupKeyCombination, onChangeSelectOfStartupKeyCombination', () => {
       test('it works', () => {
         const {result} = renderUseVariables(createDefaultConfig(), [], () => {})
-        expect(result.current.searcherProps.startupKeyCombination).toBe('1')
+        expect(result.current.searcherProps.startupKeyCombination).toBe('99')
         act(() => {
           result.current.searcherProps.onChangeSelectOfStartupKeyCombination('2')
         })
