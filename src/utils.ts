@@ -35,7 +35,7 @@ export type Footprint = {
 export const createDefaultConfig = (): Config => {
   return {
     enableRomajiSearch: false,
-    startupKeyCombination: '1',
+    startupKeyCombination: '99',
   }
 }
 
