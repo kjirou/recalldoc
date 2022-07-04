@@ -1,0 +1,29 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "timezone": "Asia/Tokyo",
+  "enabledManagers": [
+    "npm"
+  ],
+  "ignoreDeps": [
+    "@types/node",
+    "npm"
+  ],
+  "schedule": "before 8am on the first day of the month",
+  "separateMultipleMajor": true,
+  "packageRules": [
+    {
+      "matchDepTypes": [
+        "dependencies"
+      ],
+      "groupName": "dependencies"
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "groupName": "devDependencies"
+    }
+  ]
+}
