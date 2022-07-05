@@ -157,7 +157,7 @@ describe('SearcherContainer', () => {
     expect(queryByText('Bar')).toBeInTheDocument()
     expect(queryByText('ばー')).toBeInTheDocument()
   })
-  test('it can search the footprints', () => {
+  test('it can search the footprints', async () => {
     const {queryByText, getByTestId} = render(
       <SearcherContainer {...{
         ...defaultProps,
@@ -178,28 +178,28 @@ describe('SearcherContainer', () => {
       }} />,
     )
     const input = getByTestId('recalldoc-searcher-input')
-    userEvent.type(input, 'Foo')
+    await userEvent.type(input, 'Foo')
     expect(queryByText('FooItem')).toBeInTheDocument()
     expect(queryByText('BarItem')).not.toBeInTheDocument()
     expect(queryByText('BazItem')).not.toBeInTheDocument()
-    userEvent.clear(input)
-    userEvent.type(input, 'Ba')
+    await userEvent.clear(input)
+    await userEvent.type(input, 'Ba')
     expect(queryByText('FooItem')).not.toBeInTheDocument()
     expect(queryByText('BarItem')).toBeInTheDocument()
     expect(queryByText('BazItem')).toBeInTheDocument()
   })
-  test('it calls props.onClose when the user clicks the backdrop', () => {
+  test('it calls props.onClose when the user clicks the backdrop', async () => {
     const {getByTestId} = render(
       <SearcherContainer {...defaultProps} />,
     )
-    userEvent.click(getByTestId('recalldoc-searcher-backdrop'))
+    await userEvent.click(getByTestId('recalldoc-searcher-backdrop'))
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1)
   })
-  test('it calls props.onClose when the user types the ESC key', () => {
+  test('it calls props.onClose when the user types the ESC key', async () => {
     const {getByTestId} = render(
       <SearcherContainer {...defaultProps} />,
     )
-    userEvent.type(getByTestId('recalldoc-searcher-backdrop'), '{esc}')
+    await userEvent.type(getByTestId('recalldoc-searcher-backdrop'), '{esc}')
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1)
   })
 })
