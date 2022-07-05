@@ -22,7 +22,6 @@ const prepareUi = (storage: Storage): void => {
   const searcherRootElement = document.createElement('div')
   searcherRootElement.style.display = 'none'
   document.body.appendChild(searcherRootElement)
-  const root = createRoot(searcherRootElement)
   let isRunning = false
   window.addEventListener('keydown', async (event) => {
     if (isRunning) {
@@ -30,6 +29,7 @@ const prepareUi = (storage: Storage): void => {
     }
     isRunning = true
     const config = await loadConfig(storage)
+    const root = createRoot(searcherRootElement)
     if (
       canStartupSearcher(
         config.startupKeyCombination,
