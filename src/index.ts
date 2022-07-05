@@ -1,8 +1,5 @@
 import { createElement } from 'react'
-import {
-  unmountComponentAtNode,
-  render,
-} from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import {
   SearcherContainer,
 } from './SearcherContainer'
@@ -25,6 +22,7 @@ const prepareUi = (storage: Storage): void => {
   const searcherRootElement = document.createElement('div')
   searcherRootElement.style.display = 'none'
   document.body.appendChild(searcherRootElement)
+  const root = createRoot(searcherRootElement)
   let isRunning = false
   window.addEventListener('keydown', async (event) => {
     if (isRunning) {
@@ -42,7 +40,7 @@ const prepareUi = (storage: Storage): void => {
       )
     ) {
       const footprints = await loadFootprints(storage)
-      render(
+      root.render(
         createElement(SearcherContainer, {
           portalDestination: document.body,
           enableShadowDom: true,
@@ -50,10 +48,9 @@ const prepareUi = (storage: Storage): void => {
           config,
           footprints,
           onClose: () => {
-            unmountComponentAtNode(searcherRootElement)
+            root.unmount()
           },
         }),
-        searcherRootElement,
       )
     }
     isRunning = false
