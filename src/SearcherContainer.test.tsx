@@ -1,10 +1,8 @@
 import {
-  render,
-} from '@testing-library/react'
-import {
   act,
+  render,
   renderHook,
-} from '@testing-library/react-hooks'
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   Props,
