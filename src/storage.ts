@@ -6,6 +6,8 @@ import {
   Footprint,
   PageMetaData,
   createDefaultConfig,
+  splitEsaCategoryPath,
+  splitKibelaFolderPath,
 } from './utils'
 
 export type Storage = {
@@ -70,8 +72,7 @@ export const updateFootprint = async (storage: Storage, footprint: Footprint): P
 export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, hash: string): Promise<void> => {
   const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
   const newFootprint: Footprint = {
-    // TODO
-    directories: [],
+    directories: splitEsaCategoryPath(categoryPath),
     title: categoryPath,
     url: origin + '/' + hash,
   }
@@ -80,13 +81,12 @@ export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, h
 
 export const updateFootprintOfKibelaFolder = (storage: Storage, url: string): Promise<void> => {
   const urlObj = new URL(url)
-  const folder = decodeURIComponent(urlObj.pathname.replace(/^\/notes\/folder\//, ''))
+  const folderPath = decodeURIComponent(urlObj.pathname.replace(/^\/notes\/folder\//, ''))
   const groupId = urlObj.searchParams.get('group_id')
   const queryString = groupId ? `?group_id=${encodeURIComponent(groupId)}` : ''
   const newFootprint: Footprint = {
-    // TODO
-    directories: [],
-    title: folder,
+    directories: splitKibelaFolderPath(folderPath),
+    title: folderPath,
     url: urlObj.origin + urlObj.pathname + queryString,
   }
   return updateFootprint(storage, newFootprint)

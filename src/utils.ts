@@ -84,6 +84,24 @@ export const classifyPage = (url: string): PageMetaData => {
   }
 }
 
+/**
+ * esa の category 画面の path 値をディレクトリ単位へ分割する。
+ * @param categoryPath - URL エンコーディングされていない値。"/" が子 category の区切りとして機能する。
+ *                       なお、esa は記事タイトルに "/" を含めようとすると、それを自動的に区切りとして認識するので、結果として "/" が入力できない仕組み。
+ */
+export const splitEsaCategoryPath = (categoryPath: string): string[] => {
+  return categoryPath.split('/')
+}
+
+/**
+ * Kibela の folder 画面のパスをディレクトリ単位へ分割する。
+ * @param folderWithTitle - "/" が子 category の区切りとして機能する。
+ *                          なお、Kibela は記事タイトルに "/" を含めようとすると、入力エラーになる。
+ */
+export const splitKibelaFolderPath = (folderPath: string): string[] => {
+  return folderPath.split('/')
+}
+
 // TODO: alt や option 同時押しも考慮した上で除外した方が丁寧。
 export const canStartupSearcher = (
   startupKeyCombination: Config['startupKeyCombination'],
