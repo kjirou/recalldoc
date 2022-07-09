@@ -74,6 +74,8 @@ if (pageMataData.siteId === 'esa') {
     const titleNameElement = document.querySelector('.post-header .post-title__name')
     if (titleNameElement) {
       const newFootprint: Footprint = {
+        // TODO
+        directories: [],
         title: [...categoryPathItems, titleNameElement.textContent].join('/'),
         url: location.origin + location.pathname,
       }
@@ -115,6 +117,8 @@ if (pageMataData.siteId === 'esa') {
     const folderIndicatorElement = document.querySelector('.folderIndicator')
     if (titleElement && folderIndicatorElement) {
       const newFootprint: Footprint = {
+        // TODO
+        directories: [],
         title: `${folderIndicatorElement.textContent}/${titleElement.textContent}`,
         url: location.origin + location.pathname,
       }

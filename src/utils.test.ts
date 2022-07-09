@@ -194,7 +194,7 @@ describe('splitSearchQueryIntoMultipulKeywords', () => {
 })
 describe('searchFootprints', () => {
   const createFootprints = (...titles: Footprint['title'][]): Footprint[] => {
-    return titles.map(title => ({title, url: ''}))
+    return titles.map(title => ({directories: [], title, url: ''}))
   }
   const table: {
     args: Parameters<typeof searchFootprints>,

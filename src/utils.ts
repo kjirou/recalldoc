@@ -22,6 +22,10 @@ export type PageMetaData = {
 
 export type Footprint = {
   /**
+   * 画面のタイトルの内、ディレクトリ部分のリスト。
+   */
+  directories: string[],
+  /**
    * 画面のタイトル。Searcher の選択肢の表示名になる。
    * Kibela の folder のときは、グループを横断した重複は可能なので一意にならない。
    */

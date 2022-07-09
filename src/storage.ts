@@ -70,6 +70,8 @@ export const updateFootprint = async (storage: Storage, footprint: Footprint): P
 export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, hash: string): Promise<void> => {
   const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
   const newFootprint: Footprint = {
+    // TODO
+    directories: [],
     title: categoryPath,
     url: origin + '/' + hash,
   }
@@ -82,6 +84,8 @@ export const updateFootprintOfKibelaFolder = (storage: Storage, url: string): Pr
   const groupId = urlObj.searchParams.get('group_id')
   const queryString = groupId ? `?group_id=${encodeURIComponent(groupId)}` : ''
   const newFootprint: Footprint = {
+    // TODO
+    directories: [],
     title: folder,
     url: urlObj.origin + urlObj.pathname + queryString,
   }

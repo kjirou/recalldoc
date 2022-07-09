@@ -37,6 +37,7 @@ describe('updateFootprintOfEsaCategory', () => {
         hash: '#path=%2Ffoo%2F%E3%81%B0%E3%83%BC',
       },
       expected: [{
+        directories: [],
         title: 'foo/ばー',
         url: 'https://nowhere.esa.io/#path=%2Ffoo%2F%E3%81%B0%E3%83%BC',
       }],
@@ -73,6 +74,7 @@ describe('updateFootprintOfKibelaFolder', () => {
         url: 'https://nowhere.kibe.la/notes/folder/foo/%E3%81%B0%E3%83%BC',
       },
       expected: [{
+        directories: [],
         title: 'foo/ばー',
         url: 'https://nowhere.kibe.la/notes/folder/foo/%E3%81%B0%E3%83%BC',
       }],
@@ -83,6 +85,7 @@ describe('updateFootprintOfKibelaFolder', () => {
         url: 'https://nowhere.kibe.la/notes/folder/foo?group_id=2&order_by=title',
       },
       expected: [{
+        directories: [],
         title: 'foo',
         url: 'https://nowhere.kibe.la/notes/folder/foo?group_id=2',
       }],

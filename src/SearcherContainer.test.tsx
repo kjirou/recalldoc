@@ -88,7 +88,7 @@ describe('useStorageSynchronization', () => {
     const config = createDefaultConfig()
     const footprints: Footprint[] = []
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
-    const newFootprints: Footprint[] = [{title: '', url: ''}]
+    const newFootprints: Footprint[] = [{directories: [], title: '', url: ''}]
     rerender([storage, config, newFootprints])
     expect(storage.saveItem).toHaveBeenCalledTimes(2)
   })
@@ -144,10 +144,12 @@ describe('SearcherContainer', () => {
         ...defaultProps,
         footprints: [
           {
+            directories: [],
             title: 'Foo/Bar',
             url: 'https://nowhere.esa.io/posts/1',
           },
           {
+            directories: [],
             title: 'ふー/ばー',
             url: 'https://nowhere.esa.io/posts/2',
           },
@@ -163,14 +165,17 @@ describe('SearcherContainer', () => {
         ...defaultProps,
         footprints: [
           {
+            directories: [],
             title: 'FooItem',
             url: 'https://nowhere.esa.io/posts/1',
           },
           {
+            directories: [],
             title: 'BarItem',
             url: 'https://nowhere.esa.io/posts/2',
           },
           {
+            directories: [],
             title: 'BazItem',
             url: 'https://nowhere.esa.io/posts/3',
           },
