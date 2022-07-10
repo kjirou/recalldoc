@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {
-  VFC,
+  FC,
   useEffect,
   useRef,
 } from 'react'
@@ -134,7 +134,7 @@ const styleLiteral = `
 `
 
 // TODO: 検索キーワードがマッチしている箇所をハイライトする。
-export const Searcher: VFC<Props> = (props) => {
+export const Searcher: FC<Props> = (props) => {
   const searchFieldRef = useRef<HTMLInputElement>(null)
   const onMount = props.onMount
 
