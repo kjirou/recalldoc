@@ -19,15 +19,15 @@ import {
 } from './storage'
 
 const prepareUi = (storage: Storage): void => {
-  const searcherRootElement = document.createElement('div')
-  searcherRootElement.style.display = 'none'
-  document.body.appendChild(searcherRootElement)
   let isRunning = false
   window.addEventListener('keydown', async (event) => {
     if (isRunning) {
       return
     }
     isRunning = true
+    const searcherRootElement = document.createElement('div')
+    searcherRootElement.style.display = 'none'
+    document.body.appendChild(searcherRootElement)
     const config = await loadConfig(storage)
     const root = createRoot(searcherRootElement)
     if (
@@ -49,6 +49,12 @@ const prepareUi = (storage: Storage): void => {
           footprints,
           onClose: () => {
             root.unmount()
+            // NOTE: root 毎に container 要素を生成しないと、再び同じ container へ createRoot(container) を行った時に以下の警告が出る。
+            //       > You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before.
+            //       >   Instead, call root.render() on the existing root instead if you want to update it.
+            //       root.unmount() で React の作用を削除しきれてないということなので、不具合の様には見える。少し調べた限りでは詳細不明。
+            //       なお、root.unmount() 後の root を再び root.render() すると、JS エラーになる。
+            document.body.removeChild(searcherRootElement)
           },
         }),
       )
