@@ -35,7 +35,7 @@ export type Footprint = {
    * かつて Kibela では、グループをまたぐと「記事パス + 記事名」の重複が可能だったので、この値が一意にならなかった。
    *   今はグループ名が記事パスに含まれているから一意になっているのかもしれない。詳細不明。
    */
-  title: string;
+  title?: string;
   /**
    * 記事 URL。一意。
    */
@@ -150,6 +150,7 @@ export const searchFootprints = (footprints: Footprint[], searchQuery: string, e
     return footprints
   }
   return footprints.filter(footprint => {
-    return keywordMatchers.every(e => e.test(footprint.title))
+    // TODO: title? にするにあたり雑に初期値を設定している。
+    return keywordMatchers.every(e => e.test(footprint.title || ''))
   })
 }
