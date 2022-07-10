@@ -22,16 +22,22 @@ export type PageMetaData = {
 
 export type Footprint = {
   /**
-   * 画面のタイトルの内、ディレクトリ部分のリスト。
+   * 記事パスをディレクトリ単位で分割したリスト。
+   * esa では category、Kibela では folder と命名されている。
    */
-  directories: string[],
+  directories: string[];
   /**
-   * 画面のタイトル。Searcher の選択肢の表示名になる。
-   * Kibela の folder のときは、グループを横断した重複は可能なので一意にならない。
+   * 記事名。undefined のときはディレクトリの情報であることを示す。
+   */
+  name?: string;
+  /**
+   * 記事パス + 記事名。
+   * かつて Kibela では、グループをまたぐと「記事パス + 記事名」の重複が可能だったので、この値が一意にならなかった。
+   *   今はグループ名が記事パスに含まれているから一意になっているのかもしれない。詳細不明。
    */
   title: string;
   /**
-   * 画面の URL。一意。
+   * 記事 URL。一意。
    */
   url: string;
 }
