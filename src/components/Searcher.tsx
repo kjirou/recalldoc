@@ -11,8 +11,9 @@ import {
 } from '../utils'
 
 export type FootprintProps = {
+  directories: string[];
   highlighted: boolean;
-  title: Footprint['title'];
+  name?: string;
   url: Footprint['url'];
 }
 
@@ -196,17 +197,14 @@ export const Searcher: FC<Props> = (props) => {
         props.footprints.length > 0 && <ul className="searcher__itemList">
           {
             props.footprints.map(footprint => {
-              const titlePaths = footprint.title.split('/')
-              const lastPath = titlePaths[titlePaths.length - 1]
-              const otherPaths = titlePaths.slice(0, titlePaths.length - 1)
               return <li
                 key={ footprint.url }
                 className={classNames('searcher__itemListItem', {'searcher__itemListItem--highlighted': footprint.highlighted})}
               >
                 <div>
                   <a href={footprint.url}>
-                    {otherPaths.length > 0 && <span>{otherPaths.join('/')}/</span>}
-                    <strong>{lastPath}</strong>
+                    <span>{footprint.directories.join('/')}/</span>
+                    {footprint.name !== undefined && <strong>{footprint.name}</strong>}
                   </a>
                 </div>
                 <div>
