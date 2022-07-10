@@ -25,7 +25,6 @@ import {
 import {
   Config,
   Footprint,
-  createDefaultConfig,
   rotateIndex,
   searchFootprints,
 } from './utils'
