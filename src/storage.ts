@@ -4,8 +4,11 @@ import {
 import {
   Config,
   Footprint,
+  OldFootprint,
   PageMetaData,
   createDefaultConfig,
+  splitEsaCategoryPath,
+  splitKibelaFolderPath,
 } from './utils'
 
 export type Storage = {
@@ -52,6 +55,11 @@ export const loadFootprints = async (storage: Storage): Promise<Footprint[]> => 
   return rawFootprints ? JSON.parse(rawFootprints) : []
 }
 
+export const loadFootprintLikes = async (storage: Storage): Promise<(Footprint | OldFootprint)[]> => {
+  const rawFootprints = await storage.loadItem(storage.footprintsKey)
+  return rawFootprints ? JSON.parse(rawFootprints) : []
+}
+
 /**
  * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
  */
@@ -63,6 +71,7 @@ export const saveFootprints = (storage: Storage, footprints: Footprint[]): Promi
 
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {
   // TODO: トランザクションになっていない。
+  // TODO: 呼び出し時点で OldFootprint が含まれていないことが局所的に不明。
   const footprints = await loadFootprints(storage)
   return saveFootprints(storage, updateFootprintReducer(footprint)(footprints))
 }
@@ -70,7 +79,7 @@ export const updateFootprint = async (storage: Storage, footprint: Footprint): P
 export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, hash: string): Promise<void> => {
   const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
   const newFootprint: Footprint = {
-    title: categoryPath,
+    directories: splitEsaCategoryPath(categoryPath),
     url: origin + '/' + hash,
   }
   return updateFootprint(storage, newFootprint)
@@ -78,11 +87,11 @@ export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, h
 
 export const updateFootprintOfKibelaFolder = (storage: Storage, url: string): Promise<void> => {
   const urlObj = new URL(url)
-  const folder = decodeURIComponent(urlObj.pathname.replace(/^\/notes\/folder\//, ''))
+  const folderPath = decodeURIComponent(urlObj.pathname.replace(/^\/notes\/folder\//, ''))
   const groupId = urlObj.searchParams.get('group_id')
   const queryString = groupId ? `?group_id=${encodeURIComponent(groupId)}` : ''
   const newFootprint: Footprint = {
-    title: folder,
+    directories: splitKibelaFolderPath(folderPath),
     url: urlObj.origin + urlObj.pathname + queryString,
   }
   return updateFootprint(storage, newFootprint)

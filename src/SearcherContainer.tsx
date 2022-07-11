@@ -1,5 +1,5 @@
 import {
-  VFC,
+  FC,
   useCallback,
   useEffect,
   useMemo,
@@ -25,7 +25,6 @@ import {
 import {
   Config,
   Footprint,
-  createDefaultConfig,
   rotateIndex,
   searchFootprints,
 } from './utils'
@@ -182,7 +181,7 @@ export const usePortalRoot = (
   return portalRoot
 }
 
-export const SearcherContainer: VFC<Props> = (props) => {
+export const SearcherContainer: FC<Props> = (props) => {
   const {config, footprints, searcherProps} = useVariables(props.config, props.footprints, props.onClose)
   useStorageSynchronization(props.storage, config, footprints)
   const portalRoot = usePortalRoot(props.portalDestination, props.enableShadowDom)

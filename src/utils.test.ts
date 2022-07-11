@@ -1,6 +1,7 @@
 import {
   Footprint,
   PageMetaData,
+  adjustOldFootprints,
   classifyPage,
   canStartupSearcher,
   rotateIndex,
@@ -193,79 +194,169 @@ describe('splitSearchQueryIntoMultipulKeywords', () => {
   })
 })
 describe('searchFootprints', () => {
-  const createFootprints = (...titles: Footprint['title'][]): Footprint[] => {
-    return titles.map(title => ({title, url: ''}))
-  }
   const table: {
     args: Parameters<typeof searchFootprints>,
     expected: ReturnType<typeof searchFootprints>,
     name: string,
   }[] = [
     {
-      name: 'it searches by partial match',
+      name: 'it searches footprints by partial matching',
       args: [
-        createFootprints('foox', 'bar', 'baz'),
+        [
+          {directories: [], name: 'foo', url: ''},
+          {directories: [], name: 'bar', url: ''},
+          {directories: [], name: 'baz', url: ''},
+        ],
         'ba',
         false,
       ],
-      expected: createFootprints('bar', 'baz'),
+      expected: [
+        {directories: [], name: 'bar', url: ''},
+        {directories: [], name: 'baz', url: ''},
+      ],
+    },
+    {
+      name: 'it joins directories and name with "/"',
+      args: [
+        [
+          {directories: ['x', 'y'], name: 'z', url: ''},
+        ],
+        'x/y/z',
+        false,
+      ],
+      expected: [
+        {directories: ['x', 'y'], name: 'z', url: ''},
+      ],
+    },
+    {
+      name: 'it searches footprints including only directory',
+      args: [
+        [
+          {directories: ['foo'], url: ''},
+        ],
+        'foo/',
+        false,
+      ],
+      expected: [
+        {directories: ['foo'], url: ''},
+      ],
     },
     {
       name: 'it evaluates multiple keywords with AND logic',
       args: [
-        createFootprints('ab', 'bc'),
+        [
+          {directories: [], name: 'ab', url: ''},
+          {directories: [], name: 'bc', url: ''},
+        ],
         'b c',
         false,
       ],
-      expected: createFootprints('bc'),
+      expected: [
+        {directories: [], name: 'bc', url: ''},
+      ],
     },
     {
-      name: 'it searches by case insensitive',
+      name: 'it searches footprints by case insensitive',
       args: [
-        createFootprints('abc', 'ABC'),
+        [
+          {directories: [], name: 'abc', url: ''},
+          {directories: [], name: 'ABC', url: ''},
+        ],
         'AbC',
         false,
       ],
-      expected: createFootprints('abc', 'ABC'),
+      expected: [
+        {directories: [], name: 'abc', url: ''},
+        {directories: [], name: 'ABC', url: ''},
+      ],
     },
     {
-      name: 'it returns all footprints when the search query is empty',
+      name: 'it returns all footprints when search query is empty',
       args: [
-        createFootprints('foo', 'bar', 'baz'),
+        [
+          {directories: [], name: 'foo', url: ''},
+          {directories: [], name: 'bar', url: ''},
+        ],
         '',
         false,
       ],
-      expected: createFootprints('foo', 'bar', 'baz'),
+      expected: [
+        {directories: [], name: 'foo', url: ''},
+        {directories: [], name: 'bar', url: ''},
+      ],
     },
     {
       name: 'it does not throw any regexp syntax errors',
       args: [
-        createFootprints('a.*+?^${}()|[]/b', 'cd'),
+        [
+          {directories: [], name: 'a.*+?^${}()|[]/b', url: ''},
+          {directories: [], name: 'cd', url: ''},
+        ],
         '.*+?^${}()|[]/',
         false,
       ],
-      expected: createFootprints('a.*+?^${}()|[]/b'),
+      expected: [
+        {directories: [], name: 'a.*+?^${}()|[]/b', url: ''},
+      ],
     },
     {
       name: 'it does not use dots as any single character',
       args: [
-        createFootprints('a', '.', 'A'),
+        [
+          {directories: [], name: 'a', url: ''},
+          {directories: [], name: '.', url: ''},
+          {directories: [], name: 'A', url: ''},
+        ],
         '.',
         false,
       ],
-      expected: createFootprints('.'),
+      expected: [
+        {directories: [], name: '.', url: ''},
+      ],
     },
     {
-      name: 'it can search as romaji',
+      name: 'it can search footprints as romaji',
       args: [
-        createFootprints('nyan', 'にゃん', 'ニャン', 'にゃーん'),
+        [
+          {directories: [], name: 'nyan', url: ''},
+          {directories: [], name: 'にゃん', url: ''},
+          {directories: [], name: 'ニャン', url: ''},
+          {directories: [], name: 'にゃーん', url: ''},
+        ],
         'nyaん',
         true,
       ],
-      expected: createFootprints('にゃん'),
+      expected: [
+        {directories: [], name: 'にゃん', url: ''},
+      ],
     },
   ]
   test.each(table)(`$name`, ({args, expected}) => {
     expect(searchFootprints(...args)).toStrictEqual(expected)
+  })
+})
+describe('adjustOldFootprints', () => {
+  const table: {
+    args: Parameters<typeof adjustOldFootprints>,
+    expected: ReturnType<typeof adjustOldFootprints>,
+    name: string,
+  }[] = [
+    {
+      name: 'it converts an old footprint',
+      args: [
+        [{title: 'foo', url: 'https://example.com'}],
+      ],
+      expected: [{directories: [], name: 'foo', url: 'https://example.com'}]
+    },
+    {
+      name: 'it converts a new footprint',
+      args: [
+        [{directories: ['foo'], name: 'bar', url: 'https://example.com'}],
+      ],
+      expected: [{directories: ['foo'], name: 'bar', url: 'https://example.com'}]
+    },
+  ]
+  test.each(table)(`$name`, ({args, expected}) => {
+    expect(adjustOldFootprints(...args)).toStrictEqual(expected)
   })
 })

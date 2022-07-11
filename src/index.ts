@@ -5,14 +5,16 @@ import {
 } from './SearcherContainer'
 import {
   Footprint,
+  adjustOldFootprints,
   canStartupSearcher,
   classifyPage,
+  splitKibelaFolderPath,
 } from './utils'
 import {
   Storage,
   createChromeStorage,
   loadConfig,
-  loadFootprints,
+  loadFootprintLikes,
   updateFootprint,
   updateFootprintOfEsaCategory,
   updateFootprintOfKibelaFolder,
@@ -39,7 +41,8 @@ const prepareUi = (storage: Storage): void => {
         event.key,
       )
     ) {
-      const footprints = await loadFootprints(storage)
+      const footprintLikes = await loadFootprintLikes(storage)
+      const footprints = adjustOldFootprints(footprintLikes)
       root.render(
         createElement(SearcherContainer, {
           portalDestination: document.body,
@@ -72,14 +75,15 @@ if (pageMataData.siteId === 'esa') {
     const categoryPathItems = Array.from(document.querySelectorAll('.post-header .category-path__item'))
       .map(e => (e.textContent || '').trim())
     const titleNameElement = document.querySelector('.post-header .post-title__name')
-    if (titleNameElement) {
+    if (titleNameElement && titleNameElement.textContent !== null) {
       const newFootprint: Footprint = {
-        title: [...categoryPathItems, titleNameElement.textContent].join('/'),
+        directories: categoryPathItems,
+        name: titleNameElement.textContent,
         url: location.origin + location.pathname,
       }
       updateFootprint(storage, newFootprint)
     }
-  // NOTE: category 間の画面遷移は基本的に Ajax なので、その経路でも Footprint を保存できるように工夫している。
+  // NOTE: category 間の画面遷移は基本的に Ajax なので、その経路でも Footprint を保存できるように工夫している。
   } else if (pageMataData.contentKind === 'top' || pageMataData.contentKind === 'category') {
     // NOTE: 監視対象の DOM が存在しないことがある。一方で、その時に #js_autopagerize_content は存在するので、おそらくその中を非同期で描画している。
     // TODO: 非同期の描画を待つ対応が雑。
@@ -113,9 +117,10 @@ if (pageMataData.siteId === 'esa') {
     // NOTE: .folderIndicator の中には複数要素が含まれていおり、それを textContent で強引に結合している。
     // TODO: 記事は複数グループの folder に所属できるため、以下のセレクタにマッチする要素は複数存在する。
     const folderIndicatorElement = document.querySelector('.folderIndicator')
-    if (titleElement && folderIndicatorElement) {
+    if (titleElement && titleElement.textContent !== null && folderIndicatorElement && folderIndicatorElement.textContent !== null)  {
       const newFootprint: Footprint = {
-        title: `${folderIndicatorElement.textContent}/${titleElement.textContent}`,
+        directories: splitKibelaFolderPath(folderIndicatorElement.textContent),
+        name: titleElement.textContent,
         url: location.origin + location.pathname,
       }
       updateFootprint(storage, newFootprint)

@@ -88,7 +88,7 @@ describe('useStorageSynchronization', () => {
     const config = createDefaultConfig()
     const footprints: Footprint[] = []
     const {rerender} = renderUseStorageSynchronization(storage, config, footprints)
-    const newFootprints: Footprint[] = [{title: '', url: ''}]
+    const newFootprints: Footprint[] = [{directories: [], url: ''}]
     rerender([storage, config, newFootprints])
     expect(storage.saveItem).toHaveBeenCalledTimes(2)
   })
@@ -144,34 +144,36 @@ describe('SearcherContainer', () => {
         ...defaultProps,
         footprints: [
           {
-            title: 'Foo/Bar',
+            directories: ['Foo'],
+            name: 'Bar',
             url: 'https://nowhere.esa.io/posts/1',
           },
           {
-            title: 'ふー/ばー',
+            directories: ['ふー'],
+            name: 'ばー',
             url: 'https://nowhere.esa.io/posts/2',
           },
         ],
       }} />,
     )
-    expect(queryByText('Bar')).toBeInTheDocument()
-    expect(queryByText('ばー')).toBeInTheDocument()
+    expect(queryByText(/Bar/)).toBeInTheDocument()
+    expect(queryByText(/ばー/)).toBeInTheDocument()
   })
   test('it can search the footprints', async () => {
-    const {queryByText, getByTestId} = render(
+    const {queryByText, getByTestId, debug} = render(
       <SearcherContainer {...{
         ...defaultProps,
         footprints: [
           {
-            title: 'FooItem',
+            directories: ['FooItem'],
             url: 'https://nowhere.esa.io/posts/1',
           },
           {
-            title: 'BarItem',
+            directories: ['BarItem'],
             url: 'https://nowhere.esa.io/posts/2',
           },
           {
-            title: 'BazItem',
+            directories: ['BazItem'],
             url: 'https://nowhere.esa.io/posts/3',
           },
         ],
@@ -179,14 +181,14 @@ describe('SearcherContainer', () => {
     )
     const input = getByTestId('recalldoc-searcher-input')
     await userEvent.type(input, 'Foo')
-    expect(queryByText('FooItem')).toBeInTheDocument()
-    expect(queryByText('BarItem')).not.toBeInTheDocument()
-    expect(queryByText('BazItem')).not.toBeInTheDocument()
+    expect(queryByText(/FooItem/)).toBeInTheDocument()
+    expect(queryByText(/BarItem/)).not.toBeInTheDocument()
+    expect(queryByText(/BazItem/)).not.toBeInTheDocument()
     await userEvent.clear(input)
     await userEvent.type(input, 'Ba')
-    expect(queryByText('FooItem')).not.toBeInTheDocument()
-    expect(queryByText('BarItem')).toBeInTheDocument()
-    expect(queryByText('BazItem')).toBeInTheDocument()
+    expect(queryByText(/FooItem/)).not.toBeInTheDocument()
+    expect(queryByText(/BarItem/)).toBeInTheDocument()
+    expect(queryByText(/BazItem/)).toBeInTheDocument()
   })
   test('it calls props.onClose when the user clicks the backdrop', async () => {
     const {getByTestId} = render(
