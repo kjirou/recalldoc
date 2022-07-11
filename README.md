@@ -50,3 +50,8 @@ npm run generate-icons
 ```
 npm run zip
 ```
+
+#### Chrome 拡張として公開や更新をする
+
+- [#48](https://github.com/kjirou/recalldoc/pull/48) に最初に行った時のメモをしてある。
+  - 何か調べたことがあったら、一旦はそこにまとめる。
