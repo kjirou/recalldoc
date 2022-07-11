@@ -27,18 +27,25 @@ export type Footprint = {
    */
   directories: string[];
   /**
-   * 記事名。undefined のときはディレクトリの情報であることを示す。
+   * 記事名。
+   * undefined のときはディレクトリの情報であることを示すが、
+   *   title から directories と name へデータ移行をしたときに「常に記事とみなす」前提で移行したので、必ずしも守られない。
+   *   その処理は adjustOldFootprints を参照。
    */
   name?: string;
+  /**
+   * 記事 URL。一意。
+   */
+  url: string;
+}
+
+export type OldFootprint = {
   /**
    * 記事パス + 記事名。
    * かつて Kibela では、グループをまたぐと「記事パス + 記事名」の重複が可能だったので、この値が一意にならなかった。
    *   今はグループ名が記事パスに含まれているから一意になっているのかもしれない。詳細不明。
    */
-  title?: string;
-  /**
-   * 記事 URL。一意。
-   */
+  title: string;
   url: string;
 }
 
@@ -150,7 +157,33 @@ export const searchFootprints = (footprints: Footprint[], searchQuery: string, e
     return footprints
   }
   return footprints.filter(footprint => {
-    // TODO: title? にするにあたり雑に初期値を設定している。
-    return keywordMatchers.every(e => e.test(footprint.title || ''))
+    // NOTE: 記事の被検索文字列は、記事ディレクトリリストと記事名を "/" で結合した文字列。 
+    let subject = footprint.directories.join('/') + '/'
+    subject += footprint.name !== undefined ? footprint.name : ''
+    return keywordMatchers.every(e => e.test(subject))
+  })
+}
+
+/**
+ * 古い記事データを現在の記事データに準拠するように変換する。
+ * 
+ * なお、変換後に React へ footprints を渡せば、footprints 全体を都度保存するので、変換結果も保存される。
+ */
+ export const adjustOldFootprints = (footprintLikes: (Footprint | OldFootprint)[]): Footprint[] => {
+  const isOldFootprint = (arg: any): arg is OldFootprint => arg.directories === undefined && arg.title !== undefined
+  return footprintLikes.map((footprintLike) => {
+    if (isOldFootprint(footprintLike)) {
+      return {
+        directories: [],
+        name: footprintLike.title.replace(/\//g, '__'),
+        url: footprintLike.url,
+      }
+    }
+    const footprint: Footprint = {
+      directories: footprintLike.directories,
+      ...(footprintLike.name !== undefined ? {name: footprintLike.name} : {}),
+      url: footprintLike.url,
+    }
+    return footprint
   })
 }

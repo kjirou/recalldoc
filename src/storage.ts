@@ -4,6 +4,7 @@ import {
 import {
   Config,
   Footprint,
+  OldFootprint,
   PageMetaData,
   createDefaultConfig,
   splitEsaCategoryPath,
@@ -54,6 +55,11 @@ export const loadFootprints = async (storage: Storage): Promise<Footprint[]> => 
   return rawFootprints ? JSON.parse(rawFootprints) : []
 }
 
+export const loadFootprintLikes = async (storage: Storage): Promise<(Footprint | OldFootprint)[]> => {
+  const rawFootprints = await storage.loadItem(storage.footprintsKey)
+  return rawFootprints ? JSON.parse(rawFootprints) : []
+}
+
 /**
  * @param footprints 件数の上限は考慮しない。呼び出し元で調整する。
  */
@@ -65,6 +71,7 @@ export const saveFootprints = (storage: Storage, footprints: Footprint[]): Promi
 
 export const updateFootprint = async (storage: Storage, footprint: Footprint): Promise<void> => {
   // TODO: トランザクションになっていない。
+  // TODO: 呼び出し時点で OldFootprint が含まれていないことが局所的に不明。
   const footprints = await loadFootprints(storage)
   return saveFootprints(storage, updateFootprintReducer(footprint)(footprints))
 }
@@ -73,7 +80,6 @@ export const updateFootprintOfEsaCategory = (storage: Storage, origin: string, h
   const categoryPath = decodeURIComponent(hash.replace(/^#path=/, '')).replace(/^\//, '')
   const newFootprint: Footprint = {
     directories: splitEsaCategoryPath(categoryPath),
-    title: categoryPath,
     url: origin + '/' + hash,
   }
   return updateFootprint(storage, newFootprint)
@@ -86,7 +92,6 @@ export const updateFootprintOfKibelaFolder = (storage: Storage, url: string): Pr
   const queryString = groupId ? `?group_id=${encodeURIComponent(groupId)}` : ''
   const newFootprint: Footprint = {
     directories: splitKibelaFolderPath(folderPath),
-    title: folderPath,
     url: urlObj.origin + urlObj.pathname + queryString,
   }
   return updateFootprint(storage, newFootprint)

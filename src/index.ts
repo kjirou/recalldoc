@@ -5,6 +5,7 @@ import {
 } from './SearcherContainer'
 import {
   Footprint,
+  adjustOldFootprints,
   canStartupSearcher,
   classifyPage,
   splitKibelaFolderPath,
@@ -13,7 +14,7 @@ import {
   Storage,
   createChromeStorage,
   loadConfig,
-  loadFootprints,
+  loadFootprintLikes,
   updateFootprint,
   updateFootprintOfEsaCategory,
   updateFootprintOfKibelaFolder,
@@ -40,7 +41,8 @@ const prepareUi = (storage: Storage): void => {
         event.key,
       )
     ) {
-      const footprints = await loadFootprints(storage)
+      const footprintLikes = await loadFootprintLikes(storage)
+      const footprints = adjustOldFootprints(footprintLikes)
       root.render(
         createElement(SearcherContainer, {
           portalDestination: document.body,
@@ -77,7 +79,6 @@ if (pageMataData.siteId === 'esa') {
       const newFootprint: Footprint = {
         directories: categoryPathItems,
         name: titleNameElement.textContent,
-        title: [...categoryPathItems, titleNameElement.textContent].join('/'),
         url: location.origin + location.pathname,
       }
       updateFootprint(storage, newFootprint)
@@ -120,7 +121,6 @@ if (pageMataData.siteId === 'esa') {
       const newFootprint: Footprint = {
         directories: splitKibelaFolderPath(folderIndicatorElement.textContent),
         name: titleElement.textContent,
-        title: `${folderIndicatorElement.textContent}/${titleElement.textContent}`,
         url: location.origin + location.pathname,
       }
       updateFootprint(storage, newFootprint)
