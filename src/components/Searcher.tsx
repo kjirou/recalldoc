@@ -103,21 +103,27 @@ const styleLiteral = `
   .searcher__itemListItem {
     min-height: 32px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     line-height: 1;
   }
   .searcher__itemListItem > :first-child {
     flex: 1;
     padding: 4px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+  }
+  .searcher__itemListItem > a:hover {
+    background-color: #cff;
   }
   .searcher__itemListItem.searcher__itemListItem--highlighted {
-    background-color: #ff0;
-  }
-  .searcher__itemListItem > :first-child > a {
-    font-size: 12px;
+    background-color: #ff9;
   }
   .searcher__itemListItem > :last-child {
     width: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     text-align: center;
   }
   .searcher__itemListItem > :last-child > button {
@@ -215,14 +221,14 @@ export const Searcher: FC<Props> = (props) => {
                       footprint.highlighted,
                   })}
                 >
-                  <div>
-                    <a href={footprint.url}>
+                  <a href={footprint.url}>
+                    <div>
                       <span>{footprint.directories.join("/")}/</span>
                       {footprint.name !== undefined && (
                         <strong>{footprint.name}</strong>
                       )}
-                    </a>
-                  </div>
+                    </div>
+                  </a>
                   <div>
                     <button
                       onClick={() => {
