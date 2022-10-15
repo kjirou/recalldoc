@@ -12,3 +12,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run test -- --verbose
+      - name: Check for differences in generated icons
+        run: |
+          npm run generate-icons
+          git diff --exit-code --quiet
