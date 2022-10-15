@@ -6,9 +6,9 @@ jobs:
     name: Run tests
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: "16.15.1"
+          node-version-file: ".nvmrc"
       - run: npm ci
       - run: npm run prettier:check
       - run: npm run lint
