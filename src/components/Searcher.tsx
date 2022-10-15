@@ -106,15 +106,18 @@ const styleLiteral = `
     align-items: stretch;
     line-height: 1;
   }
-  .searcher__itemListItem > a:first-child {
+  .searcher__itemListItem > :first-child {
     flex: 1;
     padding: 4px;
     display: flex;
     align-items: center;
     font-size: 12px;
   }
+  .searcher__itemListItem > a:hover {
+    background-color: #cff;
+  }
   .searcher__itemListItem.searcher__itemListItem--highlighted {
-    background-color: #ff0;
+    background-color: #ff9;
   }
   .searcher__itemListItem > :last-child {
     width: 40px;
