@@ -2,16 +2,11 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "es2020"
-    ],
+    "lib": ["dom", "es2020"],
     "moduleResolution": "node",
     "outDir": "./dist",
     "strict": true,
     "target": "esnext"
   },
-  "include": [
-    "./src"
-  ]
+  "include": ["./src"]
 }

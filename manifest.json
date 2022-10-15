@@ -2,9 +2,7 @@
   "manifest_version": 3,
   "name": "Recalldoc",
   "version": "2.0.1",
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "matches": ["https://*.esa.io/*", "https://*.kibe.la/*"],

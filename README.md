@@ -15,6 +15,7 @@
 - `sorenariblog[at]gmail[dot]com`
 
 ## 🔧 開発
+
 ### 事前にインストールをするソフトウェア
 
 - [Node.js](https://nodejs.org/)
@@ -27,25 +28,28 @@ npm install
 ```
 
 ### 開発手順の例
+
 #### 動作確認をしながら実装する
 
 以下のコマンドで、ビルド用のサーバを起動します。
+
 ```
 npm run develop
 ```
 
 Chrome の機能である「パッケージ化されてない拡張機能を読み込む」の対象へ、本リポジトリをローカルへ clone したディレクトリを指定します。
 
-#### Chrome Web Store用のアイコンを更新する
+#### Chrome Web Store 用のアイコンを更新する
 
 元となる [icons/icon-128x128-original.png](/icons/icon-128x128-original.png) を上書き更新します。
 
 以下のコマンドで、他のサイズの画像を生成します。
+
 ```
 npm run generate-icons
 ```
 
-#### Chrome Web Store登録用の.zipを生成する
+#### Chrome Web Store 登録用の.zip を生成する
 
 ```
 npm run zip
