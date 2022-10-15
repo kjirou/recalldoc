@@ -5,6 +5,8 @@
     "develop": "webpack --watch",
     "generate-icons": "node ./scripts/generate-icons.js",
     "lint": "eslint './src/**/*.@(ts|tsx)'",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
     "test": "jest",
     "zip": "npm run zip:clean && npm run build && npm run zip:collect-files && npm run zip:execute",
     "zip:clean": "rm -rf ./recalldoc.zip && rm -rf ./recalldoc && rm -rf ./dist",
