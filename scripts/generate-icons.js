@@ -1,9 +1,10 @@
-const favicons = require('favicons')
+const { favicons }  = require('favicons')
 const fs = require('fs')
 const path = require('path')
 
 const projectRoot = path.join(__dirname, '..')
-const sourceFilePath = path.join(projectRoot, 'icons/icon-128x128-original.png')
+const iconsDirPath = path.join(projectRoot, 'icons')
+const sourceFilePath = path.join(iconsDirPath, 'icon-128x128-original.png')
 const config = {
   icons: {
     android: false,
@@ -15,11 +16,8 @@ const config = {
     windows: false,
   },
 }
-favicons(sourceFilePath, config, (error, response) => {
-  if (error) {
-    throw new Error(error)
-  }
-  const iconsDirPath = path.join(projectRoot, 'icons')
+const main = async () => {
+  const response = await favicons(sourceFilePath, config)
   const targets = [
     {
       generatedImageName: 'favicon-16x16.png',
@@ -33,4 +31,5 @@ favicons(sourceFilePath, config, (error, response) => {
   for (const {generatedImageName, outputPath} of targets) {
     fs.writeFileSync(outputPath, response.images.find(e => e.name === generatedImageName).contents)
   }
-})
+}
+main()
