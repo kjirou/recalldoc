@@ -1,6 +1,6 @@
 # <img src="https://github.com/kjirou/recalldoc/raw/main/icons/icon-128x128-original.png" width="32" height="32" /> Recalldoc
 
-![Run tests](https://github.com/kjirou/recalldoc/workflows/Run%20tests/badge.svg)
+![run-tests](https://github.com/kjirou/recalldoc/actions/workflows/run-tests.yml/badge.svg)
 
 ドキュメント管理ツールへ閲覧履歴のインクリメンタル検索機能を付与する Chrome 拡張です。  
 現在は、[esa](https://esa.io/) と [Kibela](https://kibe.la/) で使うことができます。
