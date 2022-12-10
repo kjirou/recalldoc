@@ -1,14 +1,16 @@
-name: Run tests
 on: [push]
 jobs:
   run-tests:
     runs-on: ubuntu-20.04
-    name: Run tests
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
           node-version-file: ".nvmrc"
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
       - run: npm ci
       - run: npm run prettier:check
       - run: npm run lint
