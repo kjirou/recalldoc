@@ -206,9 +206,7 @@ export const Searcher: FC<Props> = (props) => {
               <option value="2">Ctrl|Cmd+Shift+L</option>
             </select>
           </div>
-          <div className="searcher__totalCount">
-            {props.footprints.length}/{props.totalCount} 件
-          </div>
+          <div className="searcher__totalCount">全 {props.totalCount} 件</div>
         </div>
         {props.footprints.length > 0 && (
           <ul className="searcher__itemList">
