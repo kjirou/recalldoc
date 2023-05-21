@@ -5,6 +5,7 @@
     "lib": ["dom", "es2020"],
     "moduleResolution": "node",
     "noEmit": true,
+    "skipLibCheck": true,
     "strict": true,
     "target": "esnext"
   },
